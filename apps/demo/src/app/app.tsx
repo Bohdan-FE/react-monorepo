@@ -6,7 +6,7 @@ export function App() {
   return (
     <div>
       <Hero
-        title="Welcmoe to our Demo"
+        title="Welcom to our Demo"
         subtitle="Build something amazing today"
         cta="Get Started"
       />
