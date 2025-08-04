@@ -8,7 +8,7 @@ function Profile() {
   }
 
   return (
-    <div className="flex items-center gap-4 p-8">
+    <div className="flex items-center gap-4 p-8 px-4">
       <div className="w-14 aspect-square rounded-full overflow-hidden shrink-0">
         <img
           className="h-full w-full object-cover object-center"

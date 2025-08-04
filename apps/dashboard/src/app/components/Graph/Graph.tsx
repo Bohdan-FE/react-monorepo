@@ -3,6 +3,7 @@ import * as d3 from 'd3-shape';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import Fire from '../Fire/Fire';
+import { dot } from 'node:test/reporters';
 
 const padding = {
   top: 20,
@@ -26,6 +27,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
   const kunaiRefs = useRef<(HTMLDivElement | null)[]>([]);
   const paperBombRefs = useRef<(HTMLDivElement | null)[]>([]);
   const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const explosionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
     if (
@@ -91,7 +93,9 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
           angleDeg < -90 ? -45 - angleDeg - 360 : -45 - angleDeg;
 
         gsap.set(el, {
-          transform: `translate3d(${xOffset + 2}rem, ${yOffset - 2}rem, 0)  rotate(${angleDeg + 45}deg)`,
+          transform: `translate3d(${xOffset + 2}rem, ${
+            yOffset - 2
+          }rem, 0)  rotate(${angleDeg + 45}deg)`,
         });
 
         gsap.set(paperBombRefs.current[i], {
@@ -145,9 +149,21 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
             });
           },
           onComplete: () => {
-            gsap.to(dotsRef.current[i], {
+            const tl = gsap.timeline();
+            tl.to(explosionRefs.current[i], {
               opacity: 1,
+            }).to(explosionRefs.current[i], {
+              display: 'none',
+              delay: 0.5,
             });
+            gsap.to(dotsRef.current[i], {
+              display: 'block',
+              opacity: 1,
+              duration: 0.5,
+            });
+            if (kunaiRefs.current[i]) {
+              kunaiRefs.current[i].style.display = 'none';
+            }
           },
         });
       });
@@ -159,10 +175,10 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
   }, [linePath]); // or [points]
 
   const updateGraph = (width: number, height: number) => {
-    const maxY = Math.max(...points.map(p => p.y));
-    const maxX = Math.max(...points.map(p => p.x));
+    const maxY = Math.max(...points.map((p) => p.y));
+    const maxX = Math.max(...points.map((p) => p.x));
 
-    const scaled = points.map(p => ({
+    const scaled = points.map((p) => ({
       x: padding.left + (p.x / maxX) * (width - padding.left - padding.right),
       y:
         padding.top +
@@ -171,15 +187,15 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
 
     const lineGenerator = d3
       .line<{ x: number; y: number }>()
-      .x(d => d.x)
-      .y(d => d.y)
+      .x((d: { x: number; y: number }) => d.x)
+      .y((d: { x: number; y: number }) => d.y)
       .curve(d3.curveCatmullRom.alpha(0.5));
 
     const areaGenerator = d3
       .area<{ x: number; y: number }>()
-      .x(d => d.x)
+      .x((d: { x: number; y: number }) => d.x)
       .y0(height)
-      .y1(d => d.y)
+      .y1((d: { x: number; y: number }) => d.y)
       .curve(d3.curveCatmullRom.alpha(0.5));
 
     setLinePath(lineGenerator(scaled) || '');
@@ -190,7 +206,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
   useEffect(() => {
     if (!wrapperRef.current) return;
 
-    const observer = new ResizeObserver(entries => {
+    const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const { width, height } = entry.contentRect;
         updateGraph(width, height);
@@ -220,11 +236,10 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
       <svg ref={svgRef} className="w-full h-full">
         <defs>
           <linearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="oklch(72.3% 0.219 149.579/0.5)" />
+            <stop offset="0%" stopColor="oklch(72.3% 0.219 149.579/1)" />
             <stop offset="100%" stopColor="oklch(72.3% 0.219 149.579/0)" />
           </linearGradient>
         </defs>
-
         <path
           ref={areaPathRef}
           style={{
@@ -240,16 +255,13 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
           stroke="black"
           strokeWidth={3}
         />
-        {/* {scaledPoints.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r={5} fill="red" />
-        ))} */}
       </svg>
-      {scaledPoints.map((p, i) => (
+      {/* {scaledPoints.map((p, i) => (
         <div
-          ref={el => {
-            dotsRef.current[i] = el;
+          ref={(el) => {
+            explosionRefs.current[i] = el;
           }}
-          className="w-19 h-19 rounded-full  translate-x-[-50%] translate-y-[-50%] opacity-0"
+          className="w-30 h-30  translate-x-[-50%] translate-y-[-88%] opacity-0 z-[21]"
           style={{
             position: 'absolute',
             top: p.y,
@@ -258,7 +270,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
           key={i}
         >
           <img
-            className="absolute inset-0 m-auto h-full "
+            className="absolute inset-0 m-auto h-full w-full"
             src={`/explosion.gif?${i}`}
             loading="lazy"
             alt="explosion gif"
@@ -268,7 +280,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
       {scaledPoints.map((p, i) => {
         return (
           <div
-            ref={el => {
+            ref={(el) => {
               kunaiRefs.current[i] = el;
             }}
             className="w-8 h-8 absolute z-20 transform-3d opacity-1 origin-bottom-left"
@@ -280,7 +292,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
           >
             <img className="w-full h-full" src="/kunai2.png" alt="kunai" />
             <div
-              ref={el => {
+              ref={(el) => {
                 paperBombRefs.current[i] = el;
               }}
               className="w-4 absolute flex flex-col items-center origin-top paper_bomb overflow-hidden"
@@ -297,7 +309,21 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
             </div>
           </div>
         );
-      })}
+      })} */}
+      {scaledPoints.map((p, i) => (
+        <div
+          ref={(el) => {
+            dotsRef.current[i] = el;
+          }}
+          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-100 z-[10]"
+          style={{
+            position: 'absolute',
+            top: p.y,
+            left: p.x,
+          }}
+          key={i}
+        ></div>
+      ))}
     </div>
   );
 }

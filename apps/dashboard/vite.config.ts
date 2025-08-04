@@ -1,9 +1,10 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig(async () => {
-  const tailwindcss = (await import('@tailwindcss/vite')).default;
+export default defineConfig(() => {
+  // const tailwindcss = (await import('@tailwindcss/vite')).default;
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/apps/dashboard',

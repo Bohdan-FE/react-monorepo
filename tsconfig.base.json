@@ -5,7 +5,7 @@
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2023", "dom"],
+    "lib": ["ESNext", "dom"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmitOnError": true,
@@ -15,7 +15,7 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2023",
+    "target": "ESNext",
     "customConditions": ["development"]
   }
 }
