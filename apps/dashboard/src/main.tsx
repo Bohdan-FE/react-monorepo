@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 import App from './app/App';
 import Home from './app/pages/Home';
 import ChatPage from './app/pages/Chat';
+import Game from './app/pages/Game';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: '/chat',
         Component: ChatPage,
+      },
+      {
+        path: '/game',
+        Component: Game,
       },
     ],
   },
