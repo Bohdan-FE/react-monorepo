@@ -15,11 +15,11 @@ function Game() {
     if (!canvas) return;
     const context = canvas.getContext('2d');
     contextRef.current = context;
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 50; i++) {
       const circle = new CircleDrawer(context!, {
-        x: 60 * (i + 1),
+        x: 100 * (i + 1),
         y: 100,
-        radius: 40,
+        radius: 45,
         percentage: 1,
         color: 'black',
       });
@@ -28,8 +28,8 @@ function Game() {
     mouseCircleRef.current = new CircleDrawer(context!, {
       x: 0,
       y: 0,
-      radius: 20,
-      percentage: 1,
+      radius: 2,
+      percentage: 0,
       color: 'black',
       lineWidth: 12,
     });
@@ -39,15 +39,16 @@ function Game() {
       const { width, height } = parent.getBoundingClientRect();
       canvas.width = width;
       canvas.height = height;
-      if (context) {
-        startLoop(context);
-      }
     };
     const resizeObserver = new ResizeObserver(() => resizeCanvas());
     if (canvas.parentElement) {
       resizeObserver.observe(canvas.parentElement);
     }
     resizeCanvas();
+
+    if (context) {
+      startLoop(context);
+    }
 
     return () => {
       resizeObserver.disconnect();
@@ -64,11 +65,12 @@ function Game() {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       draw(ctx);
       circlesRef.current.forEach((c) =>
-        c.circle.update({ y: c.circle.getY() + 0.5 })
+        c.circle.update({ y: c.circle.getY() })
       );
       mousePhysic();
-      gravityPhysic();
+
       circlePhysic();
+      gravityPhysic();
       requestAnimationFrame(update);
     };
     update();
@@ -109,25 +111,44 @@ function Game() {
   };
 
   const circlePhysic = () => {
-    circlesRef.current?.forEach((c1) => {
-      circlesRef.current?.forEach((c2) => {
-        const dx = c1.circle.getX() - c2.circle.getX();
-        const dy = c1.circle.getY() - c2.circle.getY();
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const minDistance = c1.circle.getRadius() + c2.circle.getRadius();
-        if (distance < minDistance && distance > 0) {
-          const nx = dx / distance;
-          const ny = dy / distance;
-          const overlap = minDistance - distance * 0;
-          c2.circle.update({
-            x: c2.circle.getX() + nx * overlap * 0.2,
-            y: c2.circle.getY() + ny * overlap * 0.2,
+    for (let i = 0; i < circlesRef.current.length; i++) {
+      for (let j = i + 1; j < circlesRef.current.length; j++) {
+        const c1 = circlesRef.current[i];
+        const c2 = circlesRef.current[j];
+
+        const dx = c2.circle.getX() - c1.circle.getX();
+        const dy = c2.circle.getY() - c1.circle.getY();
+        const dist = Math.hypot(dx, dy);
+
+        const minDist = c1.circle.getRadius() + c2.circle.getRadius();
+
+        if (dist < minDist && dist > 0) {
+          // normalize vector
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          // overlap amount
+          const overlap = (minDist - dist) / 4;
+
+          // push circles apart
+          c1.circle.update({
+            x: c1.circle.getX() - nx * overlap,
+            y: c1.circle.getY() - ny * overlap,
           });
-          c2.vx += nx * overlap * 0.2;
-          c2.vy += ny * overlap * 0.2;
+          c2.circle.update({
+            x: c2.circle.getX() + nx * overlap,
+            y: c2.circle.getY() + ny * overlap,
+          });
+
+          // adjust velocities for simple "bounce"
+          const bounce = 0.7; // restitution
+          c1.vx -= nx * overlap * bounce;
+          c1.vy -= ny * overlap * bounce;
+          c2.vx += nx * overlap * bounce;
+          c2.vy += ny * overlap * bounce;
         }
-      });
-    });
+      }
+    }
   };
 
   const mouseEnter = (e: React.MouseEvent) => {};
