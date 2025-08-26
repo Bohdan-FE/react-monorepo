@@ -1,0 +1,11 @@
+@font-face {
+  font-family: Comic;
+  src: url('/fonts/ComicRelief-Bold.ttf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Comic;
+  src: url('/fonts/ComicRelief-Regular.ttf');
+  font-weight: normal;
+}

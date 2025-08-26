@@ -1,0 +1,38 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+@import './styles/normalize.css';
+@import './styles/variables.css';
+@import './styles/fonts.css';
+@import './styles/theme.css';
+
+html {
+  font-size: 16px;
+  font-family: var(--main-font);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+li {
+  list-style-type: none;
+}
+
+* {
+  user-select: none;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-300%) scale(0);
+  }
+}
