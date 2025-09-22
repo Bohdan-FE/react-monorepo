@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchTasks } from '../api/tasks';
-import { useStore } from '../store/store';
 
 export interface Task {
   _id: string;
@@ -10,8 +9,7 @@ export interface Task {
   date: Date;
 }
 
-export const useTasks = () => {
-  const date = useStore(state => state.date);
+export const useTasks = (date: Date) => {
   return useQuery<Task[]>({
     queryKey: ['tasks', date.toISOString()],
     queryFn: () => fetchTasks({ date }),

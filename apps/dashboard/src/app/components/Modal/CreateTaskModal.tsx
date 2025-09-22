@@ -7,8 +7,8 @@ import { useTasks } from '../../../hooks/useTasks';
 function CreateTaskModal() {
   const { register, handleSubmit } = useForm();
   const { mutate: createTask } = useCreateTask();
-  const date = useStore(state => state.date);
-  const { data: tasks } = useTasks();
+  const date = useStore((state) => state.date);
+  const { data: tasks } = useTasks(date);
 
   const onSubmit = (data: any) => {
     const taskData = {

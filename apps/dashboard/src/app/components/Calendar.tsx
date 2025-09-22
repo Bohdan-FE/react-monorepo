@@ -10,7 +10,7 @@ const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function Calendar() {
   const today = new Date();
-  const setDate = useStore(state => state.setDate);
+  const setDate = useStore((state) => state.setDate);
   const {
     date,
     firstDayOfMonth,
@@ -24,9 +24,9 @@ export default function Calendar() {
     dragData,
     setEndPosition,
     offset,
-  } = useStore(state => state);
+  } = useStore((state) => state);
   const { mutate: updateTask } = useUpdateTask();
-  const { data: tasks } = useTasks();
+  const { data: tasks } = useTasks(date);
 
   const { data: tasksAmount } = useTasksAmount({
     startDate: firstDayOfMonth,
@@ -43,7 +43,7 @@ export default function Calendar() {
     }
     for (let i = 1; i <= daysInMonth; i++) {
       const tasksAmountForDay = tasksAmount?.find(
-        d =>
+        (d) =>
           new Date(d.date).toISOString() ===
           new Date(year, month, i).toISOString()
       );
@@ -77,7 +77,7 @@ export default function Calendar() {
     if (!dragData || !date) return;
     let index = 0;
     if (tasks && tasks.length > 0) {
-      index = Math.max(...tasks.map(task => task.index)) + 1;
+      index = Math.max(...tasks.map((task) => task.index)) + 1;
     }
     setEndPosition({
       x: e.currentTarget.getBoundingClientRect().left - offset.x,
@@ -117,7 +117,7 @@ export default function Calendar() {
       </div>
 
       <div className="grid grid-cols-7 text-center font-medium text-gray-600 mb-2">
-        {daysOfWeek.map(day => (
+        {daysOfWeek.map((day) => (
           <div key={day}>{day}</div>
         ))}
       </div>
@@ -148,7 +148,7 @@ export default function Calendar() {
                   className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${baseStyle} ${
                     isToday(day.day) ? 'bg-black/10 font-bold' : ''
                   }`}
-                  onMouseOver={e => handleOnDragOver(e, day?.date)}
+                  onMouseOver={(e) => handleOnDragOver(e, day?.date)}
                 >
                   {day.day}
                 </div>

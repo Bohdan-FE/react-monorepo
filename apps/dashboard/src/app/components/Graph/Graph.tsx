@@ -3,7 +3,7 @@ import * as d3 from 'd3-shape';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import Fire from '../Fire/Fire';
-import { dot } from 'node:test/reporters';
+import { useTasks } from '../../../hooks/useTasks';
 
 const padding = {
   top: 20,
@@ -12,14 +12,14 @@ const padding = {
   right: 30,
 };
 
-function Graph({ points }: { points: { x: number; y: number }[] }) {
+function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [linePath, setLinePath] = useState('');
   const [areaPath, setAreaPath] = useState('');
-  const [scaledPoints, setScaledPoints] = useState<{ x: number; y: number }[]>(
-    []
-  );
+  const [scaledPoints, setScaledPoints] = useState<
+    { x: number; y: number; date: Date }[]
+  >([]);
   const narutoRef = useRef<HTMLImageElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const areaPathRef = useRef<SVGPathElement | null>(null);
@@ -126,7 +126,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
         const angle = el.getAttribute('data-angle-bomb') ?? '-45';
 
         const tl = gsap.timeline({
-          delay: 1.1 + i * 0.7, // stagger manually
+          delay: 1.1 + i * 0.7,
         });
 
         tl.fromTo(
@@ -152,6 +152,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
             const tl = gsap.timeline();
             tl.to(explosionRefs.current[i], {
               opacity: 1,
+              display: 'block',
             }).to(explosionRefs.current[i], {
               display: 'none',
               delay: 0.5,
@@ -167,22 +168,28 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
           },
         });
       });
-    }, wrapperRef); // <- scope for the refs
+    }, wrapperRef);
 
     return () => {
       if (gsapContext.current) gsapContext.current.revert();
-    }; // 🧹 clean up old animations
-  }, [linePath]); // or [points]
+    };
+  }, [linePath]);
 
   const updateGraph = (width: number, height: number) => {
     const maxY = Math.max(...points.map((p) => p.y));
     const maxX = Math.max(...points.map((p) => p.x));
+    kunaiRefs.current.forEach((k) => {
+      if (k) {
+        k.style.display = 'block';
+      }
+    });
 
     const scaled = points.map((p) => ({
       x: padding.left + (p.x / maxX) * (width - padding.left - padding.right),
       y:
         padding.top +
         (1 - p.y / maxY) * (height - padding.top - padding.bottom),
+      date: p.date,
     }));
 
     const lineGenerator = d3
@@ -200,6 +207,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
 
     setLinePath(lineGenerator(scaled) || '');
     setAreaPath(areaGenerator(scaled) || '');
+    if (gsapContext.current) gsapContext.current.revert();
     setScaledPoints(scaled);
   };
 
@@ -256,7 +264,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
           strokeWidth={3}
         />
       </svg>
-      {/* {scaledPoints.map((p, i) => (
+      {scaledPoints.map((p, i) => (
         <div
           ref={(el) => {
             explosionRefs.current[i] = el;
@@ -271,7 +279,7 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
         >
           <img
             className="absolute inset-0 m-auto h-full w-full"
-            src={`/explosion.gif?${i}`}
+            src={`/explosion.gif?${new Date()}${i}`}
             loading="lazy"
             alt="explosion gif"
           />
@@ -309,23 +317,39 @@ function Graph({ points }: { points: { x: number; y: number }[] }) {
             </div>
           </div>
         );
-      })} */}
+      })}
       {scaledPoints.map((p, i) => (
         <div
           ref={(el) => {
             dotsRef.current[i] = el;
           }}
-          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-100 z-[10]"
+          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] relative"
           style={{
             position: 'absolute',
             top: p.y,
             left: p.x,
           }}
           key={i}
-        ></div>
+        >
+          <PointPopup date={p.date} />
+        </div>
       ))}
     </div>
   );
 }
 
 export default Graph;
+
+function PointPopup({ date }: { date: Date }) {
+  const { data: task } = useTasks(date);
+
+  if (!task || !task.length) return;
+
+  return (
+    <div className="absolute top-[calc(100%+8px)] lef-1/2 -translate-x-1/2">
+      {task?.map((t) => (
+        <p>{t.description}</p>
+      ))}
+    </div>
+  );
+}

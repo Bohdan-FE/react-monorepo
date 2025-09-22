@@ -31,12 +31,13 @@ function Home() {
       const currentDate = new Date(week.monday);
       currentDate.setDate(currentDate.getDate() + index);
       const task = taskAmount.find(
-        task =>
+        (task) =>
           new Date(task.date).toDateString() === currentDate.toDateString()
       );
       return {
         x: index,
         y: task ? task.amount : 0,
+        date: currentDate,
       };
     });
     return points;

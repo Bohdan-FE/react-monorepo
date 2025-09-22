@@ -8,11 +8,10 @@ import { useManualDrag } from '../../hooks/useManualDrag';
 import * as motion from 'motion/react-client';
 
 function TasksList() {
-  const { data: tasks, isLoading, isError } = useTasks();
   const { mutate: reorder } = useReorderTasks();
-  const { dragData, setDragData, setOnDragEnd, setEndPosition } = useStore(
-    state => state
-  );
+  const { dragData, setDragData, setOnDragEnd, setEndPosition, date } =
+    useStore((state) => state);
+  const { data: tasks, isLoading, isError } = useTasks(date);
   const [sortedTasks, setSortedTasks] = useState<typeof tasks | []>([]);
   const { handleMouseDown } = useManualDrag();
 
@@ -35,8 +34,8 @@ function TasksList() {
           x: (e.currentTarget as HTMLElement).offsetLeft,
         });
         const updated = [...(sortedTasks || [])];
-        const dragIdx = updated.findIndex(task => task._id === dragData._id);
-        const overIdx = updated.findIndex(task => task._id === overTask._id);
+        const dragIdx = updated.findIndex((task) => task._id === dragData._id);
+        const overIdx = updated.findIndex((task) => task._id === overTask._id);
         if (dragIdx === -1 || overIdx === -1) return;
         const [dragged] = updated.splice(dragIdx, 1);
         updated.splice(overIdx, 0, dragged);
@@ -55,8 +54,8 @@ function TasksList() {
       }
 
       if (!overTask) {
-        if (!sortedTasks?.find(task => task._id === dragData._id)) {
-          setSortedTasks(prev =>
+        if (!sortedTasks?.find((task) => task._id === dragData._id)) {
+          setSortedTasks((prev) =>
             [...(prev || []), dragData].sort((a, b) => a.index - b.index)
           );
         }
@@ -75,7 +74,9 @@ function TasksList() {
       return;
     }
     handleMouseDown(e, task);
-    setSortedTasks(prev => [...(prev || []).filter(t => t._id !== task._id)]);
+    setSortedTasks((prev) => [
+      ...(prev || []).filter((t) => t._id !== task._id),
+    ]);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -84,7 +85,7 @@ function TasksList() {
   return (
     <ul
       className="space-y-2 p-2 h-full"
-      onMouseOver={e => handleDragOver(e, null)}
+      onMouseOver={(e) => handleDragOver(e, null)}
     >
       {sortedTasks?.length ? (
         sortedTasks.map((task, index) => (
@@ -93,8 +94,8 @@ function TasksList() {
             className={clsx({
               'opacity-0': dragData?._id === task._id,
             })}
-            onMouseDown={e => onDragStart(e, task)}
-            onMouseOver={e => handleDragOver(e, task)}
+            onMouseDown={(e) => onDragStart(e, task)}
+            onMouseOver={(e) => handleDragOver(e, task)}
             layout
             transition={spring}
           >

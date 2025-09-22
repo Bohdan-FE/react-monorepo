@@ -15,8 +15,7 @@ function Sidebar() {
   return (
     <aside
       className={clsx(
-        'bg-yellow flex flex-col border-r overflow-hidden relative transition-all duration-300',
-        isOpened ? 'w-16' : 'w-xs'
+        'bg-yellow  border-r overflow-hidden relative transition-all duration-300 flex flex-col shrink-0'
       )}
     >
       <button
@@ -25,14 +24,29 @@ function Sidebar() {
       >
         <IoChevronBackCircleOutline className="w-5 h-5" />
       </button>
-      <Profile />
+      <Profile full={isOpened} />
       <nav>
         <ul>
           {NAVIGATION.map((item) => (
             <Link to={item.href} key={item.name}>
-              <li className="px-4 py-4 hover:bg-orange/40 transition-colors duration-75 flex items-center gap-4">
-                <item.IconComponent className="w-4 h-4 shrink-0" />
-                <p className="font-bold">{item.name}</p>
+              <li
+                className={clsx(
+                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  {
+                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
+                      isOpened,
+                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                  }
+                )}
+              >
+                <div>
+                  <item.IconComponent className="w-4 h-4 mx-auto" />
+                </div>
+                <div className={clsx('flex items-center px-4')}>
+                  <p className="font-bold overflow-hidden whitespace-nowrap">
+                    {item.name}
+                  </p>
+                </div>
               </li>
             </Link>
           ))}
