@@ -3,7 +3,8 @@ import * as d3 from 'd3-shape';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import Fire from '../Fire/Fire';
-import { useTasks } from '../../../hooks/useTasks';
+import MouseFollowContainer from '../../../../../../packages/ui/src/lib/MouseFollowContainer/MouseFollowContainer';
+import Portal from '../Portal/Portal';
 
 const padding = {
   top: 20,
@@ -28,6 +29,7 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
   const paperBombRefs = useRef<(HTMLDivElement | null)[]>([]);
   const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
   const explosionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const observer = useRef<ResizeObserver | null>(null);
 
   useGSAP(() => {
     if (
@@ -69,6 +71,7 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
       );
 
       gsap.to(narutoRef.current, {
+        opacity: 1,
         motionPath: pathRef.current
           ? {
               path: pathRef.current,
@@ -214,17 +217,18 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
   useEffect(() => {
     if (!wrapperRef.current) return;
 
-    const observer = new ResizeObserver((entries) => {
+    if (observer.current) {
+      observer.current = null;
+    }
+    observer.current = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const { width, height } = entry.contentRect;
         updateGraph(width, height);
       }
     });
-
-    observer.observe(wrapperRef.current);
-
+    observer.current.observe(wrapperRef.current);
     return () => {
-      observer.disconnect();
+      observer.current?.disconnect();
     };
   }, [points]);
 
@@ -233,9 +237,9 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
       ref={wrapperRef}
       className="w-full h-full relative perspective-distant"
     >
-      <div ref={narutoRef} className="absolute">
+      <div ref={narutoRef} className="absolute opacity-0">
         <img
-          className="w-12 border block translate-y-[18%]"
+          className="w-12 border block translate-y-[18%] "
           src="/running-naruto.gif"
           alt="naruto"
         />
@@ -323,7 +327,7 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
           ref={(el) => {
             dotsRef.current[i] = el;
           }}
-          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] relative"
+          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] relative dot"
           style={{
             position: 'absolute',
             top: p.y,
@@ -331,7 +335,7 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
           }}
           key={i}
         >
-          <PointPopup date={p.date} />
+          <PointPopup amount={points[i].y} />
         </div>
       ))}
     </div>
@@ -340,16 +344,35 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
 
 export default Graph;
 
-function PointPopup({ date }: { date: Date }) {
-  const { data: task } = useTasks(date);
+function PointPopup({ amount }: { amount: number }) {
+  const [isShown, setIsShown] = useState(false);
 
-  if (!task || !task.length) return;
+  const onMouseEnter = () => {
+    console.log('mouse enter');
+    setIsShown(true);
+  };
+
+  const onMouseLeave = () => {
+    console.log('mouse leve');
+    setIsShown(false);
+  };
 
   return (
-    <div className="absolute top-[calc(100%+8px)] lef-1/2 -translate-x-1/2">
-      {task?.map((t) => (
-        <p>{t.description}</p>
-      ))}
+    <div
+      className="w-full h-full"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {isShown && (
+        <Portal>
+          <MouseFollowContainer>
+            <div className="bg-pink-300 px-[0.75rem] py-[0.5rem] rounded-xl">
+              <p>Task amount: {amount}</p>
+            </div>
+            {/* <PointPopup date={p.date} /> */}
+          </MouseFollowContainer>
+        </Portal>
+      )}
     </div>
   );
 }

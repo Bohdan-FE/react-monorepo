@@ -25,7 +25,7 @@ export default function Calendar() {
     setEndPosition,
     offset,
   } = useStore((state) => state);
-  const { mutate: updateTask } = useUpdateTask();
+  const { mutate: updateTask } = useUpdateTask(date);
   const { data: tasks } = useTasks(date);
 
   const { data: tasksAmount } = useTasksAmount({

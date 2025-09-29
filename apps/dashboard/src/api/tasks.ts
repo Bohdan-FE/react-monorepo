@@ -1,15 +1,16 @@
 import api from './api';
 
 export interface CreateTaskPayload {
-  description: string;
-  index: number;
+  description?: string;
+  title: string;
   date: Date;
 }
 
 export interface UpdateTaskPayload {
+  title?: string;
   description?: string;
   index?: number;
-  done?: boolean;
+  status?: 'todo' | 'done' | 'in_progress';
   date?: Date;
 }
 

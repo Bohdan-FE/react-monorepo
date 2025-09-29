@@ -1,4 +1,4 @@
-import { Task, useTasks } from '../../hooks/useTasks';
+import { Task, TaskStatus, useTasks } from '../../hooks/useTasks';
 import TaskItem from './TaskItem';
 import { useStore } from '../../store/store';
 import { useCallback, useEffect, useState } from 'react';
@@ -6,14 +6,18 @@ import clsx from 'clsx';
 import { useReorderTasks } from '../../hooks/useReorderTasks';
 import { useManualDrag } from '../../hooks/useManualDrag';
 import * as motion from 'motion/react-client';
+import { useUpdateTask } from '../../hooks/useUpdateTask';
 
-function TasksList() {
+function TasksList({ status }: { status: TaskStatus }) {
   const { mutate: reorder } = useReorderTasks();
   const { dragData, setDragData, setOnDragEnd, setEndPosition, date } =
     useStore((state) => state);
-  const { data: tasks, isLoading, isError } = useTasks(date);
-  const [sortedTasks, setSortedTasks] = useState<typeof tasks | []>([]);
+  const { data, isLoading, isError } = useTasks(date);
+  const [sortedTasks, setSortedTasks] = useState<typeof data | []>([]);
   const { handleMouseDown } = useManualDrag();
+  const { mutate } = useUpdateTask(date);
+
+  const tasks = data?.filter((t) => t.status === status);
 
   useEffect(() => {
     if (tasks) {
@@ -50,6 +54,9 @@ function TasksList() {
             index,
           }));
           reorder(payload);
+          if (dragData.status !== status) {
+            mutate({ taskId: dragData._id, task: { status } });
+          }
         });
       }
 
@@ -84,7 +91,7 @@ function TasksList() {
 
   return (
     <ul
-      className="space-y-2 p-2 h-full"
+      className="space-y-2 p-2 h-full border bg-amber-400"
       onMouseOver={(e) => handleDragOver(e, null)}
     >
       {sortedTasks?.length ? (

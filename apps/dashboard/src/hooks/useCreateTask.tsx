@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createTask, CreateTaskPayload } from '../api/tasks';
 import { useStore } from '../store/store';
 import { Task } from './useTasks';
+import { TaskAmount } from './useTaskAmount';
 
 export const useCreateTask = () => {
   const queryClient = useQueryClient();
-  const { date } = useStore(state => state);
+  const { date, firstDayOfMonth, lastDayOfMonth } = useStore((state) => state);
 
   return useMutation({
     mutationFn: (newTask: CreateTaskPayload) => createTask(newTask),
@@ -23,15 +24,33 @@ export const useCreateTask = () => {
       const optimisticTask: Task = {
         ...newTask,
         _id: `optimistic-${Date.now()}`,
-        done: false,
+        status: 'todo',
         index: previousTasks?.length ?? 0,
         date: date, // assuming `date` is a `Date` object
       };
 
-      queryClient.setQueryData<Task[]>(['tasks', date.toISOString()], old => [
+      queryClient.setQueryData<Task[]>(['tasks', date.toISOString()], (old) => [
         ...(old ?? []),
         optimisticTask,
       ]);
+
+      queryClient.setQueryData<TaskAmount[]>(
+        ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
+        (old) => {
+          if (!old) return old;
+
+          return old.map((o) => {
+            const oDate = new Date(o.date); // normalize to Date
+            if (oDate.toISOString() === date.toISOString()) {
+              return {
+                ...o,
+                amount: o.amount + 1,
+              };
+            }
+            return o;
+          });
+        }
+      );
 
       return { previousTasks };
     },
@@ -46,9 +65,9 @@ export const useCreateTask = () => {
     },
 
     onSuccess: (realTask: Task) => {
-      queryClient.setQueryData<Task[]>(['tasks', date.toISOString()], old =>
+      queryClient.setQueryData<Task[]>(['tasks', date.toISOString()], (old) =>
         (old ?? [])
-          .filter(t => !t._id.startsWith('optimistic-'))
+          .filter((t) => !t._id.startsWith('optimistic-'))
           .concat(realTask)
       );
 

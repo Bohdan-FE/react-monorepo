@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchAmountOfTasks } from '../api/tasks';
 
 export interface TaskAmount {
-  date: Date;
+  date: string;
   amount: number;
 }
 

@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchTasks } from '../api/tasks';
 
+export type TaskStatus = 'todo' | 'done' | 'in_progress';
+
 export interface Task {
   _id: string;
-  description: string;
-  done: boolean;
+  title: string;
+  description?: string;
+  status: TaskStatus;
   index: number;
   date: Date;
 }

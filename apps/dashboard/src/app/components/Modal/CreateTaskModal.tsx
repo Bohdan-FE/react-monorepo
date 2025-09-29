@@ -25,10 +25,12 @@ function CreateTaskModal() {
         <h2>Create Task</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2">
+            <label htmlFor="title">Title</label>
+            <input id="title" {...register('title', { required: true })} />
             <label htmlFor="description">Task Description</label>
             <textarea
               id="description"
-              {...register('description', { required: true })}
+              {...register('description')}
               placeholder="Enter task description"
             ></textarea>
           </div>
