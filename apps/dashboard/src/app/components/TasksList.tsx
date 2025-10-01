@@ -1,7 +1,7 @@
 import { Task, TaskStatus, useTasks } from '../../hooks/useTasks';
 import TaskItem from './TaskItem';
 import { useStore } from '../../store/store';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useReorderTasks } from '../../hooks/useReorderTasks';
 import { useManualDrag } from '../../hooks/useManualDrag';
@@ -16,27 +16,27 @@ function TasksList({ status }: { status: TaskStatus }) {
   const [sortedTasks, setSortedTasks] = useState<typeof data | []>([]);
   const { handleMouseDown } = useManualDrag();
   const { mutate } = useUpdateTask(date);
-
-  const tasks = data?.filter((t) => t.status === status);
+  const itemRef = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
+    const tasks = data?.filter((t) => t.status === status);
     if (tasks) {
       const sorted = [...tasks].sort((a, b) => a.index - b.index);
       setSortedTasks(sorted);
     }
-  }, [tasks]);
+  }, [data]);
 
   const handleDragOver = useCallback(
     (e: React.MouseEvent, overTask: Task | null) => {
       e.preventDefault();
 
       if (!dragData) return;
-
       if (overTask) {
-        setEndPosition({
-          y: (e.currentTarget as HTMLElement).offsetTop,
-          x: (e.currentTarget as HTMLElement).offsetLeft,
-        });
+        if (overTask._id === dragData._id) return;
+        // setEndPosition({
+        //   y: (e.currentTarget as HTMLElement).offsetTop,
+        //   x: (e.currentTarget as HTMLElement).offsetLeft,
+        // });
         const updated = [...(sortedTasks || [])];
         const dragIdx = updated.findIndex((task) => task._id === dragData._id);
         const overIdx = updated.findIndex((task) => task._id === overTask._id);
@@ -61,15 +61,57 @@ function TasksList({ status }: { status: TaskStatus }) {
       }
 
       if (!overTask) {
+        setEndPosition({
+          y: (e.currentTarget as HTMLElement).offsetTop,
+          x: (e.currentTarget as HTMLElement).offsetLeft,
+        });
         if (!sortedTasks?.find((task) => task._id === dragData._id)) {
+          if (sortedTasks && sortedTasks.length) {
+            const maxIndex = Math.max(...sortedTasks.map((o) => o.index));
+            const highest = sortedTasks.find((o) => o.index === maxIndex);
+            dragData.index = highest!.index + 1;
+          }
+
           setSortedTasks((prev) =>
             [...(prev || []), dragData].sort((a, b) => a.index - b.index)
           );
+
+          setOnDragEnd(() => {
+            mutate({
+              taskId: dragData._id,
+              task: { status, index: dragData.index },
+            });
+          });
         }
       }
     },
-    [dragData, reorder, sortedTasks, setDragData, setOnDragEnd]
+    [dragData, reorder, sortedTasks, setDragData, setOnDragEnd, itemRef.current]
   );
+
+  const handleMouseMove = () => {
+    if (sortedTasks && sortedTasks.length && dragData) {
+      const dragIdx = sortedTasks.findIndex((t) => t._id === dragData._id);
+      const el = itemRef.current[dragIdx];
+      if (el) {
+        const targetPosition = {
+          y: el.offsetTop || 0,
+          x: el.offsetLeft || 0,
+        };
+
+        setEndPosition(targetPosition);
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!dragData) return;
+    setOnDragEnd(() => {});
+    const tasks = data?.filter((t) => t.status === status);
+    if (tasks) {
+      const sorted = [...tasks].sort((a, b) => a.index - b.index);
+      setSortedTasks(sorted);
+    }
+  };
 
   const onDragStart = (e: React.MouseEvent, task: Task) => {
     const target = e.target as HTMLElement;
@@ -93,10 +135,15 @@ function TasksList({ status }: { status: TaskStatus }) {
     <ul
       className="space-y-2 p-2 h-full border bg-amber-400"
       onMouseOver={(e) => handleDragOver(e, null)}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
     >
       {sortedTasks?.length ? (
         sortedTasks.map((task, index) => (
           <motion.li
+            ref={(el) => {
+              itemRef.current[index] = el;
+            }}
             key={task._id}
             className={clsx({
               'opacity-0': dragData?._id === task._id,
