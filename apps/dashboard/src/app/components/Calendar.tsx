@@ -34,7 +34,7 @@ export default function Calendar() {
   });
 
   const daysInMonth = lastDayOfMonth.getDate();
-  const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Make Monday = 0
+  const startDay = (firstDayOfMonth.getDay() + 6) % 7;
 
   const getCalendarDays = () => {
     const days = [];
@@ -90,6 +90,7 @@ export default function Calendar() {
         task: {
           date,
           index,
+          status: 'todo',
         },
       });
       setDragData(null);
@@ -134,9 +135,6 @@ export default function Calendar() {
                 'h-10 flex items-center justify-center cursor-pointer hover:outline outline-cyan-300 rounded-md relative',
                 date.getDate() === day?.date.getDate() && 'border-2'
               )}
-              onClick={() => {
-                setDate(day?.date || today);
-              }}
             >
               {day?.tasksAmount && (
                 <div className="absolute top-0 right-0 aspect-square text-xs text-gray-500 rounded-full ">
@@ -149,6 +147,9 @@ export default function Calendar() {
                     isToday(day.day) ? 'bg-black/10 font-bold' : ''
                   }`}
                   onMouseOver={(e) => handleOnDragOver(e, day?.date)}
+                  onClick={() => {
+                    setDate(day?.date || today);
+                  }}
                 >
                   {day.day}
                 </div>

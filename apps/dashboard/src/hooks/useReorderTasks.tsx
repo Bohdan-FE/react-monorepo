@@ -5,14 +5,16 @@ import { useStore } from '../store/store';
 
 export const useReorderTasks = () => {
   const queryClient = useQueryClient();
-  const date = useStore(state => state.date);
+  const date = useStore((state) => state.date);
 
   return useMutation({
     mutationFn: reorderTasks,
-    onMutate: async newOrder => {
+
+    onMutate: async (newOrder) => {
       await queryClient.cancelQueries({
         queryKey: ['tasks', date.toISOString()],
       });
+
       const previousTasks = queryClient.getQueryData<any[]>([
         'tasks',
         date.toISOString(),
@@ -22,13 +24,14 @@ export const useReorderTasks = () => {
         ['tasks', date.toISOString()],
         (old: { _id: string; index: number }[] | undefined) =>
           old?.map((task: { _id: string; index: number }) => {
-            const updated = newOrder.find(t => t.taskId === task._id);
+            const updated = newOrder.find((t) => t.taskId === task._id);
             return updated ? { ...task, index: updated.index } : task;
           }) ?? []
       );
 
       return { previousTasks };
     },
+
     onError: (_err, _vars, ctx) => {
       if (ctx?.previousTasks) {
         queryClient.setQueryData(
@@ -37,6 +40,7 @@ export const useReorderTasks = () => {
         );
       }
     },
+
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['tasks', date.toISOString()],

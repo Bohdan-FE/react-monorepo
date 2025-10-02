@@ -12,11 +12,11 @@ function TasksList({ status }: { status: TaskStatus }) {
   const { mutate: reorder } = useReorderTasks();
   const { dragData, setDragData, setOnDragEnd, setEndPosition, date } =
     useStore((state) => state);
-  const { data, isLoading, isError } = useTasks(date);
+  const { data, isLoading, isError, isFetching } = useTasks(date);
   const [sortedTasks, setSortedTasks] = useState<typeof data | []>([]);
   const { handleMouseDown } = useManualDrag();
   const { mutate } = useUpdateTask(date);
-  const itemRef = useRef<(HTMLLIElement | null)[]>([]);
+  const itemRef = useRef<Record<string, HTMLLIElement | null>>({});
 
   useEffect(() => {
     const tasks = data?.filter((t) => t.status === status);
@@ -29,14 +29,9 @@ function TasksList({ status }: { status: TaskStatus }) {
   const handleDragOver = useCallback(
     (e: React.MouseEvent, overTask: Task | null) => {
       e.preventDefault();
-
       if (!dragData) return;
       if (overTask) {
         if (overTask._id === dragData._id) return;
-        // setEndPosition({
-        //   y: (e.currentTarget as HTMLElement).offsetTop,
-        //   x: (e.currentTarget as HTMLElement).offsetLeft,
-        // });
         const updated = [...(sortedTasks || [])];
         const dragIdx = updated.findIndex((task) => task._id === dragData._id);
         const overIdx = updated.findIndex((task) => task._id === overTask._id);
@@ -61,11 +56,15 @@ function TasksList({ status }: { status: TaskStatus }) {
       }
 
       if (!overTask) {
-        setEndPosition({
-          y: (e.currentTarget as HTMLElement).offsetTop,
-          x: (e.currentTarget as HTMLElement).offsetLeft,
-        });
-        if (!sortedTasks?.find((task) => task._id === dragData._id)) {
+        // setEndPosition({
+        //   y: (e.currentTarget as HTMLElement).offsetTop,
+        //   x: (e.currentTarget as HTMLElement).offsetLeft,
+        // });
+        const isDraggableTaskInArr = sortedTasks?.find(
+          (task) => task._id === dragData._id
+        );
+
+        if (!isDraggableTaskInArr) {
           if (sortedTasks && sortedTasks.length) {
             const maxIndex = Math.max(...sortedTasks.map((o) => o.index));
             const highest = sortedTasks.find((o) => o.index === maxIndex);
@@ -90,14 +89,12 @@ function TasksList({ status }: { status: TaskStatus }) {
 
   const handleMouseMove = () => {
     if (sortedTasks && sortedTasks.length && dragData) {
-      const dragIdx = sortedTasks.findIndex((t) => t._id === dragData._id);
-      const el = itemRef.current[dragIdx];
+      const el = itemRef.current[dragData._id]; // <-- теперь берём по id, а не по индексу
       if (el) {
         const targetPosition = {
-          y: el.offsetTop || 0,
-          x: el.offsetLeft || 0,
+          y: el.getBoundingClientRect().top || 0,
+          x: el.getBoundingClientRect().left || 0,
         };
-
         setEndPosition(targetPosition);
       }
     }
@@ -115,6 +112,10 @@ function TasksList({ status }: { status: TaskStatus }) {
 
   const onDragStart = (e: React.MouseEvent, task: Task) => {
     const target = e.target as HTMLElement;
+    setEndPosition({
+      y: (e.currentTarget as HTMLElement).offsetTop,
+      x: (e.currentTarget as HTMLElement).offsetLeft,
+    });
     if (
       target.closest('button') ||
       target.closest('input') ||
@@ -133,7 +134,7 @@ function TasksList({ status }: { status: TaskStatus }) {
 
   return (
     <ul
-      className="space-y-2 p-2 h-full border bg-amber-400"
+      className="space-y-2 p-2  border bg-amber-400 flex-1"
       onMouseOver={(e) => handleDragOver(e, null)}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
@@ -142,11 +143,11 @@ function TasksList({ status }: { status: TaskStatus }) {
         sortedTasks.map((task, index) => (
           <motion.li
             ref={(el) => {
-              itemRef.current[index] = el;
+              itemRef.current[task._id] = el;
             }}
             key={task._id}
             className={clsx({
-              'opacity-0': dragData?._id === task._id,
+              'opacity-30': dragData?._id === task._id,
             })}
             onMouseDown={(e) => onDragStart(e, task)}
             onMouseOver={(e) => handleDragOver(e, task)}

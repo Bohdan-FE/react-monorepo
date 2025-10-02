@@ -45,35 +45,43 @@ function Home() {
   const points = useMemo(() => createPoints(taskAmount), [taskAmount, week]);
 
   return (
-    <div className="flex h-full justify-end items-center">
-      <div className="h-full w-full self-start flex flex-col gap-4 p-4">
-        <p className="text-[3rem] text-center font-medium">Weekly workload</p>
-        <div className="h-[300px] flex gap-3">
-          <div className="bg-amber-400 w-[45%]"></div>
-          {week && Array.isArray(taskAmount) && taskAmount.length > 0 && (
-            <Graph points={points} />
-          )}
-        </div>
-        <div className="flex-1 grid grid-cols-3 gap-4">
-          <div className="bg-amber-600 ">
-            <p className="text-center font-semibold">to do</p>
-            <TasksList status="todo" />
+    <div className="flex flex-col flex-1">
+      <div className="flex-1 w-full h-full flex flex-col gap-4 p-4">
+        {/* <p className="text-[2rem] text-center font-medium">Weekly workload</p> */}
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="grid grid-cols-4 gap-4">
+            <div className="bg-amber-400 "></div>
+            <div className="col-span-2">
+              {week && Array.isArray(taskAmount) && taskAmount.length > 0 && (
+                <Graph points={points} />
+              )}
+            </div>
+
+            <div className="bg-amber-400 "></div>
           </div>
-          <div className="bg-pink-700">
-            <p className="text-center font-semibold">in progress</p>
-            <TasksList status="in_progress" />
-          </div>
-          <div className="bg-amber-600 ">
-            <p className="text-center font-semibold">done</p>
-            <TasksList status="done" />
+          <div className="flex-1 grid grid-cols-4 gap-4">
+            <div className="bg-amber-600 flex flex-col">
+              <p className="text-center font-semibold">to do</p>
+              <TasksList status="todo" />
+            </div>
+            <div className="bg-pink-700 flex flex-col">
+              <p className="text-center font-semibold ">in progress</p>
+              <TasksList status="in_progress" />
+            </div>
+            <div className="bg-amber-600 flex flex-col">
+              <p className="text-center font-semibold">done</p>
+              <TasksList status="done" />
+            </div>
+
+            <Calendar />
           </div>
         </div>
       </div>
 
-      <div className="h-full flex flex-col shrink-0 ">
+      {/* <div className="h-full flex flex-col shrink-0 ">
         <Calendar />
-        {/* <div className="bg-white h-full">{user && <TasksList status='' />}</div> */}
-      </div>
+        <div className="bg-white h-full">{user && <TasksList status='' />}</div>
+      </div> */}
     </div>
   );
 }

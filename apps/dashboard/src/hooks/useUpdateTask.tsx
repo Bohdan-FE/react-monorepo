@@ -21,6 +21,10 @@ export const useUpdateTask = (date: Date) => {
         queryKey: ['tasks', date.toISOString()],
       });
 
+      await queryClient.cancelQueries({
+        queryKey: ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
+      });
+
       const previousTasks = queryClient.getQueryData<any[]>([
         'tasks',
         date.toISOString(),
@@ -32,17 +36,30 @@ export const useUpdateTask = (date: Date) => {
       const oldDateNormalized = oldDate.setHours(0, 0, 0, 0);
       const newDateNormalized = newDate.setHours(0, 0, 0, 0);
 
+      let movedTask: Task | null = null;
+
       queryClient.setQueryData<Task[]>(
         ['tasks', oldDate.toISOString()],
-        (old) =>
-          old
-            ?.map((t) => (t._id === taskId ? { ...t, ...task } : t))
-            .filter((t) => {
-              const taskDate = new Date(t.date).setHours(0, 0, 0, 0);
-              return taskDate === oldDateNormalized;
-            }) ?? []
+        (old) => {
+          if (!old) return [];
+          return old.filter((t) => {
+            const taskDate = new Date(t.date).setHours(0, 0, 0, 0);
+            if (t._id === taskId && taskDate === oldDateNormalized) {
+              movedTask = { ...t, ...task, date: newDate.toISOString() };
+              return false;
+            }
+            return true;
+          });
+        }
       );
 
+      // 2. Добавляем в новую дату (если нашли в старой)
+      if (movedTask) {
+        queryClient.setQueryData<Task[]>(
+          ['tasks', newDate.toISOString()],
+          (old) => (old ? [...old, movedTask!] : [movedTask!])
+        );
+      }
       if (oldDateNormalized !== newDateNormalized) {
         queryClient.setQueryData<TaskAmount[]>(
           ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
@@ -58,11 +75,6 @@ export const useUpdateTask = (date: Date) => {
               })
               .filter((o) => o.amount !== 0);
           }
-        );
-
-        queryClient.setQueryData<Task[]>(
-          ['tasks', newDate.toISOString()],
-          (old) => [...(old ?? []), { ...task } as Task]
         );
 
         queryClient.setQueryData<TaskAmount[]>(

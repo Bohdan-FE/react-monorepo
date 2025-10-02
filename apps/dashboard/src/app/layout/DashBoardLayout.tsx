@@ -5,7 +5,7 @@ function DashBoardLayout() {
   return (
     <div className=" h-screen flex  shadow-lg bg-white border-4 border-black bg-[url('/naruto-bg.png')] bg-center bg-no-repeat">
       <Sidebar />
-      <main className="w-full bg-white/70">
+      <main className="w-full bg-white/70 flex flex-col">
         <Outlet />
       </main>
     </div>

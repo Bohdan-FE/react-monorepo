@@ -9,7 +9,7 @@ export interface Task {
   description?: string;
   status: TaskStatus;
   index: number;
-  date: Date;
+  date: string;
 }
 
 export const useTasks = (date: Date) => {
