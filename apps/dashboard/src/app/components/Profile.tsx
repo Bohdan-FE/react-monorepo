@@ -17,7 +17,7 @@ function Profile({ full }: { full: boolean }) {
           : 'grid-cols-[minmax(2rem,1rem)minmax(0px,0fr)]'
       )}
     >
-      <div className="aspect-square rounded-full overflow-hidden shrink-0 ">
+      <div className="aspect-square rounded-full overflow-hidden shrink-0 shadow-small">
         <img
           className="h-full w-full object-cover object-center"
           src="https://m.media-amazon.com/images/I/51d9TO-CgbL.jpg"

@@ -1,13 +1,19 @@
 @theme {
-  --color-orange: #fa9427;
-  --color-blue: #0069b1;
-  --color-blue-light: #00b0b9;
+  --color-orange: #fa7315;
+  --color-blue: #3575df;
+  --color-blue-light: #1de5da;
   --color-white: #fff;
   --color-black: #000;
-  --color-yellow: #f6b700;
-  --color-red: #df4661;
+  --color-yellow: #ffde2f;
+  --color-red: #ff4648;
+  --color-pink: #ec4899;
+  --color-yellow-light: #fff6cd;
+  --shadow-big: 0.4rem 0.4rem 0px 0px rgba(0, 0, 0, 0.75);
+  --shadow-small: 0.2rem 0.2rem 0px 0px rgba(0, 0, 0, 0.75);
 
   --animate-dot-wave: dot-wave 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
+
+  --animate-flame-up: flame-up 2s line;
 
   @keyframes dot-wave {
     0% {
@@ -25,6 +31,15 @@
     100% {
       transform: translateY(0) scale(0.98);
       opacity: 0.7;
+    }
+  }
+
+  @keyframes flame-up {
+    0% {
+      bottom: 0;
+    }
+    100% {
+      bottom: 100%;
     }
   }
 }

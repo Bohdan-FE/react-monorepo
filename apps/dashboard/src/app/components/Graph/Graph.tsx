@@ -348,12 +348,10 @@ function PointPopup({ amount }: { amount: number }) {
   const [isShown, setIsShown] = useState(false);
 
   const onMouseEnter = () => {
-    console.log('mouse enter');
     setIsShown(true);
   };
 
   const onMouseLeave = () => {
-    console.log('mouse leve');
     setIsShown(false);
   };
 

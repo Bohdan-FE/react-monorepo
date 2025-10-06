@@ -3,9 +3,9 @@ import Sidebar from '../components/Sidebar/Sidebar';
 
 function DashBoardLayout() {
   return (
-    <div className=" h-screen flex  shadow-lg bg-white border-4 border-black bg-[url('/naruto-bg.png')] bg-center bg-no-repeat">
+    <div className=" h-screen flex  shadow-lg bg-yellow-light border-4 ">
       <Sidebar />
-      <main className="w-full bg-white/70 flex flex-col">
+      <main className="w-full border-black bg-[url('/naruto-bg.png')]  bg-center bg-no-repeat  flex">
         <Outlet />
       </main>
     </div>

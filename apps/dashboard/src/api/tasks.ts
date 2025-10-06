@@ -1,3 +1,4 @@
+import { TaskStatus } from '../hooks/useTasks';
 import api from './api';
 
 export interface CreateTaskPayload {
@@ -10,7 +11,7 @@ export interface UpdateTaskPayload {
   title?: string;
   description?: string;
   index?: number;
-  status?: 'todo' | 'done' | 'in_progress';
+  status?: TaskStatus;
   date?: Date;
 }
 
@@ -53,7 +54,7 @@ export const fetchAmountOfTasks = async ({
 };
 
 export const reorderTasks = async (
-  tasks: { taskId: string; index: number }[]
+  tasks: { taskId: string; index: number; status: TaskStatus }[]
 ) => {
   const axiosResponse = await api.patch(`/tasks/reorder`, { tasks });
   return axiosResponse.data;

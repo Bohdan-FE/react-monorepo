@@ -1,12 +1,12 @@
-function Fire() {
+function Fire({ color }: { color?: string }) {
   const amount = 100;
-  const fireColor = 'rgb(255,80,0)';
-  const fireColorT = 'rgba(255,80,0,0)';
+  const fireColor = color || 'rgb(255,80,0)';
+  const fireColorT = color || 'rgba(255,80,0,0)';
 
   return (
     <div className="w-full  blur-[0.02em] relative">
       {Array.from({ length: amount }).map((_, index) => {
-        const left = `calc((70%) * ${index / amount})`;
+        const left = `calc((100%) * ${index / amount})`;
         return (
           <div
             className="w-[25%] aspect-square rounded-full absolute bottom-0"
