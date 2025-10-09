@@ -23,32 +23,34 @@ function TaskItem({ task, index }: { task: Task; index: number }) {
         duration: 2,
         ease: 'none',
         onComplete: () => {
-          // deleteTask(taskId);
+          deleteTask(taskId);
         },
       });
     });
   };
 
   return (
-    <div
-      className={clsx(
-        'flex gap-3 items-center p-4 rounded-md bg-white relative transit transition-all duration-[2s] ease-[none]'
-      )}
-      style={{
-        clipPath: isDeleting
-          ? 'polygon(0 0, 100% 0%, 100% 0, 0 0)'
-          : 'polygon(0 0, 100% 0%, 100% 100%, 0 100%)',
-      }}
-      onClick={() => selectTask(task)}
-    >
-      <span>{index + 1}</span>
+    <div className="relative">
+      <div
+        className={clsx(
+          'flex gap-3 items-center p-4 rounded-md bg-white relative transit transition-all duration-[2s] ease-[none]'
+        )}
+        style={{
+          clipPath: isDeleting
+            ? 'polygon(0 0, 100% 0%, 100% 0, 0 0)'
+            : 'polygon(0 0, 100% 0%, 100% 100%, 0 100%)',
+        }}
+        onClick={() => selectTask(task)}
+      >
+        <span>{index + 1}</span>
 
-      <label htmlFor={task._id}>{task.title}</label>
-      <button className="ml-auto" onClick={() => onDelete(task._id)}>
-        delete
-      </button>
-      <div className="cursor-move ml-auto">
-        <IoReorderFour id="drag-handle" />
+        <label htmlFor={task._id}>{task.title}</label>
+        <button className="ml-auto" onClick={() => onDelete(task._id)}>
+          delete
+        </button>
+        <div className="cursor-move ml-auto">
+          <IoReorderFour id="drag-handle" />
+        </div>
       </div>
       {isDeleting && (
         <div

@@ -141,19 +141,13 @@ function TasksList({ status }: { status: TaskStatus }) {
 
   const onDragStart = (e: React.MouseEvent, task: Task) => {
     const target = e.target as HTMLElement;
-    if (target.id !== 'drag-handle') return;
+    if (!target.closest('svg') && !target.closest('use')) return;
 
     setEndPosition({
       y: (e.currentTarget as HTMLElement).offsetTop,
       x: (e.currentTarget as HTMLElement).offsetLeft,
     });
-    if (
-      target.closest('button') ||
-      target.closest('input') ||
-      target.closest('a')
-    ) {
-      return;
-    }
+
     handleMouseDown(e, task);
     setSortedTasks((prev) => [
       ...(prev || []).filter((t) => t._id !== task._id),

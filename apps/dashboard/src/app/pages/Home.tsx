@@ -1,24 +1,25 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { TaskAmount, useTasksAmount } from '../../hooks/useTaskAmount';
 import { getWeekRange, WeekRange } from '../../utils/getWeekFromDay';
 import Calendar from '../components/Calendar';
 import Graph from '../components/Graph/Graph';
 import TasksList from '../components/TasksList';
-import { useUser } from '../../hooks/useUser';
+
 import TaskDescription from '../components/TaskDescription';
-import { useStore } from '../../store/store';
+
 import clsx from 'clsx';
+import { DonutChart } from '../components/DonatChart/DonatChart';
 
 function Home() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const [week] = useState<WeekRange>(getWeekRange(today));
-  const { data: user } = useUser();
-  const { selectedTask } = useStore();
+
   const initialYear = today.getFullYear();
   const initialMonth = today.getMonth();
   const firstDayOfMonth = new Date(initialYear, initialMonth, 1);
   const lastDayOfMonth = new Date(initialYear, initialMonth + 1, 0);
+  const donutContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: taskAmount } = useTasksAmount({
     startDate: firstDayOfMonth,
@@ -55,21 +56,28 @@ function Home() {
         <div className="grid grid-rows-2 gap-4 flex-1">
           <div className="grid grid-cols-4 gap-4">
             <Calendar />
-            <div className="col-span-2 rounded-3xl shadow-big border-4 bg-white  relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('/konoha-bg.jpg')] bg-center bg-cover opacity-30"></div>
+            <div className="col-span-2 rounded-3xl shadow-big border-4 bg-white  relative ">
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('/konoha-bg.jpg')] bg-center bg-cover opacity-30 rounded-3xl"></div>
               {week && Array.isArray(taskAmount) && taskAmount.length > 0 && (
                 <Graph points={points} />
               )}
             </div>
 
-            <div className="shadow-big border-4 bg-white/50 backdrop-blur-md rounded-3xl"></div>
+            <div
+              ref={donutContainerRef}
+              className="shadow-big border-4 bg-white/50 backdrop-blur-md rounded-3xl flex items-center justify-center px-10"
+            >
+              <DonutChart
+                data={[
+                  { name: 'To Do', amount: 8 },
+                  { name: 'In Progress', amount: 5 },
+                  { name: 'Done', amount: 12 },
+                ]}
+                donutThickness={3}
+              />
+            </div>
           </div>
-          <div
-            className={clsx('flex-1 grid gap-4', {
-              'grid-cols-4': selectedTask,
-              'grid-cols-3': !selectedTask,
-            })}
-          >
+          <div className={clsx('flex-1 grid gap-4 grid-cols-4')}>
             <div className="shadow-big border-4 bg-orange/50 backdrop-blur-md flex flex-col rounded-3xl relative">
               <div className="absolute bottom-0 right-4 h-[75%] w-fit">
                 <img className="h-full" src="/naruto-full.png" alt="" />
@@ -91,11 +99,10 @@ function Home() {
               <p className="text-center font-semibold">done</p>
               <TasksList status="done" />
             </div>
-            {selectedTask && (
-              <div className="bg-white/50 rounded-3xl backdrop-blur-md border-4 shadow-big">
-                <TaskDescription />
-              </div>
-            )}
+
+            <div className="bg-white/50 rounded-3xl backdrop-blur-md border-4 shadow-big">
+              <TaskDescription />
+            </div>
           </div>
         </div>
       </div>
