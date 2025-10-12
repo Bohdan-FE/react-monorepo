@@ -143,23 +143,22 @@ function TasksList({ status }: { status: TaskStatus }) {
     const target = e.target as HTMLElement;
     if (!target.closest('svg') && !target.closest('use')) return;
 
-    setEndPosition({
-      y: (e.currentTarget as HTMLElement).offsetTop,
-      x: (e.currentTarget as HTMLElement).offsetLeft,
-    });
-
     handleMouseDown(e, task);
     setSortedTasks((prev) => [
       ...(prev || []).filter((t) => t._id !== task._id),
     ]);
+    setEndPosition({
+      y: (e.currentTarget as HTMLElement).getBoundingClientRect().top,
+      x: (e.currentTarget as HTMLElement).getBoundingClientRect().left,
+    });
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="flex-1">Loading...</div>;
   if (isError) return <div>Error loading tasks</div>;
 
   return (
     <ul
-      className="space-y-2 p-2 flex-1 overflow-y-auto relative z-[1]"
+      className="space-y-2  overflow-y-auto scroll-p-8 relative z-[1] h-full"
       onMouseOver={(e) => handleDragOver(e, null)}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
@@ -171,7 +170,7 @@ function TasksList({ status }: { status: TaskStatus }) {
               itemRef.current[task._id] = el;
             }}
             key={task._id}
-            className={clsx({
+            className={clsx('w-[calc(100%-0.2rem)]  shadow-small rounded-xl', {
               'opacity-30': dragData?._id === task._id,
             })}
             onMouseDown={(e) => onDragStart(e, task)}
@@ -183,7 +182,9 @@ function TasksList({ status }: { status: TaskStatus }) {
           </motion.li>
         ))
       ) : (
-        <p>There is no tasks</p>
+        <div className="flex items-center justify-center ">
+          <p>There is no tasks</p>
+        </div>
       )}
     </ul>
   );

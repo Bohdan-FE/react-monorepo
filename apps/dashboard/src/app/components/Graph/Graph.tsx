@@ -13,38 +13,96 @@ const padding = {
   right: 30,
 };
 
-function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
+type Point = { x: number; y: number; date: Date };
+
+function Graph({ points }: { points: Point[] }) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
+
   const [linePath, setLinePath] = useState('');
   const [areaPath, setAreaPath] = useState('');
-  const [scaledPoints, setScaledPoints] = useState<
-    { x: number; y: number; date: Date }[]
-  >([]);
-  const narutoRef = useRef<HTMLImageElement | null>(null);
+  const [scaledPoints, setScaledPoints] = useState<Point[]>([]);
+
+  const narutoRef = useRef<HTMLDivElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const areaPathRef = useRef<SVGPathElement | null>(null);
-  const gsapContext = useRef<gsap.Context | null>(null);
+
   const kunaiRefs = useRef<(HTMLDivElement | null)[]>([]);
   const paperBombRefs = useRef<(HTMLDivElement | null)[]>([]);
   const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
   const explosionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const observer = useRef<ResizeObserver | null>(null);
+  const gsapContext = useRef<gsap.Context | null>(null);
 
+  // ----------------------------
+  // SCALE + PATHS
+  // ----------------------------
+  const updateGraph = (width: number, height: number) => {
+    if (!points.length) return;
+
+    const maxY = Math.max(...points.map((p) => p.y));
+    const maxX = Math.max(...points.map((p) => p.x));
+
+    const scaled = points.map((p) => ({
+      x: padding.left + (p.x / maxX) * (width - padding.left - padding.right),
+      y:
+        padding.top +
+        (1 - p.y / maxY) * (height - padding.top - padding.bottom),
+      date: p.date,
+    }));
+
+    const line = d3
+      .line<Point>()
+      .x((d) => d.x)
+      .y((d) => d.y)
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    const area = d3
+      .area<Point>()
+      .x((d) => d.x)
+      .y0(height)
+      .y1((d) => d.y)
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    setScaledPoints(scaled);
+    setLinePath(line(scaled) || '');
+    setAreaPath(area(scaled) || '');
+  };
+
+  // ----------------------------
+  // RESIZE OBSERVER
+  // ----------------------------
+  useEffect(() => {
+    if (!wrapperRef.current) return;
+
+    observer.current?.disconnect();
+    observer.current = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        updateGraph(width, height);
+      }
+    });
+    observer.current.observe(wrapperRef.current);
+
+    return () => observer.current?.disconnect();
+  }, [points]);
+
+  // ----------------------------
+  // ANIMATIONS
+  // ----------------------------
   useGSAP(() => {
     if (
-      !narutoRef.current ||
       !pathRef.current ||
       !areaPathRef.current ||
-      pathRef.current.getTotalLength() === 0
+      !narutoRef.current ||
+      !linePath
     )
       return;
 
-    if (gsapContext.current) {
-      gsapContext.current.revert(); // 🧹 clean up old animations
-    }
+    gsapContext.current?.revert(); // cleanup old animations
 
     gsapContext.current = gsap.context(() => {
+      // Naruto run setup
       gsap.set(narutoRef.current, {
         transformOrigin: '100% 100%',
         xPercent: -100,
@@ -60,9 +118,7 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
 
       gsap.fromTo(
         areaPathRef.current,
-        {
-          clipPath: 'polygon(0 0, 0% 0%, 0% 100%, 0% 100%)',
-        },
+        { clipPath: 'polygon(0 0, 0% 0%, 0% 100%, 0% 100%)' },
         {
           clipPath: 'polygon(0 0, 100% 0%, 100% 100%, 0% 100%)',
           duration: 5,
@@ -70,23 +126,24 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
         }
       );
 
-      gsap.to(narutoRef.current, {
-        opacity: 1,
-        motionPath: pathRef.current
-          ? {
-              path: pathRef.current,
-              align: pathRef.current,
-              autoRotate: true,
-            }
-          : undefined,
-        duration: 5,
-        ease: 'none',
-        onComplete: () => {
-          gsap.set(narutoRef.current, { opacity: 0 });
-        },
-      });
+      if (pathRef.current) {
+        gsap.to(narutoRef.current, {
+          motionPath: {
+            path: pathRef.current,
+            align: pathRef.current,
+            autoRotate: true,
+          },
+          duration: 5,
+          ease: 'none',
+          onComplete: () => {
+            gsap.set(narutoRef.current, { opacity: 0 });
+          },
+        });
+      }
 
+      // Kunai setup + explosions
       kunaiRefs.current.forEach((el, i) => {
+        if (!el) return;
         const angleDeg = -Math.random() * 180;
         const angleRad = (angleDeg * Math.PI) / 180;
         const distance = 25;
@@ -98,22 +155,20 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
         gsap.set(el, {
           transform: `translate3d(${xOffset + 2}rem, ${
             yOffset - 2
-          }rem, 0)  rotate(${angleDeg + 45}deg)`,
+          }rem, 0) rotate(${angleDeg + 45}deg)`,
         });
 
-        gsap.set(paperBombRefs.current[i], {
-          transform: `translate(-55%, 0%) rotate(${angleDegBomb}deg)`,
-        });
-
-        paperBombRefs.current[i]?.setAttribute(
-          'data-angle-bomb',
-          angleDegBomb.toString()
-        );
-
-        paperBombRefs.current[i];
+        const bomb = paperBombRefs.current[i];
+        if (bomb) {
+          gsap.set(bomb, {
+            transform: `translate(-55%, 0%) rotate(${angleDegBomb}deg)`,
+          });
+          bomb.setAttribute('data-angle-bomb', angleDegBomb.toString());
+        }
       });
 
       gsap.to(kunaiRefs.current, {
+        display: 'block',
         duration: 0.5,
         delay: 0.6,
         ease: 'none',
@@ -123,20 +178,15 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
         opacity: 1,
       });
 
-      const elements = gsap.utils.toArray('.paper_bomb') as HTMLElement[];
-
-      elements.forEach((el, i) => {
+      // Paper bomb + explosion sequence
+      const bombs = gsap.utils.toArray('.paper_bomb') as HTMLElement[];
+      bombs.forEach((el, i) => {
         const angle = el.getAttribute('data-angle-bomb') ?? '-45';
-
-        const tl = gsap.timeline({
-          delay: 1.1 + i * 0.7,
-        });
+        const tl = gsap.timeline({ delay: 1.1 + i * 0.7 });
 
         tl.fromTo(
           el,
-          {
-            rotate: '-135deg',
-          },
+          { rotate: '-135deg' },
           {
             rotate: `${angle}deg`,
             duration: 2.5,
@@ -147,104 +197,56 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
           duration: 2.5,
           ease: 'none',
           onStart: () => {
-            gsap.to('.fire', {
-              opacity: 1,
-            });
+            gsap.to('.fire', { opacity: 1 });
           },
           onComplete: () => {
-            const tl = gsap.timeline();
-            tl.to(explosionRefs.current[i], {
-              opacity: 1,
-              display: 'block',
-            }).to(explosionRefs.current[i], {
-              display: 'none',
-              delay: 0.5,
-            });
-            gsap.to(dotsRef.current[i], {
-              display: 'block',
-              opacity: 1,
-              duration: 0.5,
-            });
-            if (kunaiRefs.current[i]) {
-              kunaiRefs.current[i].style.display = 'none';
+            const explosion = explosionRefs.current[i];
+            if (explosion) {
+              gsap.to(explosion, {
+                opacity: 1,
+                display: 'block',
+                duration: 0.2,
+              });
+              gsap.to(explosion, {
+                display: 'none',
+                delay: 0.5,
+              });
             }
+
+            const dot = dotsRef.current[i];
+            if (dot) {
+              gsap.to(dot, {
+                display: 'block',
+                opacity: 1,
+                duration: 0.5,
+              });
+            }
+
+            const kunai = kunaiRefs.current[i];
+            if (kunai) kunai.style.display = 'none';
           },
         });
       });
     }, wrapperRef);
 
-    return () => {
-      if (gsapContext.current) gsapContext.current.revert();
-    };
-  }, [linePath]);
+    return () => gsapContext.current?.revert();
+  }, [points, linePath]);
 
-  const updateGraph = (width: number, height: number) => {
-    const maxY = Math.max(...points.map((p) => p.y));
-    const maxX = Math.max(...points.map((p) => p.x));
-    kunaiRefs.current.forEach((k) => {
-      if (k) {
-        k.style.display = 'block';
-      }
-    });
-
-    const scaled = points.map((p) => ({
-      x: padding.left + (p.x / maxX) * (width - padding.left - padding.right),
-      y:
-        padding.top +
-        (1 - p.y / maxY) * (height - padding.top - padding.bottom),
-      date: p.date,
-    }));
-
-    const lineGenerator = d3
-      .line<{ x: number; y: number }>()
-      .x((d: { x: number; y: number }) => d.x)
-      .y((d: { x: number; y: number }) => d.y)
-      .curve(d3.curveCatmullRom.alpha(0.5));
-
-    const areaGenerator = d3
-      .area<{ x: number; y: number }>()
-      .x((d: { x: number; y: number }) => d.x)
-      .y0(height)
-      .y1((d: { x: number; y: number }) => d.y)
-      .curve(d3.curveCatmullRom.alpha(0.5));
-
-    setLinePath(lineGenerator(scaled) || '');
-    setAreaPath(areaGenerator(scaled) || '');
-    if (gsapContext.current) gsapContext.current.revert();
-    setScaledPoints(scaled);
-  };
-
-  useEffect(() => {
-    if (!wrapperRef.current) return;
-
-    if (observer.current) {
-      observer.current = null;
-    }
-    observer.current = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        const { width, height } = entry.contentRect;
-        updateGraph(width, height);
-      }
-    });
-    observer.current.observe(wrapperRef.current);
-    return () => {
-      observer.current?.disconnect();
-    };
-  }, [points]);
-
+  // ----------------------------
+  // RENDER
+  // ----------------------------
   return (
-    <div
-      ref={wrapperRef}
-      className="w-full h-full relative perspective-distant"
-    >
+    <div ref={wrapperRef} className="w-full h-full relative">
+      {/* Naruto */}
       <div ref={narutoRef} className="absolute opacity-0">
         <img
-          className="w-12 border block translate-y-[18%] "
           src="/running-naruto.gif"
-          alt="naruto"
+          alt="Naruto"
+          className="w-12 border block translate-y-[18%]"
         />
       </div>
 
+      {/* SVG graph */}
       <svg ref={svgRef} className="w-full h-full">
         <defs>
           <linearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
@@ -252,13 +254,12 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
             <stop offset="100%" stopColor="oklch(72.3% 0.219 149.579/0)" />
           </linearGradient>
         </defs>
+
         <path
           ref={areaPathRef}
-          style={{
-            clipPath: 'polygon(0 0, 80% 0%, 80% 100%, 0% 100%)',
-          }}
           d={areaPath}
           fill="url(#gradientFill)"
+          style={{ clipPath: 'polygon(0 0, 80% 0%, 80% 100%, 0% 100%)' }}
         />
         <path
           ref={pathRef}
@@ -268,72 +269,62 @@ function Graph({ points }: { points: { x: number; y: number; date: Date }[] }) {
           strokeWidth={3}
         />
       </svg>
+
+      {/* Explosions */}
       {scaledPoints.map((p, i) => (
         <div
+          key={`explosion-${i}`}
           ref={(el) => {
             explosionRefs.current[i] = el;
           }}
-          className="w-30 h-30  translate-x-[-50%] translate-y-[-88%] opacity-0 z-[21]"
-          style={{
-            position: 'absolute',
-            top: p.y,
-            left: p.x,
-          }}
-          key={i}
+          className="w-30 h-30 translate-x-[-50%] translate-y-[-88%] opacity-0 z-[21] absolute"
+          style={{ top: p.y, left: p.x }}
         >
           <img
+            src={`/explosion.gif?${Date.now()}${i}`}
+            alt="explosion"
             className="absolute inset-0 m-auto h-full w-full"
-            src={`/explosion.gif?${new Date()}${i}`}
             loading="lazy"
-            alt="explosion gif"
           />
         </div>
       ))}
-      {scaledPoints.map((p, i) => {
-        return (
-          <div
-            ref={(el) => {
-              kunaiRefs.current[i] = el;
-            }}
-            className="w-8 h-8 absolute z-20 transform-3d opacity-1 origin-bottom-left"
-            style={{
-              top: p.y - 10 + 'px',
-              left: p.x - 10 + 'px',
-            }}
-            key={i}
-          >
-            <img className="w-full h-full" src="/kunai2.png" alt="kunai" />
-            <div
-              ref={(el) => {
-                paperBombRefs.current[i] = el;
-              }}
-              className="w-4 absolute flex flex-col items-center origin-top paper_bomb overflow-hidden"
-              style={{
-                top: '10%',
-                left: '100%',
-              }}
-            >
-              <span className="h-3 w-[1px] bg-black/70 block shrink-0"></span>
-              <img className="w-4" src="/paper_bomb.jpeg" alt="paper_bomb" />
-              <div className="w-[120%] absolute bottom-0 left-1/2 translate-x-[-50%] block opacity-0 fire">
-                <Fire />
-              </div>
-            </div>
-          </div>
-        );
-      })}
+
+      {/* Kunai + paper bombs */}
       {scaledPoints.map((p, i) => (
         <div
+          key={`kunai-${i}`}
+          ref={(el) => {
+            kunaiRefs.current[i] = el;
+          }}
+          className="w-8 h-8 absolute z-20 origin-bottom-left opacity-1"
+          style={{ top: p.y - 10, left: p.x - 10 }}
+        >
+          <img src="/kunai2.png" alt="kunai" className="w-full h-full" />
+          <div
+            ref={(el) => {
+              paperBombRefs.current[i] = el;
+            }}
+            className="w-4 absolute flex flex-col items-center origin-top paper_bomb overflow-hidden"
+            style={{ top: '10%', left: '100%' }}
+          >
+            <span className="h-3 w-[1px] bg-black/70 block shrink-0" />
+            <img src="/paper_bomb.jpeg" alt="paper_bomb" className="w-4" />
+            <div className="w-[120%] absolute bottom-0 left-1/2 translate-x-[-50%] block opacity-0 fire">
+              <Fire />
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* Dots */}
+      {scaledPoints.map((p, i) => (
+        <div
+          key={`dot-${i}`}
           ref={(el) => {
             dotsRef.current[i] = el;
           }}
-          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] relative dot"
-          style={{
-            position: 'absolute',
-            top: p.y,
-            left: p.x,
-          }}
-          key={i}
+          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] absolute"
+          style={{ top: p.y, left: p.x }}
         >
           <PointPopup amount={points[i].y} />
         </div>

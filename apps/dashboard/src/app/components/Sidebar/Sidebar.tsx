@@ -1,8 +1,7 @@
-import { Link } from 'react-router';
+import { Link, NavLink, useLocation } from 'react-router';
 import Profile from '../Profile';
 import { useStore } from '../../../store/store';
 import AuthModal from '../Modal/AuthModal';
-import CreateTaskModal from '../Modal/CreateTaskModal';
 import { NAVIGATION } from './navigation';
 import { IoChevronBackCircleOutline } from 'react-icons/io5';
 import { useState } from 'react';
@@ -14,32 +13,37 @@ function Sidebar() {
   const openModal = useStore((state) => state.openModal);
   const [isOpened, setIsOpened] = useState(true);
   const { data: user } = useUser();
+  const location = useLocation();
 
   return (
     <aside
       className={clsx(
-        'bg-blue-light  border-r-4 overflow-hidden relative transition-all duration-300 flex flex-col shrink-0 shadow-big'
+        'bg-blue-dark  overflow-hidden relative transition-all  flex flex-col shrink-0 rounded-tr-3xl rounded-br-3xl shadow-big ',
+        { 'w-58': isOpened, 'w-16': !isOpened }
       )}
     >
       <button
-        className="absolute top-2 right-2"
+        className="absolute top-2 right-2 z-20"
         onClick={() => setIsOpened((prev) => !prev)}
       >
         <IoChevronBackCircleOutline className="w-5 h-5" />
       </button>
       <Profile full={isOpened} />
-      <nav>
+      <nav className="z-10">
         <ul>
           {NAVIGATION.map((item) => (
-            <Link to={item.href} key={item.name}>
+            <NavLink to={item.href} key={item.name}>
               <li
                 className={clsx(
-                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  'px-4 py-4  hover:scale-105 grid transition-all   overflow-hidden',
                   {
                     'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
                       isOpened,
                     'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
-                  }
+                  },
+                  location.pathname === item.href
+                    ? 'bg-pink rounded-xl shadow-small scale-105 mx-[0.6rem] text-white'
+                    : 'hover:pl-6'
                 )}
               >
                 <div>
@@ -51,7 +55,7 @@ function Sidebar() {
                   </p>
                 </div>
               </li>
-            </Link>
+            </NavLink>
           ))}
           {!user && (
             <button className="w-full" onClick={() => openModal(<AuthModal />)}>

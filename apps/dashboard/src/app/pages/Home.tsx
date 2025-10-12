@@ -1,14 +1,15 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { TaskAmount, useTasksAmount } from '../../hooks/useTaskAmount';
 import { getWeekRange, WeekRange } from '../../utils/getWeekFromDay';
 import Calendar from '../components/Calendar';
 import Graph from '../components/Graph/Graph';
-import TasksList from '../components/TasksList';
 
 import TaskDescription from '../components/TaskDescription';
 
 import clsx from 'clsx';
-import { DonutChart } from '../components/DonatChart/DonatChart';
+
+import TasksContainer from '../components/TasksContainer/TasksContainer';
+import DonutGraphContainer from '../components/DonatGraphContainer/DonatGraphContainer';
 
 function Home() {
   const today = new Date();
@@ -19,7 +20,6 @@ function Home() {
   const initialMonth = today.getMonth();
   const firstDayOfMonth = new Date(initialYear, initialMonth, 1);
   const lastDayOfMonth = new Date(initialYear, initialMonth + 1, 0);
-  const donutContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: taskAmount } = useTasksAmount({
     startDate: firstDayOfMonth,
@@ -40,7 +40,7 @@ function Home() {
       );
       return {
         x: index,
-        y: task ? task.amount : 0,
+        y: task ? task.totalAmount : 0,
         date: currentDate,
       };
     });
@@ -52,57 +52,24 @@ function Home() {
   return (
     <div className="flex h-full">
       <div className="flex-1 w-full h-full flex flex-col gap-4 p-4">
-        {/* <p className="text-[2rem] text-center font-medium">Weekly workload</p> */}
-        <div className="grid grid-rows-2 gap-4 flex-1">
-          <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-rows-2 h-full gap-4 ">
+          <div className="grid grid-cols-4 gap-4 h-full">
             <Calendar />
-            <div className="col-span-2 rounded-3xl shadow-big border-4 bg-white  relative ">
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('/konoha-bg.jpg')] bg-center bg-cover opacity-30 rounded-3xl"></div>
+            <div className="col-span-2 rounded-2xl shadow-big border-4 bg-white relative ">
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('/konoha-bg.jpg')] bg-center bg-cover opacity-30 rounded-2xl"></div>
               {week && Array.isArray(taskAmount) && taskAmount.length > 0 && (
                 <Graph points={points} />
               )}
             </div>
-
-            <div
-              ref={donutContainerRef}
-              className="shadow-big border-4 bg-white/50 backdrop-blur-md rounded-3xl flex items-center justify-center px-10"
-            >
-              <DonutChart
-                data={[
-                  { name: 'To Do', amount: 8 },
-                  { name: 'In Progress', amount: 5 },
-                  { name: 'Done', amount: 12 },
-                ]}
-                donutThickness={3}
-              />
-            </div>
+            <DonutGraphContainer />
           </div>
-          <div className={clsx('flex-1 grid gap-4 grid-cols-4')}>
-            <div className="shadow-big border-4 bg-orange/50 backdrop-blur-md flex flex-col rounded-3xl relative">
-              <div className="absolute bottom-0 right-4 h-[75%] w-fit">
-                <img className="h-full" src="/naruto-full.png" alt="" />
-              </div>
-              <p className="text-center font-semibold">to do</p>
-              <TasksList status="todo" />
-            </div>
-            <div className="shadow-big border-4 bg-pink/50 backdrop-blur-md flex flex-col rounded-3xl">
-              <div className="absolute bottom-0 right-4 h-[75%] w-fit">
-                <img className="h-full" src="/sakura-full.png" alt="" />
-              </div>
-              <p className="text-center font-semibold ">in progress</p>
-              <TasksList status="in_progress" />
-            </div>
-            <div className="shadow-big border-4 bg-blue/50 backdrop-blur-md flex flex-col rounded-3xl">
-              <div className="absolute bottom-0 right-4 h-[75%] w-fit">
-                <img className="h-full" src="/sasuke-full.png" alt="" />
-              </div>
-              <p className="text-center font-semibold">done</p>
-              <TasksList status="done" />
-            </div>
-
-            <div className="bg-white/50 rounded-3xl backdrop-blur-md border-4 shadow-big">
-              <TaskDescription />
-            </div>
+          <div
+            className={clsx('grid grid-cols-4 grid-rows-[100%] gap-4 h-full')}
+          >
+            <TaskDescription />
+            <TasksContainer type="todo" />
+            <TasksContainer type="in_progress" />
+            <TasksContainer type="done" />
           </div>
         </div>
       </div>

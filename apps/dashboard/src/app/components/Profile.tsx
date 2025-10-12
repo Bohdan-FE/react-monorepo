@@ -11,7 +11,7 @@ function Profile({ full }: { full: boolean }) {
   return (
     <div
       className={clsx(
-        ' py-8 px-4 grid transition-all duration-300',
+        ' py-8 px-4 grid transition-all duration-300 z-10',
         full
           ? 'grid-cols-[minmax(3.5rem,3.5rem)minmax(auto,1fr)]'
           : 'grid-cols-[minmax(2rem,1rem)minmax(0px,0fr)]'

@@ -4,7 +4,8 @@ import api from './api';
 export interface CreateTaskPayload {
   description?: string;
   title: string;
-  date: Date;
+  date: string;
+  index: number;
 }
 
 export interface UpdateTaskPayload {

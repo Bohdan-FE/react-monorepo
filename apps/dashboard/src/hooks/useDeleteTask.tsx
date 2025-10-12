@@ -16,7 +16,7 @@ export const useDeleteTask = () => {
     onMutate: async (taskId: string) => {
       await queryClient.cancelQueries({ queryKey: taskKey });
 
-      const previousTasks = queryClient.getQueryData<any[]>(taskKey);
+      const previousTasks = queryClient.getQueryData<Task[]>(taskKey);
 
       queryClient.setQueryData<Task[]>(taskKey, (old) =>
         (old ?? []).filter((task) => task._id !== taskId)
@@ -28,16 +28,25 @@ export const useDeleteTask = () => {
 
           return old
             .map((o) => {
-              const oDate = new Date(o.date); // normalize to Date
+              const oDate = new Date(o.date);
+
+              const deletedTask = previousTasks?.find((t) => t._id === taskId);
+
               if (oDate.toISOString() === date.toISOString()) {
                 return {
                   ...o,
-                  amount: o.amount - 1,
+                  totalAmount: o.totalAmount - 1,
+                  in_progress:
+                    deletedTask?.status === 'in_progress'
+                      ? o.in_progress - 1
+                      : o.in_progress,
+                  done: deletedTask?.status === 'done' ? o.done - 1 : o.done,
+                  todo: deletedTask?.status === 'todo' ? o.todo - 1 : o.todo,
                 };
               }
               return o;
             })
-            .filter((o) => o.amount !== 0);
+            .filter((o) => o.totalAmount !== 0);
         }
       );
 

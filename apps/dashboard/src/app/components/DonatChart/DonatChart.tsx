@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useMemo, useState, memo } from 'react';
 
 export interface DonutSlice {
   name: string;
@@ -14,12 +14,11 @@ export interface DonutChartProps {
   keepSquare?: boolean;
 }
 
-export const DonutChart: React.FC<DonutChartProps> = ({
+const DonutChart: React.FC<DonutChartProps> = ({
   data = [],
   donutThickness = 3, // default: 3rem
   animate = true,
   centerLabel = null,
-  formatAmount,
   keepSquare = true,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -48,9 +47,8 @@ export const DonutChart: React.FC<DonutChartProps> = ({
     };
   }, [data]);
 
-  // Convert rem → px
   const remToPx = (rem: number) => {
-    if (typeof window === 'undefined') return rem * 16; // fallback SSR
+    if (typeof window === 'undefined') return rem * 16;
     return (
       rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
     );
@@ -91,14 +89,21 @@ export const DonutChart: React.FC<DonutChartProps> = ({
       const t = duration <= 0 ? 1 : Math.min(1, (now - startTime) / duration);
       ctx.clearRect(0, 0, width, height);
 
-      for (const arc of arcs) {
-        const end = arc.start + (arc.end - arc.start) * t;
+      if (total === 0) {
         ctx.beginPath();
-        ctx.arc(cx, cy, radius - thickness / 2, arc.start, end);
+        ctx.arc(cx, cy, radius - thickness / 2, 0, Math.PI * 2);
         ctx.lineWidth = thickness;
-        ctx.lineCap = 'butt';
-        ctx.strokeStyle = arc.color;
+        ctx.strokeStyle = '#e5e7eb';
         ctx.stroke();
+      } else {
+        for (const arc of arcs) {
+          const end = arc.start + (arc.end - arc.start) * t;
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius - thickness / 2, arc.start, end);
+          ctx.lineWidth = thickness;
+          ctx.strokeStyle = arc.color;
+          ctx.stroke();
+        }
       }
 
       if (t < 1) requestAnimationFrame(drawFrame);
@@ -153,23 +158,8 @@ export const DonutChart: React.FC<DonutChartProps> = ({
           )}
         </div>
       )}
-      <div className="legend mt-2 flex flex-col gap-[6px] text-[13px]">
-        {normalized.map((s, i) => (
-          <div key={i} className="legend-item flex items-center gap-2">
-            <span
-              className="swatch inline-block w-[14px] h-[14px] rounded-[3px]"
-              style={{ backgroundColor: colors[i % colors.length] }}
-            />
-            <span>
-              {s.name}:{' '}
-              {formatAmount
-                ? formatAmount(s.amount)
-                : s.amount.toLocaleString()}{' '}
-              ({s.percentage.toFixed(1)}%)
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
+
+export default memo(DonutChart);

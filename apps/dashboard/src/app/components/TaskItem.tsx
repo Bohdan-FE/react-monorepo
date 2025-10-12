@@ -2,72 +2,44 @@ import { IoReorderFour } from 'react-icons/io5';
 import { useDeleteTask } from '../../hooks/useDeleteTask';
 import { Task } from '../../hooks/useTasks';
 import { useStore } from '../../store/store';
-import Fire from './Fire/Fire';
-import { useRef, useState } from 'react';
-import gsap from 'gsap';
 import clsx from 'clsx';
+import { MdDeleteOutline } from 'react-icons/md';
 
 function TaskItem({ task, index }: { task: Task; index: number }) {
   const { mutate: deleteTask } = useDeleteTask();
-  const { selectTask } = useStore();
-  const taskRef = useRef<HTMLDivElement>(null);
+  const { selectTask, selectedTask } = useStore();
 
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const onDelete = (taskId: string) => {
-    setIsDeleting(true);
-
-    setTimeout(() => {
-      gsap.to(taskRef.current, {
-        bottom: '100%',
-        duration: 2,
-        ease: 'none',
-        onComplete: () => {
-          deleteTask(taskId);
-        },
-      });
-    });
+  const handleDeleteTask = (e: React.MouseEvent) => {
+    console.log('Deleting task:', task._id);
+    e.stopPropagation();
+    e.preventDefault();
+    deleteTask(task._id);
   };
 
   return (
-    <div className="relative">
-      <div
-        className={clsx(
-          'flex gap-3 items-center p-4 rounded-md bg-white relative transit transition-all duration-[2s] ease-[none]'
-        )}
-        style={{
-          clipPath: isDeleting
-            ? 'polygon(0 0, 100% 0%, 100% 0, 0 0)'
-            : 'polygon(0 0, 100% 0%, 100% 100%, 0 100%)',
-        }}
-        onClick={() => selectTask(task)}
-      >
-        <span>{index + 1}</span>
-
-        <label htmlFor={task._id}>{task.title}</label>
-        <button className="ml-auto" onClick={() => onDelete(task._id)}>
-          delete
-        </button>
-        <div className="cursor-move ml-auto">
-          <IoReorderFour id="drag-handle" />
-        </div>
-      </div>
-      {isDeleting && (
-        <div
-          ref={taskRef}
-          className={clsx(
-            'absolute w-full left-[-0.3rem] h-[5%] bottom-0 flex '
-          )}
-        >
-          <Fire color="black" />
-          <Fire color="black" />
-          <Fire color="black" />
-          <Fire color="black" />
-          <Fire color="black" />
-          <Fire color="black" />
-          <Fire color="black" />
-        </div>
+    <div
+      className={clsx(
+        'flex gap-1 items-center p-2 py-3 relative w-full rounded-xl cursor-pointer border-1 transition',
+        {
+          'bg-blue-dark text-white': selectedTask?._id === task._id,
+          'bg-white': selectedTask?._id !== task._id,
+        }
       )}
+      onClick={() => selectTask(task)}
+    >
+      <span>{index + 1}.</span>
+
+      <p className="truncate capitalize text-sm">{task.title}</p>
+      <button
+        className="ml-auto shrink-0 hover:scale-110 transition"
+        type="button"
+        onClick={(e) => handleDeleteTask(e)}
+      >
+        <MdDeleteOutline className="pointer-events-none" />
+      </button>
+      <div className="cursor-move shrink-0">
+        <IoReorderFour id="drag-handle" />
+      </div>
     </div>
   );
 }

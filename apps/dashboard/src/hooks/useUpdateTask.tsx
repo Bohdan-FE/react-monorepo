@@ -6,14 +6,17 @@ import { useStore } from '../store/store';
 
 export const useUpdateTask = (date: Date) => {
   const queryClient = useQueryClient();
-  const { firstDayOfMonth, lastDayOfMonth } = useStore();
+  const { firstDayOfMonth, lastDayOfMonth, selectTask } = useStore();
+
   return useMutation({
     mutationFn: ({
       taskId,
       task,
+      updateSelected,
     }: {
       taskId: string;
       task: UpdateTaskPayload;
+      updateSelected?: boolean;
     }) => updateTask(taskId, task),
 
     onMutate: async ({ taskId, task }) => {
@@ -25,7 +28,7 @@ export const useUpdateTask = (date: Date) => {
         queryKey: ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
       });
 
-      const previousTasks = queryClient.getQueryData<any[]>([
+      const previousTasks = queryClient.getQueryData<Task[]>([
         'tasks',
         date.toISOString(),
       ]);
@@ -36,7 +39,7 @@ export const useUpdateTask = (date: Date) => {
       const oldDateNormalized = oldDate.setHours(0, 0, 0, 0);
       const newDateNormalized = newDate.setHours(0, 0, 0, 0);
 
-      let movedTask: Task | null = null;
+      const movedTask = previousTasks?.find((t) => t._id === taskId);
 
       queryClient.setQueryData<Task[]>(
         ['tasks', oldDate.toISOString()],
@@ -45,7 +48,6 @@ export const useUpdateTask = (date: Date) => {
           return old.filter((t) => {
             const taskDate = new Date(t.date).setHours(0, 0, 0, 0);
             if (t._id === taskId && taskDate === oldDateNormalized) {
-              movedTask = { ...t, ...task, date: newDate.toISOString() };
               return false;
             }
             return true;
@@ -53,13 +55,36 @@ export const useUpdateTask = (date: Date) => {
         }
       );
 
-      // 2. Добавляем в новую дату (если нашли в старой)
       if (movedTask) {
+        // queryClient.setQueryData<TaskAmount[]>(
+        //   ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
+        //   (old) => {
+        //     if (!old) return old;
+        //     const oldStatus = movedTask.status;
+        //     const newStatus = task.status ? task.status : oldStatus;
+        //     console.log({ oldStatus, newStatus });
+        //     if (oldStatus !== newStatus) {
+        //       const dayData = old.find(
+        //         (o) =>
+        //           new Date(o.date).setHours(0, 0, 0, 0) === oldDateNormalized
+        //       );
+
+        //       if (dayData) {
+        //         dayData[oldStatus] = Math.max(0, dayData[oldStatus] - 1);
+        //         dayData[newStatus] = (dayData[newStatus] || 0) + 1;
+        //         return [...old, dayData];
+        //       }
+        //     }
+        //     return old;
+        //   }
+        // );
+
         queryClient.setQueryData<Task[]>(
           ['tasks', newDate.toISOString()],
-          (old) => (old ? [...old, movedTask!] : [movedTask!])
+          (old) => (old ? [...old, movedTask] : [movedTask])
         );
       }
+
       if (oldDateNormalized !== newDateNormalized) {
         queryClient.setQueryData<TaskAmount[]>(
           ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
@@ -68,12 +93,19 @@ export const useUpdateTask = (date: Date) => {
             return old
               .map((o) => {
                 const oDate = new Date(o.date).setHours(0, 0, 0, 0);
+
                 if (oDate === oldDateNormalized) {
-                  return { ...o, amount: o.amount - 1 };
+                  return {
+                    ...o,
+                    totalAmount: o.totalAmount - 1,
+                    in_progress: o.in_progress ? o.in_progress - 1 : 0,
+                    done: o.done ? o.done - 1 : 0,
+                    todo: o.todo ? o.todo - 1 : 0,
+                  };
                 }
                 return o;
               })
-              .filter((o) => o.amount !== 0);
+              .filter((o) => o.totalAmount !== 0);
           }
         );
 
@@ -81,9 +113,7 @@ export const useUpdateTask = (date: Date) => {
           ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
           (old) => {
             if (!old) {
-              return [
-                { date: new Date(newDateNormalized).toISOString(), amount: 1 },
-              ];
+              return old;
             }
 
             let found = false;
@@ -91,7 +121,7 @@ export const useUpdateTask = (date: Date) => {
               const oDateNormalized = new Date(o.date).setHours(0, 0, 0, 0);
               if (oDateNormalized === newDateNormalized) {
                 found = true;
-                return { ...o, amount: o.amount + 1 };
+                return { ...o, totalAmount: o.totalAmount + 1 };
               }
               return o;
             });
@@ -99,7 +129,10 @@ export const useUpdateTask = (date: Date) => {
             if (!found) {
               updated.push({
                 date: new Date(newDateNormalized).toISOString(),
-                amount: 1,
+                totalAmount: 1,
+                in_progress: 0,
+                done: 0,
+                todo: 1,
               });
             }
 
@@ -121,6 +154,12 @@ export const useUpdateTask = (date: Date) => {
           ['tasks', date.toISOString()],
           context.previousTasks
         );
+      }
+    },
+
+    onSuccess: (task, variables) => {
+      if (variables.updateSelected) {
+        selectTask(task);
       }
     },
 

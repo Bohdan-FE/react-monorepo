@@ -24,6 +24,7 @@ export default function Calendar() {
     dragData,
     setEndPosition,
     offset,
+    selectTask,
   } = useStore((state) => state);
   const { mutate: updateTask } = useUpdateTask(date);
   const { data: tasks } = useTasks(date);
@@ -47,10 +48,11 @@ export default function Calendar() {
           new Date(d.date).toISOString() ===
           new Date(year, month, i).toISOString()
       );
+
       days.push({
         day: i,
         date: new Date(year, month, i),
-        tasksAmount: tasksAmountForDay?.amount,
+        tasksAmount: tasksAmountForDay?.totalAmount,
       });
     }
 
@@ -98,11 +100,11 @@ export default function Calendar() {
   };
 
   return (
-    <div className="max-w-md p-4 shadow-big border-4 bg-white/50 rounded-3xl">
+    <div className="max-w-md p-4 shadow-big border-4 bg-white/50 rounded-2xl">
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={goToPreviousMonth}
-          className="px-2 py-1 text-sm bg-white rounded-md border-2 hover:bg-cyan-50 "
+          className="px-2 py-1 text-sm bg-blue-light rounded-md border-2 hover:bg-blue-dark "
         >
           <LuArrowBigLeft />
         </button>
@@ -111,7 +113,7 @@ export default function Calendar() {
         </h2>
         <button
           onClick={goToNextMonth}
-          className="px-2 py-1 text-sm bg-white rounded-md border-2 hover:bg-cyan-50"
+          className="px-2 py-1 text-sm bg-blue-light rounded-md border-2 hover:bg-blue-dark"
         >
           <LuArrowBigLeft className="rotate-180" />
         </button>
@@ -132,7 +134,7 @@ export default function Calendar() {
             <div
               key={index}
               className={clsx(
-                'h-10 flex items-center justify-center cursor-pointer hover:outline outline-cyan-300 rounded-md relative',
+                'h-10 flex items-center justify-center cursor-pointer hover:outline outline-blue rounded-md relative',
                 date.getDate() === day?.date.getDate() && 'border-2'
               )}
             >
@@ -149,6 +151,7 @@ export default function Calendar() {
                   onMouseOver={(e) => handleOnDragOver(e, day?.date)}
                   onClick={() => {
                     setDate(day?.date || today);
+                    selectTask(null);
                   }}
                 >
                   {day.day}

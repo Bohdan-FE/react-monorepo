@@ -3,7 +3,10 @@ import { fetchAmountOfTasks } from '../api/tasks';
 
 export interface TaskAmount {
   date: string;
-  amount: number;
+  totalAmount: number;
+  in_progress: number;
+  done: number;
+  todo: number;
 }
 
 interface UseTasksAmountProps {

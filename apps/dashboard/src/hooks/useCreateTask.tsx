@@ -26,7 +26,7 @@ export const useCreateTask = () => {
         _id: `optimistic-${Date.now()}`,
         status: 'todo',
         index: previousTasks?.length ?? 0,
-        date: date, // assuming `date` is a `Date` object
+        date: date.toISOString(),
       };
 
       queryClient.setQueryData<Task[]>(['tasks', date.toISOString()], (old) => [
@@ -44,7 +44,8 @@ export const useCreateTask = () => {
             if (oDate.toISOString() === date.toISOString()) {
               return {
                 ...o,
-                amount: o.amount + 1,
+                totalAmount: o.totalAmount + 1,
+                todo: o.todo + 1,
               };
             }
             return o;
