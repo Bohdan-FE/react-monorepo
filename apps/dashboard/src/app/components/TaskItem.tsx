@@ -19,7 +19,7 @@ function TaskItem({ task, index }: { task: Task; index: number }) {
   return (
     <div
       className={clsx(
-        'flex gap-1 items-center p-2 py-3 relative w-full rounded-xl cursor-pointer border-1 transition',
+        'flex gap-1 items-center p-2 py-3 relative w-full rounded-xl cursor-pointer border-1 transition  shadow-small ',
         {
           'bg-blue-dark text-white': selectedTask?._id === task._id,
           'bg-white': selectedTask?._id !== task._id,

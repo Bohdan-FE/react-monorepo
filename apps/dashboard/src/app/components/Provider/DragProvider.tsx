@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from '../../../store/store';
 import { AnimatePresence } from 'motion/react';
 import { motion } from 'motion/react';
 
 function DragProvider() {
   const { draggableElement, position, previewSize, offset, endPosition } =
-    useStore(state => state);
+    useStore((state) => state);
+
+  const copy = draggableElement?.cloneNode(true) as HTMLElement | null;
+
+  if (copy) {
+    copy.style.opacity = '1';
+  }
 
   return (
     <AnimatePresence>
@@ -24,10 +30,11 @@ function DragProvider() {
             zIndex: 20,
             width: previewSize.width,
             height: previewSize.height,
+            opacity: 1,
           }}
         >
           {React.createElement('div', {
-            dangerouslySetInnerHTML: { __html: draggableElement.outerHTML },
+            dangerouslySetInnerHTML: { __html: copy?.outerHTML || '' },
           })}
         </motion.div>
       )}
