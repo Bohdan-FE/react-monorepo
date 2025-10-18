@@ -158,7 +158,7 @@ function TasksList({ status }: { status: TaskStatus }) {
 
   return (
     <ul
-      className="space-y-2  overflow-y-auto scroll-p-8 relative z-[1] h-full"
+      className="  overflow-y-auto scroll-p-8 relative z-[1] h-full"
       onMouseOver={(e) => handleDragOver(e, null)}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
@@ -170,12 +170,12 @@ function TasksList({ status }: { status: TaskStatus }) {
               itemRef.current[task._id] = el;
             }}
             key={task._id}
-            className={clsx('w-[calc(100%-0.2rem)]  shadow-small rounded-xl', {
-              'opacity-30': dragData?._id === task._id,
+            className={clsx('w-[calc(100%-0.2rem)] rounded-xl py-1', {
+              'opacity-30 z-10': dragData?._id === task._id,
             })}
             onMouseDown={(e) => onDragStart(e, task)}
             onMouseOver={(e) => handleDragOver(e, task)}
-            layout
+            layout={dragData?._id !== task._id}
             transition={spring}
           >
             <TaskItem index={index} task={task} />
