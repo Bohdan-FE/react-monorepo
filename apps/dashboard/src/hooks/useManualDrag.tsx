@@ -47,12 +47,8 @@ export function useManualDrag() {
           y: el.getBoundingClientRect().y,
         });
       }
-      setTimeout(() => {
-        setDraggableElement(null);
-      }, 0);
-      setTimeout(() => {
-        setDragData(null);
-      }, 300);
+      setDraggableElement(null);
+      setDragData(null);
 
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);

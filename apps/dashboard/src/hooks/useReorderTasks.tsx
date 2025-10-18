@@ -44,6 +44,9 @@ export const useReorderTasks = () => {
       queryClient.invalidateQueries({
         queryKey: ['tasks', date.toISOString()],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['tasksAmount'],
+      });
     },
   });
 };

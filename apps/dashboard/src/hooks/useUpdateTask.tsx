@@ -4,20 +4,19 @@ import { Task } from './useTasks';
 import { TaskAmount } from './useTaskAmount';
 import { useStore } from '../store/store';
 
+interface UpdateTaskParams {
+  taskId: string;
+  task: UpdateTaskPayload;
+  updateSelected?: boolean;
+}
+
 export const useUpdateTask = (date: Date) => {
   const queryClient = useQueryClient();
   const { firstDayOfMonth, lastDayOfMonth, selectTask } = useStore();
 
   return useMutation({
-    mutationFn: ({
-      taskId,
-      task,
-      updateSelected,
-    }: {
-      taskId: string;
-      task: UpdateTaskPayload;
-      updateSelected?: boolean;
-    }) => updateTask(taskId, task),
+    mutationFn: ({ taskId, task }: UpdateTaskParams) =>
+      updateTask(taskId, task),
 
     onMutate: async ({ taskId, task }) => {
       await queryClient.cancelQueries({
@@ -56,28 +55,28 @@ export const useUpdateTask = (date: Date) => {
       );
 
       if (movedTask) {
-        // queryClient.setQueryData<TaskAmount[]>(
-        //   ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
-        //   (old) => {
-        //     if (!old) return old;
-        //     const oldStatus = movedTask.status;
-        //     const newStatus = task.status ? task.status : oldStatus;
-        //     console.log({ oldStatus, newStatus });
-        //     if (oldStatus !== newStatus) {
-        //       const dayData = old.find(
-        //         (o) =>
-        //           new Date(o.date).setHours(0, 0, 0, 0) === oldDateNormalized
-        //       );
+        queryClient.setQueryData<TaskAmount[]>(
+          ['tasksAmount', firstDayOfMonth, lastDayOfMonth],
+          (old) => {
+            if (!old) return old;
+            const oldStatus = movedTask.status;
+            const newStatus = task.status ? task.status : oldStatus;
+            console.log({ oldStatus, newStatus });
+            if (oldStatus !== newStatus) {
+              const dayData = old.find(
+                (o) =>
+                  new Date(o.date).setHours(0, 0, 0, 0) === oldDateNormalized
+              );
 
-        //       if (dayData) {
-        //         dayData[oldStatus] = Math.max(0, dayData[oldStatus] - 1);
-        //         dayData[newStatus] = (dayData[newStatus] || 0) + 1;
-        //         return [...old, dayData];
-        //       }
-        //     }
-        //     return old;
-        //   }
-        // );
+              if (dayData) {
+                dayData[oldStatus] = Math.max(0, dayData[oldStatus] - 1);
+                dayData[newStatus] = (dayData[newStatus] || 0) + 1;
+                return [...old, dayData];
+              }
+            }
+            return old;
+          }
+        );
 
         queryClient.setQueryData<Task[]>(
           ['tasks', newDate.toISOString()],

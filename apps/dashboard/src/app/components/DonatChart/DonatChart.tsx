@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useMemo, useState, memo } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useMemo,
+  useState,
+  memo,
+  useLayoutEffect,
+} from 'react';
 
 export interface DonutSlice {
   name: string;
@@ -18,7 +25,6 @@ const DonutChart: React.FC<DonutChartProps> = ({
   data = [],
   donutThickness = 3, // default: 3rem
   animate = true,
-  centerLabel = null,
   keepSquare = true,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -113,7 +119,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
   };
 
   // Handle container resize (responsive width)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
@@ -130,7 +136,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
     return () => observer.disconnect();
   }, [keepSquare]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     draw();
   }, [canvasSize, normalized, donutThickness, animate]);
 
@@ -144,20 +150,6 @@ const DonutChart: React.FC<DonutChartProps> = ({
           display: 'block',
         }}
       />
-      {centerLabel && (
-        <div className="center-label absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-          {centerLabel.title && (
-            <div className="center-title font-bold text-base">
-              {centerLabel.title}
-            </div>
-          )}
-          {centerLabel.sub && (
-            <div className="center-sub text-sm opacity-80">
-              {centerLabel.sub}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };

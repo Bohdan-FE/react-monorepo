@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useStore } from '../../../store/store';
 import { AnimatePresence } from 'motion/react';
 import { motion } from 'motion/react';
@@ -7,7 +7,9 @@ function DragProvider() {
   const { draggableElement, position, previewSize, offset, endPosition } =
     useStore((state) => state);
 
-  const copy = draggableElement?.cloneNode(true) as HTMLElement | null;
+  const copy = draggableElement?.children[0].cloneNode(
+    true
+  ) as HTMLElement | null;
 
   if (copy) {
     copy.style.opacity = '1';
@@ -20,7 +22,7 @@ function DragProvider() {
           exit={{
             left: endPosition.x,
             top: endPosition.y,
-            transition: { duration: 0.3 },
+            transition: { duration: 0.17 },
           }}
           style={{
             position: 'fixed',

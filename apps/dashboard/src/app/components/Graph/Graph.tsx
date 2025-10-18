@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import Fire from '../Fire/Fire';
 import MouseFollowContainer from '../../../../../../packages/ui/src/lib/MouseFollowContainer/MouseFollowContainer';
 import Portal from '../Portal/Portal';
+import { TaskAmount } from '../../../hooks/useTaskAmount';
 
 const padding = {
   top: 20,
@@ -13,7 +14,7 @@ const padding = {
   right: 30,
 };
 
-type Point = { x: number; y: number; date: Date };
+type Point = { x: number; y: number; data?: TaskAmount };
 
 function Graph({ points }: { points: Point[] }) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -48,7 +49,7 @@ function Graph({ points }: { points: Point[] }) {
       y:
         padding.top +
         (1 - p.y / maxY) * (height - padding.top - padding.bottom),
-      date: p.date,
+      data: p.data,
     }));
 
     const line = d3

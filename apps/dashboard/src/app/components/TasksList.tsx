@@ -1,28 +1,25 @@
 import { Task, TaskStatus, useTasks } from '../../hooks/useTasks';
 import TaskItem from './TaskItem';
 import { useStore } from '../../store/store';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useReorderTasks } from '../../hooks/useReorderTasks';
 import { useManualDrag } from '../../hooks/useManualDrag';
-import * as motion from 'motion/react-client';
-import { useUpdateTask } from '../../hooks/useUpdateTask';
 import { useQueryClient } from '@tanstack/react-query';
-import { throttle } from 'lodash';
-import { AnimationGeneratorType } from 'motion/react';
+import { motion, AnimationGeneratorName } from 'motion/react';
+import throttle from 'lodash/throttle';
 
 function TasksList({ status }: { status: TaskStatus }) {
-  const { mutate: reorder } = useReorderTasks();
+  const { mutate: reorder, isPending } = useReorderTasks();
   const dragData = useStore((state) => state.dragData);
   const setDragData = useStore((state) => state.setDragData);
   const setOnDragEnd = useStore((state) => state.setOnDragEnd);
   const setEndPosition = useStore((state) => state.setEndPosition);
   const date = useStore((state) => state.date);
-  const { data, isLoading, isError } = useTasks(date);
+  const { data, isLoading, isError, isFetching } = useTasks(date);
   const queryClient = useQueryClient();
   const [sortedTasks, setSortedTasks] = useState<typeof data | []>([]);
   const { handleMouseDown } = useManualDrag();
-  const { mutate: updateTask } = useUpdateTask(date);
   const itemRef = useRef<Record<string, HTMLLIElement | null>>({});
 
   useEffect(() => {
@@ -34,68 +31,81 @@ function TasksList({ status }: { status: TaskStatus }) {
       }
       return prev;
     });
-  }, [data, status, dragData?.status]);
+  }, [data, status]);
 
-  const handleDragOverTask = useCallback(
-    throttle((e: React.MouseEvent, targetTask: Task) => {
-      e.preventDefault();
-      if (!dragData || dragData._id === targetTask._id) return;
-      setSortedTasks((prev) => {
-        if (!prev) return prev;
-        const dragDataIndex = prev.findIndex((t) => t._id === dragData._id);
-        const targetIndex = prev.findIndex((t) => t._id === targetTask._id);
-        if (
-          dragDataIndex === -1 ||
-          targetIndex === -1 ||
-          dragDataIndex === targetIndex
-        ) {
-          return prev;
-        }
-        const newTasks = [...prev];
-        const [moved] = newTasks.splice(dragDataIndex, 1);
-        newTasks.splice(targetIndex, 0, moved);
-        return newTasks;
-      });
-
-      setOnDragEnd(() => {});
-    }, 250),
-    [dragData]
-  );
-
-  const handleDragOverList = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleDragOverTask = (e: React.MouseEvent, overTask: Task) => {
     if (!dragData) return;
-    if (dragData.status !== status) {
-      dragData.status = status;
-      const lastIndex = sortedTasks?.length
-        ? sortedTasks[sortedTasks.length - 1].index
-        : 0;
-      dragData.index = lastIndex + 1;
-      setSortedTasks((prev) => {
-        if (!prev) return prev;
-        const newTasks = [...prev, dragData];
-        return newTasks;
-      });
-      setOnDragEnd(() => {
-        updateTask({
-          taskId: dragData._id,
-          task: { status, index: dragData.index },
-        });
-      });
-    }
+    if (dragData._id === overTask._id) return;
+    if (isFetching || isPending) return;
+    const newOrder = [...(sortedTasks || [])];
+    const dragIndex = newOrder.findIndex((t) => t._id === dragData._id);
+    const overIndex = newOrder.findIndex((t) => t._id === overTask._id);
+    const [draggedItem] = newOrder.splice(dragIndex, 1);
+    newOrder.splice(overIndex, 0, draggedItem);
+    newOrder.map((task, index) => ({ ...task, index, status }));
+
+    setSortedTasks(newOrder);
+
+    setOnDragEnd(() => {
+      const payload = newOrder.map((task, index) => ({
+        taskId: task._id,
+        status: task.status,
+        index: index,
+      }));
+      reorder(payload);
+    });
   };
 
+  const handleDragOverList = throttle((e: React.MouseEvent) => {
+    if (!dragData || !data) return;
+    if (isFetching || isPending) return;
+
+    if (dragData.status !== status) {
+      setDragData({ ...dragData, status });
+      setSortedTasks((prev) => {
+        return prev
+          ? [...prev, { ...dragData, status, index: prev.length }]
+          : [{ ...dragData, status, index: 0 }];
+      });
+
+      queryClient.setQueryData(
+        ['tasks', date.toISOString()],
+        (old: Task[] | undefined) => {
+          if (!old) return old;
+          const withoutDragged = old.filter((t) => t._id !== dragData._id);
+          return [
+            ...withoutDragged,
+            { ...dragData, status, index: withoutDragged.length },
+          ];
+        }
+      );
+
+      setOnDragEnd(() => {
+        if (!sortedTasks) return;
+
+        reorder([
+          ...sortedTasks.map((task, index) => ({
+            taskId: task._id,
+            status: task.status,
+            index: index,
+          })),
+          { taskId: dragData._id, status, index: sortedTasks.length },
+        ]);
+      });
+    }
+  }, 100);
+
   const handleMouseMove = () => {
-    // if (sortedTasks && sortedTasks.length && dragData) {
-    //   const el = itemRef.current[dragData._id];
-    //   if (el) {
-    //     const targetPosition = {
-    //       y: el.getBoundingClientRect().top || 0,
-    //       x: el.getBoundingClientRect().left || 0,
-    //     };
-    //     setEndPosition(targetPosition);
-    //   }
-    // }
+    if (sortedTasks && sortedTasks.length && dragData) {
+      const el = itemRef.current[dragData._id];
+      if (el) {
+        const targetPosition = {
+          y: el.getBoundingClientRect().top || 0,
+          x: el.getBoundingClientRect().left || 0,
+        };
+        setEndPosition(targetPosition);
+      }
+    }
   };
 
   const handleMouseLeave = () => {
@@ -125,14 +135,21 @@ function TasksList({ status }: { status: TaskStatus }) {
             ref={(el) => {
               itemRef.current[task._id] = el;
             }}
-            key={task._id + status}
-            className={clsx('w-[calc(100%-0.2rem)] rounded-xl relative py-1', {
-              'opacity-10 z-2 ': dragData?._id === task._id,
-            })}
+            key={task._id}
+            className={clsx('w-[calc(100%-0.2rem)] rounded-xl relative py-1 ')}
             onMouseDown={(e) => onDragStart(e, task)}
             onMouseOver={(e) => handleDragOverTask(e, task)}
             layout
-            transition={spring}
+            layoutId={'task-item-' + task._id}
+            animate={{
+              opacity: dragData?._id === task._id ? 0.1 : 1,
+              zIndex: 2,
+            }}
+            transition={{
+              damping: 20,
+              stiffness: 150,
+              duration: task._id === dragData?._id ? 0 : 0.1,
+            }}
           >
             <TaskItem index={index} task={task} />
           </motion.li>
@@ -145,11 +162,5 @@ function TasksList({ status }: { status: TaskStatus }) {
     </ul>
   );
 }
-const spring = {
-  type: 'spring' as AnimationGeneratorType,
-  stiffness: 1400, // higher = faster
-  damping: 160, // lower = less resistance, snappier motion
-  mass: 0.8, // slightly lighter for crispness
-};
 
 export default TasksList;
