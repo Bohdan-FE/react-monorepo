@@ -12,26 +12,19 @@
   --shadow-big: 0.4rem 0.4rem 0px 0px rgba(0, 0, 0, 0.75);
   --shadow-small: 0.2rem 0.2rem 0px 0px rgba(0, 0, 0, 0.75);
 
-  --animate-dot-wave: dot-wave 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
+  --animate-dot-wave: dot-wave 0.9s ease infinite;
 
   --animate-flame-up: flame-up 2s line;
 
   @keyframes dot-wave {
     0% {
-      transform: translateY(0) scale(0.95);
-      opacity: 0.6;
-    }
-    35% {
-      transform: translateY(-22px) scale(1.12);
+      transform: scale(0.95);
       opacity: 1;
     }
-    70% {
-      transform: translateY(-8px) scale(1.02);
-      opacity: 0.9;
-    }
+
     100% {
-      transform: translateY(0) scale(0.98);
-      opacity: 0.7;
+      transform: scale(1.5);
+      opacity: 0;
     }
   }
 

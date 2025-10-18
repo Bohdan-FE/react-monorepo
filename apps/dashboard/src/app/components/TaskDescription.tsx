@@ -142,7 +142,10 @@ function TaskDescription() {
               className="bg-blue  text-white p-2 rounded-xl active:scale-95 active:shadow-none shadow-small mt-auto disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleUpdateTask}
               disabled={
-                !selectedTask || !isChanged || isUpdating || title.trim() === ''
+                !selectedTask ||
+                !isChanged ||
+                isUpdating ||
+                title?.trim() === ''
               }
             >
               {isUpdating ? 'Saving...' : 'Save changes'}

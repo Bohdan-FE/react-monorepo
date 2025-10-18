@@ -5,7 +5,15 @@ import { motion } from 'motion/react';
 
 function DragProvider() {
   const { draggableElement, position, previewSize, offset, endPosition } =
-    useStore(state => state);
+    useStore((state) => state);
+
+  const copy = draggableElement?.children[0].cloneNode(
+    true
+  ) as HTMLElement | null;
+
+  if (copy) {
+    copy.style.opacity = '1';
+  }
 
   return (
     <AnimatePresence>
@@ -14,7 +22,7 @@ function DragProvider() {
           exit={{
             left: endPosition.x,
             top: endPosition.y,
-            transition: { duration: 0.3 },
+            transition: { duration: 0.17 },
           }}
           style={{
             position: 'fixed',
@@ -24,10 +32,11 @@ function DragProvider() {
             zIndex: 20,
             width: previewSize.width,
             height: previewSize.height,
+            opacity: 1,
           }}
         >
           {React.createElement('div', {
-            dangerouslySetInnerHTML: { __html: draggableElement.outerHTML },
+            dangerouslySetInnerHTML: { __html: copy?.outerHTML || '' },
           })}
         </motion.div>
       )}

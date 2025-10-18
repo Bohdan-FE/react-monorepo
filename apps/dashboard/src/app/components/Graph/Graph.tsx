@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import Fire from '../Fire/Fire';
 import MouseFollowContainer from '../../../../../../packages/ui/src/lib/MouseFollowContainer/MouseFollowContainer';
 import Portal from '../Portal/Portal';
+import { TaskAmount } from '../../../hooks/useTaskAmount';
 
 const padding = {
   top: 20,
@@ -13,7 +14,7 @@ const padding = {
   right: 30,
 };
 
-type Point = { x: number; y: number; date: Date };
+type Point = { x: number; y: number; data?: TaskAmount };
 
 function Graph({ points }: { points: Point[] }) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -48,7 +49,7 @@ function Graph({ points }: { points: Point[] }) {
       y:
         padding.top +
         (1 - p.y / maxY) * (height - padding.top - padding.bottom),
-      date: p.date,
+      data: p.data,
     }));
 
     const line = d3
@@ -326,7 +327,11 @@ function Graph({ points }: { points: Point[] }) {
           className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] absolute"
           style={{ top: p.y, left: p.x }}
         >
-          <PointPopup amount={points[i].y} />
+          <div className="absolute inset-0 m-auto h-full w-full border border-red-500 rounded-full animate-dot-wave"></div>
+          <div className="absolute inset-0 m-auto h-full w-full border border-red-500 rounded-full animate-dot-wave animation-delay-100"></div>
+          <div className="absolute inset-0 m-auto h-full w-full border border-red-500 rounded-full animate-dot-wave animation-delay-200"></div>
+          <div className="absolute inset-0 m-auto h-full w-full border border-red-500 rounded-full animate-dot-wave animation-delay-300"></div>
+          <PointPopup data={p.data} />
         </div>
       ))}
     </div>
@@ -335,7 +340,7 @@ function Graph({ points }: { points: Point[] }) {
 
 export default Graph;
 
-function PointPopup({ amount }: { amount: number }) {
+function PointPopup({ data }: { data: TaskAmount | undefined }) {
   const [isShown, setIsShown] = useState(false);
 
   const onMouseEnter = () => {
@@ -346,19 +351,23 @@ function PointPopup({ amount }: { amount: number }) {
     setIsShown(false);
   };
 
+  const date = new Date(data?.date || '').toLocaleDateString();
   return (
     <div
-      className="w-full h-full"
+      className="w-full h-full z-[5] relative"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {isShown && (
+      {isShown && data && (
         <Portal>
-          <MouseFollowContainer>
-            <div className="bg-pink-300 px-[0.75rem] py-[0.5rem] rounded-xl">
-              <p>Task amount: {amount}</p>
+          <MouseFollowContainer className="translate-x-[-50%] translate-y-4">
+            <div className="bg-pink-300 px-[0.75rem] py-[0.5rem] rounded-xl text-sm space-y-1">
+              <p>Task amount: {data.totalAmount}</p>
+              <p>Date: {date}</p>
+              <p>Todo: {data.todo}</p>
+              <p>In Progress: {data.in_progress}</p>
+              <p>Done: {data.done}</p>
             </div>
-            {/* <PointPopup date={p.date} /> */}
           </MouseFollowContainer>
         </Portal>
       )}

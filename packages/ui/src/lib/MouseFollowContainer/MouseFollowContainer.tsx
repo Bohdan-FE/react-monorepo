@@ -1,7 +1,13 @@
 import { ReactNode, useEffect, useState } from 'react';
 
-function MouseFollowContainer({ children }: { children: ReactNode }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+function MouseFollowContainer({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
@@ -14,11 +20,11 @@ function MouseFollowContainer({ children }: { children: ReactNode }) {
       document.removeEventListener('mousemove', handleMove);
     };
   }, []);
-
+  if (!pos) return null;
   return (
     <div
-      className="fixed z-[100] pointer-events-none rounded-full"
-      style={{ top: pos.y, left: pos.x, transform: 'translate(-50%, 50%)' }}
+      className={`fixed z-[100] pointer-events-none rounded-full ${className}`}
+      style={{ top: pos.y, left: pos.x }}
     >
       {children}
     </div>

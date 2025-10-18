@@ -8,19 +8,21 @@ import { useState } from 'react';
 import { FiLogIn } from 'react-icons/fi';
 import clsx from 'clsx';
 import { useUser } from '../../../hooks/useUser';
+import { motion } from 'motion/react';
 
 function Sidebar() {
   const openModal = useStore((state) => state.openModal);
-  const [isOpened, setIsOpened] = useState(true);
+  const [isOpened, setIsOpened] = useState(false);
   const { data: user } = useUser();
   const location = useLocation();
 
   return (
-    <aside
+    <motion.aside
       className={clsx(
-        'bg-blue-dark  overflow-hidden relative transition-all  flex flex-col shrink-0 rounded-tr-3xl rounded-br-3xl shadow-big ',
-        { 'w-58': isOpened, 'w-16': !isOpened }
+        'bg-blue-dark  overflow-hidden relative flex flex-col shrink-0 rounded-tr-3xl rounded-br-3xl shadow-big '
+        // { 'w-58': isOpened, 'w-16': !isOpened }
       )}
+      animate={{ width: isOpened ? 232 : 64, transition: { duration: 0.1 } }}
     >
       <button
         className="absolute top-2 right-2 z-20"
@@ -86,7 +88,7 @@ function Sidebar() {
       <button onClick={() => openModal(<CreateTaskModal />)}>
         Create task
       </button> */}
-    </aside>
+    </motion.aside>
   );
 }
 
