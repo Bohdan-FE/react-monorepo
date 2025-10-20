@@ -23,7 +23,7 @@ function MouseFollowContainer({
   if (!pos) return null;
   return (
     <div
-      className={`fixed z-[100] pointer-events-none rounded-full ${className}`}
+      className={`fixed z-[999] pointer-events-none rounded-full ${className}`}
       style={{ top: pos.y, left: pos.x }}
     >
       {children}

@@ -19,10 +19,16 @@ function Sidebar() {
   return (
     <motion.aside
       className={clsx(
-        'bg-blue-dark  overflow-hidden relative flex flex-col shrink-0 rounded-tr-3xl rounded-br-3xl shadow-big '
-        // { 'w-58': isOpened, 'w-16': !isOpened }
+        'bg-blue-dark fixed top-0 left-0 h-full overflow-hidden  flex flex-col shrink-0  shadow-big z-[10]'
       )}
-      animate={{ width: isOpened ? 232 : 64, transition: { duration: 0.1 } }}
+      animate={{
+        width: isOpened ? 232 : 64,
+        // borderBottomRightRadius: isOpened ? '0rem' : '50%',
+        // borderTopRightRadius: isOpened ? '0rem' : '50%',
+        transition: { duration: 0.2, ease: 'easeInOut' },
+      }}
+      onMouseEnter={() => setIsOpened(true)}
+      onMouseLeave={() => setIsOpened(false)}
     >
       <button
         className="absolute top-2 right-2 z-20"

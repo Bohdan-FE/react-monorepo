@@ -6,6 +6,7 @@ import Fire from '../Fire/Fire';
 import MouseFollowContainer from '../../../../../../packages/ui/src/lib/MouseFollowContainer/MouseFollowContainer';
 import Portal from '../Portal/Portal';
 import { TaskAmount } from '../../../hooks/useTaskAmount';
+import { useStore } from '../../../store/store';
 
 const padding = {
   top: 20,
@@ -19,6 +20,7 @@ type Point = { x: number; y: number; data?: TaskAmount };
 function Graph({ points }: { points: Point[] }) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const setDate = useStore((state) => state.setDate);
 
   const [linePath, setLinePath] = useState('');
   const [areaPath, setAreaPath] = useState('');
@@ -35,9 +37,6 @@ function Graph({ points }: { points: Point[] }) {
   const observer = useRef<ResizeObserver | null>(null);
   const gsapContext = useRef<gsap.Context | null>(null);
 
-  // ----------------------------
-  // SCALE + PATHS
-  // ----------------------------
   const updateGraph = (width: number, height: number) => {
     if (!points.length) return;
 
@@ -183,7 +182,9 @@ function Graph({ points }: { points: Point[] }) {
       const bombs = gsap.utils.toArray('.paper_bomb') as HTMLElement[];
       bombs.forEach((el, i) => {
         const angle = el.getAttribute('data-angle-bomb') ?? '-45';
-        const tl = gsap.timeline({ delay: 1.1 + i * 0.7 });
+        const tl = gsap.timeline({
+          delay: 1.1 + i * 0.7,
+        });
 
         tl.fromTo(
           el,
@@ -233,9 +234,6 @@ function Graph({ points }: { points: Point[] }) {
     return () => gsapContext.current?.revert();
   }, [points, linePath]);
 
-  // ----------------------------
-  // RENDER
-  // ----------------------------
   return (
     <div ref={wrapperRef} className="w-full h-full relative">
       {/* Naruto */}
@@ -324,8 +322,11 @@ function Graph({ points }: { points: Point[] }) {
           ref={(el) => {
             dotsRef.current[i] = el;
           }}
-          className="w-4 h-4 rounded-full bg-red-500 translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] absolute"
+          className="w-4 h-4 rounded-full bg-red-500 cursor-pointer hover:scale-[1.3] transition-all  translate-x-[-50%] translate-y-[-50%] opacity-0 z-[10] absolute"
           style={{ top: p.y, left: p.x }}
+          onClick={() => {
+            if (p.data?.date) setDate(new Date(p.data.date));
+          }}
         >
           <div className="absolute inset-0 m-auto h-full w-full border border-red-500 rounded-full animate-dot-wave"></div>
           <div className="absolute inset-0 m-auto h-full w-full border border-red-500 rounded-full animate-dot-wave animation-delay-100"></div>
@@ -351,7 +352,13 @@ function PointPopup({ data }: { data: TaskAmount | undefined }) {
     setIsShown(false);
   };
 
-  const date = new Date(data?.date || '').toLocaleDateString();
+  const date = data?.date
+    ? new Date(data.date).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
+    : '';
   return (
     <div
       className="w-full h-full z-[5] relative"
@@ -362,11 +369,24 @@ function PointPopup({ data }: { data: TaskAmount | undefined }) {
         <Portal>
           <MouseFollowContainer className="translate-x-[-50%] translate-y-4">
             <div className="bg-pink-300 px-[0.75rem] py-[0.5rem] rounded-xl text-sm space-y-1">
-              <p>Task amount: {data.totalAmount}</p>
-              <p>Date: {date}</p>
-              <p>Todo: {data.todo}</p>
-              <p>In Progress: {data.in_progress}</p>
-              <p>Done: {data.done}</p>
+              <p className="font-semibold">
+                Date: <span className="font-normal">{date}</span>
+              </p>
+              <p className="font-semibold">
+                Task amount:{' '}
+                <span className="font-normal">{data.totalAmount}</span>
+              </p>
+
+              <p className="font-semibold">
+                Todo: <span className="font-normal">{data.todo}</span>
+              </p>
+              <p className="font-semibold">
+                In Progress:{' '}
+                <span className="font-normal">{data.in_progress}</span>
+              </p>
+              <p className="font-semibold">
+                Done: <span className="font-normal">{data.done}</span>
+              </p>
             </div>
           </MouseFollowContainer>
         </Portal>

@@ -5,6 +5,8 @@ import { AxiosError } from 'axios';
 type FetchUserResponse = {
   email: string;
   name: string;
+  id: string;
+  avatar?: string;
 };
 
 export const useUser = () => {

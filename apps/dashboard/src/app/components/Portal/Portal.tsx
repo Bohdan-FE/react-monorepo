@@ -7,6 +7,7 @@ const Portal = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     elRef.current = document.createElement('div');
+    elRef.current.className = 'z-[999]';
     document.body.appendChild(elRef.current);
     document.body.classList.add('overflow-hidden');
     setMounted(true);
