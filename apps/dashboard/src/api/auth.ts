@@ -1,3 +1,4 @@
+import { User } from '../models/User';
 import api from './api';
 
 export interface LoginPayload {
@@ -12,7 +13,7 @@ export interface RegisterPayload {
 }
 
 export const login = async ({ email, password }: LoginPayload) => {
-  const axiosResponse = await api.post(`/users/login`, {
+  const axiosResponse = await api.post(`/auth/login`, {
     email,
     password,
   });
@@ -20,7 +21,7 @@ export const login = async ({ email, password }: LoginPayload) => {
 };
 
 export const register = async ({ name, email, password }: RegisterPayload) => {
-  const axiosResponse = await api.post(`/users/register`, {
+  const axiosResponse = await api.post(`/auth/register`, {
     name,
     email,
     password,
@@ -30,6 +31,6 @@ export const register = async ({ name, email, password }: RegisterPayload) => {
 };
 
 export const fetchUser = async () => {
-  const axiosResponse = await api.get(`/users/current`);
+  const axiosResponse = await api.get(`/auth/current`);
   return axiosResponse.data;
 };

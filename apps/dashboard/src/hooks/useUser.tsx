@@ -1,16 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchUser } from '../api/auth';
 import { AxiosError } from 'axios';
-
-type FetchUserResponse = {
-  email: string;
-  name: string;
-  id: string;
-  avatar?: string;
-};
+import { User } from '../models/User';
 
 export const useUser = () => {
-  return useQuery<FetchUserResponse, AxiosError<{ message: string }>>({
+  return useQuery<User, AxiosError<{ message: string }>>({
     queryKey: ['user'],
     queryFn: fetchUser,
     staleTime: 1000 * 60 * 5,

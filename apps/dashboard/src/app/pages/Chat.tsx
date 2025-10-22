@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { socket } from '../../socket/socket';
+import { socketService } from '../../socket/socketService';
 import { useUser } from '../../hooks/useUser';
+import useUsers from '../../hooks/useUsersPaginated';
 
 const Chat: React.FC = () => {
   const [myId, setMyId] = useState('');
@@ -10,45 +11,46 @@ const Chat: React.FC = () => {
     { from: string; text: string; timestamp?: string }[]
   >([]);
   const { data: user } = useUser();
+  const { data: users } = useUsers();
 
-  useEffect(() => {
-    if (myId) socket.emit('register', myId);
+  // useEffect(() => {
+  //   if (myId) socket.emit('register', myId);
 
-    socket.on('privateMessage', (data) => {
-      setChat((prev) => [
-        ...prev,
-        { from: data.from, text: data.message, timestamp: data.timestamp },
-      ]);
-    });
+  //   socket.on('privateMessage', (data) => {
+  //     setChat((prev) => [
+  //       ...prev,
+  //       { from: data.from, text: data.message, timestamp: data.timestamp },
+  //     ]);
+  //   });
 
-    socket.on('chatHistory', (history) => {
-      const formatted = history.map((msg: any) => ({
-        from: msg.from,
-        text: msg.message,
-        timestamp: msg.timestamp,
-      }));
-      setChat(formatted);
-    });
+  //   socket.on('chatHistory', (history) => {
+  //     const formatted = history.map((msg: any) => ({
+  //       from: msg.from,
+  //       text: msg.message,
+  //       timestamp: msg.timestamp,
+  //     }));
+  //     setChat(formatted);
+  //   });
 
-    socket.on('errorMessage', (msg) => alert(msg));
+  //   socket.on('errorMessage', (msg) => alert(msg));
 
-    return () => {
-      socket.off('privateMessage');
-      socket.off('chatHistory');
-      socket.off('errorMessage');
-    };
-  }, [myId]);
+  //   return () => {
+  //     socket.off('privateMessage');
+  //     socket.off('chatHistory');
+  //     socket.off('errorMessage');
+  //   };
+  // }, [myId]);
 
-  const sendPrivate = () => {
-    if (!targetId || !message) return;
-    socket.emit('privateMessage', { to: targetId, message });
-    setMessage('');
-  };
+  // const sendPrivate = () => {
+  //   if (!targetId || !message) return;
+  //   socket.emit('privateMessage', { to: targetId, message });
+  //   setMessage('');
+  // };
 
-  const loadHistory = () => {
-    if (!targetId) return;
-    socket.emit('getHistory', { withUser: targetId });
-  };
+  // const loadHistory = () => {
+  //   if (!targetId) return;
+  //   socket.emit('getHistory', { withUser: targetId });
+  // };
 
   return (
     <div style={{ padding: 20 }} className="bg-white">
@@ -61,9 +63,9 @@ const Chat: React.FC = () => {
             value={myId}
             onChange={(e) => setMyId(e.target.value)}
           />
-          <button onClick={() => socket.emit('register', myId)}>
+          {/* <button onClick={() => socket.emit('register', myId)}>
             Register
-          </button>
+          </button> */}
         </div>
       ) : (
         <>
@@ -73,7 +75,7 @@ const Chat: React.FC = () => {
               value={targetId}
               onChange={(e) => setTargetId(e.target.value)}
             />
-            <button onClick={loadHistory}>Load history</button>
+            {/* <button onClick={loadHistory}>Load history</button> */}
           </div>
 
           <div
@@ -100,7 +102,7 @@ const Chat: React.FC = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <button onClick={sendPrivate}>Send</button>
+          {/* <button onClick={sendPrivate}>Send</button> */}
         </>
       )}
     </div>
