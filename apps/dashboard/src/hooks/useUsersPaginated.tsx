@@ -4,7 +4,7 @@ import { PaginatedUsersResponse } from '../models/User';
 import { AxiosError } from 'axios';
 import { fetchUsers } from '../api/users';
 
-export const useUsers = (perPage = 20) => {
+export const useUsersPaginated = (perPage = 20) => {
   const query = useInfiniteQuery<
     PaginatedUsersResponse,
     AxiosError<{ message: string }>
@@ -35,4 +35,4 @@ export const useUsers = (perPage = 20) => {
   };
 };
 
-export default useUsers;
+export default useUsersPaginated;

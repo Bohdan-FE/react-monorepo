@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { socketService } from '../../socket/socketService';
 import { useUser } from '../../hooks/useUser';
 import useUsers from '../../hooks/useUsersPaginated';
+import UserList from '../components/UserList';
+import FriendsList from '../components/FriendsList';
 
 const Chat: React.FC = () => {
   const [myId, setMyId] = useState('');
@@ -53,58 +55,63 @@ const Chat: React.FC = () => {
   // };
 
   return (
-    <div style={{ padding: 20 }} className="bg-white">
-      <h2>Private Chat 💬</h2>
+    <div>
+      <div style={{ padding: 20 }} className="bg-white">
+        <h2>Private Chat 💬</h2>
 
-      {!myId ? (
-        <div>
-          <input
-            placeholder="Enter your user ID"
-            value={myId}
-            onChange={(e) => setMyId(e.target.value)}
-          />
-          {/* <button onClick={() => socket.emit('register', myId)}>
+        {!myId ? (
+          <div>
+            <input
+              placeholder="Enter your user ID"
+              value={myId}
+              onChange={(e) => setMyId(e.target.value)}
+            />
+            {/* <button onClick={() => socket.emit('register', myId)}>
             Register
           </button> */}
-        </div>
-      ) : (
-        <>
-          <div style={{ marginBottom: 10 }}>
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom: 10 }}>
+              <input
+                placeholder="Recipient user ID"
+                value={targetId}
+                onChange={(e) => setTargetId(e.target.value)}
+              />
+              {/* <button onClick={loadHistory}>Load history</button> */}
+            </div>
+
+            <div
+              style={{
+                border: '1px solid #ccc',
+                height: 250,
+                overflowY: 'auto',
+                marginBottom: 10,
+                padding: 10,
+              }}
+            >
+              {chat.map((c, i) => (
+                <div key={i}>
+                  <b>{c.from}:</b> {c.text}{' '}
+                  <small style={{ color: '#888' }}>
+                    {new Date(c.timestamp || '').toLocaleTimeString()}
+                  </small>
+                </div>
+              ))}
+            </div>
+
             <input
-              placeholder="Recipient user ID"
-              value={targetId}
-              onChange={(e) => setTargetId(e.target.value)}
+              placeholder="Message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
             />
-            {/* <button onClick={loadHistory}>Load history</button> */}
-          </div>
+            {/* <button onClick={sendPrivate}>Send</button> */}
+          </>
+        )}
+      </div>
 
-          <div
-            style={{
-              border: '1px solid #ccc',
-              height: 250,
-              overflowY: 'auto',
-              marginBottom: 10,
-              padding: 10,
-            }}
-          >
-            {chat.map((c, i) => (
-              <div key={i}>
-                <b>{c.from}:</b> {c.text}{' '}
-                <small style={{ color: '#888' }}>
-                  {new Date(c.timestamp || '').toLocaleTimeString()}
-                </small>
-              </div>
-            ))}
-          </div>
-
-          <input
-            placeholder="Message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          {/* <button onClick={sendPrivate}>Send</button> */}
-        </>
-      )}
+      <UserList />
+      <FriendsList />
     </div>
   );
 };
