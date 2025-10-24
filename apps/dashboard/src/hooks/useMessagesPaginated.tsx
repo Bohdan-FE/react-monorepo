@@ -2,6 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { PaginatedMessagesResponse } from '../models/Message';
 import { fetchMessages } from '../api/messages';
+import { useMemo } from 'react';
 
 export const useMessagesPaginated = (userId: string, perPage = 20) => {
   const query = useInfiniteQuery<
@@ -22,7 +23,10 @@ export const useMessagesPaginated = (userId: string, perPage = 20) => {
     refetchOnMount: 'always',
   });
 
-  const messages = query.data?.pages.flatMap((page) => page.data) ?? [];
+  const messages = useMemo(
+    () => query.data?.pages.flatMap((page) => page.data) ?? [],
+    [query.data?.pages]
+  );
 
   return {
     data: messages,

@@ -4,6 +4,7 @@ import { useRejectFriendRequest } from '../../hooks/useRejectFriend';
 import { useRemoveFriend } from '../../hooks/useRemoveFriend';
 import { useFriendsPaginated } from '../../hooks/useFriendsPaginated';
 import { FriendshipStatus } from '../../models/User';
+import { useStore } from '../../store/store';
 
 function FriendsList() {
   const { data: friends } = useFriendsPaginated();
@@ -11,8 +12,7 @@ function FriendsList() {
   const { mutate: rejectFriendRequest } = useRejectFriendRequest();
   const { mutate: removeFriend } = useRemoveFriend();
   const { mutate: acceptFriendRequest } = useAcceptFriendship();
-
-  console.log('Friends List:', friends);
+  const selectUser = useStore((store) => store.selectUser);
 
   return (
     <div className="bg-white mt-8">
@@ -26,6 +26,8 @@ function FriendsList() {
               width={30}
               height={30}
               style={{ borderRadius: '50%', marginRight: 10 }}
+              className="cursor-pointer"
+              onClick={() => selectUser(user)}
             />
             <p>
               {user.name} - Status: {user.friendshipStatus}

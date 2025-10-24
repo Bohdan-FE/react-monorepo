@@ -3,6 +3,7 @@ import { useAcceptFriendship } from '../../hooks/useAcceptFriendship';
 import { useRejectFriendRequest } from '../../hooks/useRejectFriend';
 import { useRemoveFriend } from '../../hooks/useRemoveFriend';
 import useUsersPaginated from '../../hooks/useUsersPaginated';
+import { useStore } from '../../store/store';
 
 function UserList() {
   const { data: users } = useUsersPaginated();
@@ -10,9 +11,10 @@ function UserList() {
   const { mutate: rejectFriendRequest } = useRejectFriendRequest();
   const { mutate: removeFriend } = useRemoveFriend();
   const { mutate: acceptFriendRequest } = useAcceptFriendship();
+  const selectUser = useStore((store) => store.selectUser);
 
   return (
-    <div className="bg-white">
+    <div className="bg-green-400">
       <h3>User List</h3>
       <ul>
         {users.map((user) => (
@@ -23,6 +25,8 @@ function UserList() {
               width={30}
               height={30}
               style={{ borderRadius: '50%', marginRight: 10 }}
+              className="cursor-pointer"
+              onClick={() => selectUser(user)}
             />
             <p>
               {user.name} - Status: {user.relationshipStatus}
