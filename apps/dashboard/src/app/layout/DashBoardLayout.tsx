@@ -3,17 +3,28 @@ import Sidebar from '../components/Sidebar/Sidebar';
 import { useEffect } from 'react';
 import { useStore } from '../../store/store';
 import { useUser } from '../../hooks/useUser';
+import { useQueryClient } from '@tanstack/react-query';
 
 function DashBoardLayout() {
   const connect = useStore((store) => store.connect);
   const disconnect = useStore((store) => store.disconnect);
   const { data: user } = useUser();
+  const on = useStore((store) => store.on);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (user) {
       const token = localStorage.getItem('authToken');
       if (!token) return;
       connect('http://localhost:3000', token);
+      on(
+        'user_status_change',
+        ({ userId, isOnline }: { userId: string; isOnline: boolean }) => {
+          queryClient.invalidateQueries({
+            queryKey: ['users'],
+          });
+        }
+      );
     }
 
     const handleBeforeUnload = () => {

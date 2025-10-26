@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 
-function MouseFollowContainer({
+export function MouseFollowContainer({
   children,
   className,
 }: {
@@ -30,5 +30,3 @@ function MouseFollowContainer({
     </div>
   );
 }
-
-export default MouseFollowContainer;

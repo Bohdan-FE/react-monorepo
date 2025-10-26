@@ -9,11 +9,14 @@ import { FiLogIn } from 'react-icons/fi';
 import clsx from 'clsx';
 import { useUser } from '../../../hooks/useUser';
 import { motion } from 'motion/react';
+import { useLogout } from '../../../hooks/useLogout';
+import { MdLogout } from 'react-icons/md';
 
 function Sidebar() {
   const openModal = useStore((state) => state.openModal);
   const [isOpened, setIsOpened] = useState(false);
   const { data: user } = useUser();
+  const { mutate: logout } = useLogout();
   const location = useLocation();
 
   return (
@@ -65,7 +68,7 @@ function Sidebar() {
               </li>
             </NavLink>
           ))}
-          {!user && (
+          {!user ? (
             <button className="w-full" onClick={() => openModal(<AuthModal />)}>
               <li
                 className={clsx(
@@ -83,6 +86,28 @@ function Sidebar() {
                 <div className={clsx('flex items-center px-4')}>
                   <p className="font-bold overflow-hidden whitespace-nowrap">
                     Login
+                  </p>
+                </div>
+              </li>
+            </button>
+          ) : (
+            <button className="w-full" onClick={() => logout()}>
+              <li
+                className={clsx(
+                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  {
+                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
+                      isOpened,
+                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                  }
+                )}
+              >
+                <div>
+                  <MdLogout className="w-4 h-4 mx-auto" />
+                </div>
+                <div className={clsx('flex items-center px-4')}>
+                  <p className="font-bold overflow-hidden whitespace-nowrap">
+                    Logout
                   </p>
                 </div>
               </li>

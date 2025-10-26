@@ -3,19 +3,20 @@ export interface User {
   name: string;
   email: string;
   avatarUrl?: string;
-}
-export enum RelationshipStatus {
-  None = 'none',
-  RequestReceived = 'request_received',
-  RequestSent = 'request_sent',
-  Friend = 'friend',
+  isOnline: boolean;
+  lastSeen: string;
+  relationshipStatus?: RelationshipStatus;
 }
 
-export enum FriendshipStatus {
-  Accepted = 'accepted',
-  Pending = 'pending',
-  Rejected = 'rejected',
-}
+export const RelationshipStatus = {
+  NONE: 'none',
+  REQUEST_RECEIVED: 'request_received',
+  REQUEST_SENT: 'request_sent',
+  FRIEND: 'friend',
+} as const;
+
+export type RelationshipStatus =
+  (typeof RelationshipStatus)[keyof typeof RelationshipStatus];
 
 export interface PaginatedUsersResponse {
   data: (User & {
@@ -29,15 +30,12 @@ export interface PaginatedUsersResponse {
   };
 }
 
-export interface PaginatedFriendsResponse {
-  data: (User & {
-    friendshipStatus: FriendshipStatus;
-    isRequester: boolean;
-  })[];
-  meta: {
-    total: number;
-    page: number;
-    per_page: number;
-    totalPages: number;
-  };
-}
+export const UserFilter = {
+  all: 'all',
+  friends: 'friends',
+  nonFriends: 'non-friends',
+  requestSent: 'request_sent',
+  requestReceived: 'request_received',
+} as const;
+
+export type UserFilter = (typeof UserFilter)[keyof typeof UserFilter];

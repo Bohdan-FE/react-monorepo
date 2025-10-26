@@ -1,4 +1,3 @@
-import { User } from '../models/User';
 import api from './api';
 
 export interface LoginPayload {
@@ -32,5 +31,10 @@ export const register = async ({ name, email, password }: RegisterPayload) => {
 
 export const fetchUser = async () => {
   const axiosResponse = await api.get(`/auth/current`);
+  return axiosResponse.data;
+};
+
+export const logout = async () => {
+  const axiosResponse = await api.post(`/auth/logout`);
   return axiosResponse.data;
 };

@@ -3,7 +3,7 @@ import * as d3 from 'd3-shape';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import Fire from '../Fire/Fire';
-import MouseFollowContainer from '../../../../../../packages/ui/src/lib/MouseFollowContainer/MouseFollowContainer';
+import { MouseFollowContainer } from '@acme/ui';
 import Portal from '../Portal/Portal';
 import { TaskAmount } from '../../../hooks/useTaskAmount';
 import { useStore } from '../../../store/store';

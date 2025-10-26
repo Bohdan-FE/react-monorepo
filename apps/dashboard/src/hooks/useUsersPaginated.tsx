@@ -1,16 +1,21 @@
 // hooks/useUsers.ts
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { PaginatedUsersResponse } from '../models/User';
+import { PaginatedUsersResponse, UserFilter } from '../models/User';
 import { AxiosError } from 'axios';
 import { fetchUsers } from '../api/users';
 
-export const useUsersPaginated = (perPage = 20) => {
+export const useUsersPaginated = (
+  filter: UserFilter = 'all',
+  search: string = '',
+  perPage = 10
+) => {
   const query = useInfiniteQuery<
     PaginatedUsersResponse,
     AxiosError<{ message: string }>
   >({
-    queryKey: ['users'],
-    queryFn: ({ pageParam }) => fetchUsers(pageParam as number, perPage),
+    queryKey: ['users', filter, search],
+    queryFn: ({ pageParam }) =>
+      fetchUsers(pageParam as number, perPage, filter, search),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       // If current page is last, return undefined

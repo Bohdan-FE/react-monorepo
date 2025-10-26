@@ -4,16 +4,19 @@ import { Message, MessageStatus } from '../../../models/Message';
 import { useStore } from '../../../store/store';
 import { useMessagesPaginated } from '../../../hooks/useMessagesPaginated';
 import clsx from 'clsx';
+import { throttle } from 'lodash';
 
-function ChatBox({ me, target }: { me: User; target: User }) {
+function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState<Message[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
   const on = useStore((store) => store.on);
   const emit = useStore((store) => store.emit);
   const off = useStore((store) => store.off);
   const isConnected = useStore((store) => store.isConnected);
-  const { data: chatHistory } = useMessagesPaginated(target._id);
+  const { data: chatHistory } = useMessagesPaginated(target?._id || '');
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView();
@@ -36,16 +39,17 @@ function ChatBox({ me, target }: { me: User; target: User }) {
     on('privateMessage', handlePrivateMessage);
     on('error', handleError);
     on('errorMessage', handleErrorMessage);
+    on('typing', handleTyping);
 
     return () => {
       off('privateMessage', handlePrivateMessage);
       off('error', handleError);
       off('errorMessage', handleErrorMessage);
+      off('typing', handleTyping);
     };
   }, [isConnected]);
 
   const handlePrivateMessage = (data: Message) => {
-    console.log('Private message received via socket:', data);
     setChat((prevChat) => {
       const exists = prevChat.some((msg) => msg._id === data._id);
       if (exists) return prevChat;
@@ -75,6 +79,24 @@ function ChatBox({ me, target }: { me: User; target: User }) {
     console.error('Socket error message:', error);
   };
 
+  const handleTyping = (userId: string) => {
+    if (!target) return;
+    if (userId === target._id) {
+      setIsTyping(true);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => setIsTyping(false), 3000);
+    }
+  };
+
+  const startTyping = throttle((e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+    if (target) {
+      emit('typing', target._id);
+    }
+  }, 300);
+
   const sendMessage = () => {
     if (message && target?._id) {
       const tempId = 'temporary-id-' + Math.random().toString(36).substr(2, 9);
@@ -102,7 +124,7 @@ function ChatBox({ me, target }: { me: User; target: User }) {
   };
 
   return (
-    <div style={{ padding: 20 }} className="bg-white w-[60%]">
+    <div style={{ padding: 20 }} className="bg-white w-full">
       <div className="flex justify-between">
         <h2>Private Chat 💬</h2>
         <p>{target?.name}</p>
@@ -125,7 +147,7 @@ function ChatBox({ me, target }: { me: User; target: User }) {
               'self-end bg-orange': c.from === me._id,
             })}
           >
-            <b>{c.from === me._id ? 'You' : target.name}:</b> {c.message}{' '}
+            <b>{c.from === me._id ? 'You' : target?.name}:</b> {c.message}{' '}
             <small style={{ color: '#888' }}>
               {new Date(c.createdAt || '').toLocaleTimeString()}
             </small>
@@ -134,10 +156,12 @@ function ChatBox({ me, target }: { me: User; target: User }) {
         <div ref={chatEndRef} />
       </div>
 
+      {isTyping ? <p>{target?.name} is typing...</p> : <p></p>}
+
       <input
         placeholder="Message..."
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={startTyping}
         onKeyDown={handleKeyPress}
       />
       <button onClick={sendMessage}>Send</button>
