@@ -23,26 +23,21 @@ export interface DragStore {
   setOffset: (offset: { x: number; y: number }) => void;
 }
 
-export const createDragSlice: StateCreator<
-  DragStore,
-  [],
-  [],
-  DragStore
-> = set => ({
+export const createDragSlice: StateCreator<DragStore> = (set) => ({
   dragData: null,
   draggableElement: null,
   position: { x: 0, y: 0 },
   previewSize: { width: 0, height: 0 },
   offset: { x: 0, y: 0 },
   endPosition: { x: 0, y: 0 },
-  setEndPosition: position => set(() => ({ endPosition: position })),
-  setOffset: offset => set(() => ({ offset })),
-  setPosition: position => set(() => ({ position })),
-  setDraggableElement: element => set(() => ({ draggableElement: element })),
-  setDragData: data => set(() => ({ dragData: data })),
-  setOnDragEnd: fn => set(() => ({ onDragEnd: fn })),
+  setEndPosition: (position) => set(() => ({ endPosition: position })),
+  setOffset: (offset) => set(() => ({ offset })),
+  setPosition: (position) => set(() => ({ position })),
+  setDraggableElement: (element) => set(() => ({ draggableElement: element })),
+  setDragData: (data) => set(() => ({ dragData: data })),
+  setOnDragEnd: (fn) => set(() => ({ onDragEnd: fn })),
   onDragEnd: () => {},
-  setPreview: size =>
+  setPreview: (size) =>
     set(() => ({
       previewSize: size,
     })),

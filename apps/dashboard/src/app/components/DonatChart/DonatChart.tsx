@@ -119,7 +119,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
   };
 
   // Handle container resize (responsive width)
-  useLayoutEffect(() => {
+  useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
@@ -136,12 +136,15 @@ const DonutChart: React.FC<DonutChartProps> = ({
     return () => observer.disconnect();
   }, [keepSquare]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     draw();
   }, [canvasSize, normalized, donutThickness, animate]);
 
   return (
-    <div ref={containerRef} className="donut-wrap relative w-full inline-block">
+    <div
+      ref={containerRef}
+      className="donut-wrap relative inline-block h-full w-full"
+    >
       <canvas
         ref={canvasRef}
         style={{

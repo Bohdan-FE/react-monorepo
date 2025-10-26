@@ -17,7 +17,6 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <DashBoardLayout />
         <ModalProvider />
-
         <ReactQueryDevtools initialIsOpen={false} />
         <DragProvider />
       </QueryClientProvider>

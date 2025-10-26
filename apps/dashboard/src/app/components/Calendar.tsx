@@ -100,11 +100,28 @@ export default function Calendar() {
   };
 
   return (
-    <div className="max-w-md p-4 shadow-big border-4 bg-white/50 rounded-2xl">
-      <div className="flex justify-between items-center mb-4">
+    <div className="max-w-md p-4 shadow-big border-4 bg-white/50 rounded-2xl max-h-full relative group">
+      <div className="bg-[url('/spiral.png')] bg-center bg-contain bg-no-repeat opacity-50 absolute w-full h-full inset-0 mx-auto group-hover:blur-sm transition-all duration-500">
+        <img
+          className="h-[85%] bottom-0 left-0 absolute"
+          src="/temari.png"
+          alt=""
+        />
+        <img
+          className="h-[25%] bottom-0 right-0 absolute animate-up-down delay-200"
+          src="/fan.png"
+          alt=""
+        />
+        <img
+          className="h-[15%] top-6 right-6 scale-[-1] absolute animate-up-down delay-100"
+          src="/fan.png"
+          alt=""
+        />
+      </div>
+      <div className="flex justify-between items-center mb-4 z-[2] relative">
         <button
           onClick={goToPreviousMonth}
-          className="px-2 py-1 text-sm bg-blue-light rounded-md border-2 hover:bg-blue-dark "
+          className="px-2 py-2 text-sm bg-blue-dark text-white rounded-md shadow-small hover:bg-blue-light "
         >
           <LuArrowBigLeft />
         </button>
@@ -113,55 +130,57 @@ export default function Calendar() {
         </h2>
         <button
           onClick={goToNextMonth}
-          className="px-2 py-1 text-sm bg-blue-light rounded-md border-2 hover:bg-blue-dark"
+          className="px-2 py-2 text-sm bg-blue-dark text-white  rounded-md shadow-small  hover:bg-blue-light"
         >
           <LuArrowBigLeft className="rotate-180" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 text-center font-medium text-gray-600 mb-2">
-        {daysOfWeek.map((day) => (
-          <div key={day}>{day}</div>
-        ))}
-      </div>
+      <div className="backdrop-blur-[4px] p-1 rounded-md z-[2] relative shadow-sm">
+        <div className="grid grid-cols-7 text-center font-bold text-black mb-2 z-[2] relative">
+          {daysOfWeek.map((day) => (
+            <div key={day}>{day}</div>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-7 text-center gap-y-2">
-        {calendarDays.map((day, index) => {
-          const isWeekendDay = isWeekend(index);
-          const baseStyle = isWeekendDay ? 'text-red-500' : 'text-gray-800';
+        <div className="grid grid-cols-7 text-center gap-y-2 ">
+          {calendarDays.map((day, index) => {
+            const isWeekendDay = isWeekend(index);
+            const baseStyle = isWeekendDay ? 'text-red-500' : 'text-gray-800';
 
-          return (
-            <div
-              key={index}
-              className={clsx(
-                'h-10 flex items-center justify-center cursor-pointer hover:outline outline-blue rounded-md relative',
-                date.getDate() === day?.date.getDate() && 'border-2'
-              )}
-            >
-              {day?.tasksAmount && (
-                <div className="absolute top-0 right-0 aspect-square text-xs text-gray-500 rounded-full ">
-                  <p className="">{day?.tasksAmount?.toString()}</p>
-                </div>
-              )}
-              {day ? (
-                <div
-                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${baseStyle} ${
-                    isToday(day.day) ? 'bg-black/10 font-bold' : ''
-                  }`}
-                  onMouseOver={(e) => handleOnDragOver(e, day?.date)}
-                  onClick={() => {
-                    setDate(day?.date || today);
-                    selectTask(null);
-                  }}
-                >
-                  {day.day}
-                </div>
-              ) : (
-                <span></span>
-              )}
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={index}
+                className={clsx(
+                  'h-10 flex items-center justify-center cursor-pointer hover:outline outline-blue rounded-md relative',
+                  date.getDate() === day?.date.getDate() && 'border-2'
+                )}
+              >
+                {day?.tasksAmount && (
+                  <div className="absolute top-0 right-0 aspect-square text-xs text-gray-500 rounded-full ">
+                    <p className="">{day?.tasksAmount?.toString()}</p>
+                  </div>
+                )}
+                {day ? (
+                  <div
+                    className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${baseStyle} ${
+                      isToday(day.day) ? 'bg-black/10 font-bold' : ''
+                    }`}
+                    onMouseOver={(e) => handleOnDragOver(e, day?.date)}
+                    onClick={() => {
+                      setDate(day?.date || today);
+                      selectTask(null);
+                    }}
+                  >
+                    {day.day}
+                  </div>
+                ) : (
+                  <span></span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

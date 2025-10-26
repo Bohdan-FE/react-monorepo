@@ -4,6 +4,7 @@
 @import './styles/variables.css';
 @import './styles/fonts.css';
 @import './styles/theme.css';
+@import './styles/loading.css';
 
 html {
   font-size: 16px;

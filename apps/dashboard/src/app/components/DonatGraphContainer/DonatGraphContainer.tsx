@@ -11,9 +11,9 @@ function DonutGraphContainer() {
     startDate: firstDayOfMonth,
     endDate: lastDayOfMonth,
   });
-  const [selectedTab, setSelectedTab] = useState<'Week' | 'Today' | 'Month'>(
-    'Month'
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    'This week' | 'Today' | 'This month'
+  >('This month');
   const [isOpen, setIsOpen] = useState(false);
   const startOfWeek = (() => {
     const now = new Date();
@@ -53,7 +53,7 @@ function DonutGraphContainer() {
   const selectedTabData =
     selectedTab === 'Today'
       ? todaysTasks
-      : selectedTab === 'Week'
+      : selectedTab === 'This week'
       ? thisWeekTasks
       : taskAmount;
 
@@ -64,7 +64,7 @@ function DonutGraphContainer() {
     total = 0,
   } = parsedData(selectedTabData || []);
 
-  const selectTab = (tab: 'Week' | 'Today' | 'Month') => {
+  const selectTab = (tab: 'This week' | 'Today' | 'This month') => {
     setSelectedTab(tab);
     setIsOpen(false);
   };
@@ -91,43 +91,74 @@ function DonutGraphContainer() {
         {isOpen && (
           <div className="absolute top-[calc(100%+0.2rem)] left-0 flex flex-col gap-2 w-full rounded-xl shadow-small bg-white overflow-hidden">
             <button
-              className=" p-2 text-start hover:bg-blue-light transition-colors"
+              className="p-2 text-start hover:bg-blue-light transition-colors"
               onClick={() => selectTab('Today')}
             >
               Today
             </button>
             <button
               className=" p-2 text-start hover:bg-blue-light transition-colors"
-              onClick={() => selectTab('Week')}
+              onClick={() => selectTab('This week')}
             >
-              Week
+              This week
             </button>
             <button
               className=" p-2 text-start hover:bg-blue-light transition-colors "
-              onClick={() => selectTab('Month')}
+              onClick={() => selectTab('This month')}
             >
-              Month
+              This month
             </button>
           </div>
         )}
       </div>
 
-      <div className="aspect-square overflow-hidden max-h-[50%] h-full mx-auto">
+      <div className="aspect-square overflow-hidden shrink-1 w-[62%] ml-6 relative">
         <DonutChart data={chartData} donutThickness={2} keepSquare={true} />
+        <div className="absolute inset-0 w-full h-full p-[3rem]">
+          <div
+            className="w-full h-full "
+            style={{
+              animation:
+                'clipPathAnim 5s infinite alternate cubic-bezier(0.4,0,0.2,1)',
+              clipPath: 'ellipse(50% 50% at 50% 50%)',
+            }}
+          >
+            <img
+              className="object-contain w-full h-full object-center animate-spin-slow "
+              src="/sharingan.png"
+              alt=""
+            />
+          </div>
+          <style>
+            {`
+              @keyframes clipPathAnim {
+          0% {
+            clip-path: ellipse(50% 50% at 50% 50%);
+          }
+            70% {
+              clip-path: ellipse(50% 50% at 50% 50%);
+          }
+          100% {
+            clip-path: ellipse(50% 0% at 50% 50%);
+          }
+              }
+            `}
+          </style>
+        </div>
       </div>
 
-      <div className="space-y-2 px-2">
+      <div className="space-y-1 px-2">
         <div className="flex items-center gap-2">
-          <div className="size-6 border rounded-sm bg-orange shadow-small"></div>
-          <span className="font-semibold">To Do:</span>
+          <div className="size-4 border rounded-sm bg-orange shadow-small"></div>
+          <span className="font-semibold text-sm">To Do:</span>
           <span className="text-sm opacity-80">
             {todo} ({total > 0 ? ((todo / total) * 100).toFixed(2) : 0}
             {'%'})
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="size-6 border rounded-sm bg-pink shadow-small"></div>
-          <span className="font-semibold">In Progress:</span>
+          <div className="size-4 border rounded-sm bg-pink shadow-small"></div>
+          <span className="font-semibold text-sm">In Progress:</span>
           <span className="text-sm opacity-80">
             {inProgress} (
             {total > 0 ? ((inProgress / total) * 100).toFixed(2) : 0}
@@ -135,14 +166,20 @@ function DonutGraphContainer() {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="size-6 border rounded-sm bg-blue shadow-small"></div>
-          <span className="font-semibold">Done:</span>
+          <div className="size-4 border rounded-sm bg-blue shadow-small"></div>
+          <span className="font-semibold text-sm">Done:</span>
           <span className="text-sm opacity-80">
             {done} ({total > 0 ? ((done / total) * 100).toFixed(2) : 0}
             {'%'})
           </span>
         </div>
       </div>
+
+      <img
+        className="absolute bottom-2 right-1 h-[75%] scale-x-[-1]"
+        src="/kakasi.png"
+        alt=""
+      />
     </div>
   );
 }
