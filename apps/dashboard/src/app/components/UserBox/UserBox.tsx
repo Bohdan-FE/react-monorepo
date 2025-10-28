@@ -24,17 +24,23 @@ function UserBox({ user }: { user: User }) {
       onClick={() => selectUser(user)}
     >
       <div className="flex items-center">
-        <div className="size-[3rem] shrink-0 rounded-full overflow-hidden">
-          <img
-            src={user.avatarUrl || '/jiraiya.png'}
-            alt={user.name}
-            className="w-full h-full object-cover object-center"
-          />
+        <div className="size-[3rem] shrink-0  relative">
+          <div className="w-full h-full rounded-full overflow-hidden">
+            <img
+              src={user.avatarUrl || '/jiraiya.png'}
+              alt={user.name}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+
+          {user.isOnline && (
+            <div className="absolute bottom-[0.1rem] right-[0.1rem] size-3 rounded-full border-2 border-white bg-green-500"></div>
+          )}
         </div>
 
         <div className="flex flex-col ">
           <p className="font-semibold text-md">{user.name}</p>
-          {user.isOnline ? (
+          {/* {user.isOnline ? (
             <span className="text-green-500">Online</span>
           ) : (
             <span className="text-gray-500 italic text-sm whitespace-nowrap">
@@ -49,6 +55,12 @@ function UserBox({ user }: { user: User }) {
                 })
                 .replace(',', '')}
             </span>
+          )} */}
+
+          {user.lastMessage && (
+            <p className="text-sm text-gray-600 line-clamp-2 max-w-[10rem] leading-none">
+              {user.lastMessage.message}
+            </p>
           )}
         </div>
       </div>

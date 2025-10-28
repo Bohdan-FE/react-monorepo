@@ -12,7 +12,7 @@ function UserFilter() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearch(input);
-    }, 500); // 500ms debounce
+    }, 500);
 
     return () => clearTimeout(handler);
   }, [input]);
