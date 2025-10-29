@@ -63,6 +63,12 @@ function UserBox({ user }: { user: User }) {
             </p>
           )}
         </div>
+
+        {user.unreadCount > 0 && (
+          <div className="ml-auto rounded-full bg-pink text-white p-1 flex items-center justify-center self-stretch aspect-square h-full shrink-0">
+            {user.unreadCount}
+          </div>
+        )}
       </div>
       <div className="grid grid-rows-[minmax(0px,0fr)] group-hover:grid-rows-[minmax(0px,1fr)] overflow-hidden transition-all duration-200 ease-in-out">
         <div className="grid [direction:rtl] grid-cols-2 gap-2 mt-[0.25rem] transition-all duration-200 ease-in-out p-1">

@@ -11,6 +11,7 @@ import { useUser } from '../../../hooks/useUser';
 import { motion } from 'motion/react';
 import { useLogout } from '../../../hooks/useLogout';
 import { MdLogout } from 'react-icons/md';
+import useUnreadMessagesCount from '../../../hooks/useUnreadMessagesCount';
 
 function Sidebar() {
   const openModal = useStore((state) => state.openModal);
@@ -18,6 +19,8 @@ function Sidebar() {
   const { data: user } = useUser();
   const { mutate: logout } = useLogout();
   const location = useLocation();
+
+  const { data: unreadMessagesCount } = useUnreadMessagesCount();
 
   return (
     <motion.aside
@@ -41,19 +44,19 @@ function Sidebar() {
       </button>
       <Profile full={isOpened} />
       <nav className="z-10">
-        <ul>
+        <ul className="flex flex-col gap-3">
           {NAVIGATION.map((item) => (
             <NavLink to={item.href} key={item.name}>
               <li
                 className={clsx(
-                  'px-4 py-4  hover:scale-105 grid transition-all   overflow-hidden',
+                  'px-4 py-4  hover:scale-105 grid transition-all mx-[0.6rem]  relative',
                   {
                     'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
                       isOpened,
                     'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
                   },
                   location.pathname === item.href
-                    ? 'bg-pink rounded-xl shadow-small scale-105 mx-[0.6rem] text-white'
+                    ? 'bg-pink rounded-xl shadow-small scale-105  text-white'
                     : 'hover:pl-6'
                 )}
               >
@@ -65,14 +68,33 @@ function Sidebar() {
                     {item.name}
                   </p>
                 </div>
+
+                {item.name === 'Chat' && unreadMessagesCount > 0 && (
+                  <div
+                    className={clsx(
+                      'absolute  bg-orange rounded-full flex items-center justify-center',
+                      {
+                        'top-1 right-1 translate-y-[-50%] translate-x-[50%] p-1 text-[0.65rem]':
+                          !isOpened,
+                        'top-1/2 translate-y-[-50%] right-3 p-2 text-xs':
+                          isOpened,
+                      }
+                    )}
+                  >
+                    <span className=" font-bold">{unreadMessagesCount}</span>
+                  </div>
+                )}
               </li>
             </NavLink>
           ))}
           {!user ? (
-            <button className="w-full" onClick={() => openModal(<AuthModal />)}>
+            <button
+              className="w-full mx-[0.6rem]"
+              onClick={() => openModal(<AuthModal />)}
+            >
               <li
                 className={clsx(
-                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  'px-4 py-4  grid transition-all duration-300 overflow-hidden',
                   {
                     'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
                       isOpened,
@@ -91,10 +113,10 @@ function Sidebar() {
               </li>
             </button>
           ) : (
-            <button className="w-full" onClick={() => logout()}>
+            <button className="w-full px-[0.6rem]" onClick={() => logout()}>
               <li
                 className={clsx(
-                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  'px-4 py-4  grid transition-all duration-300 overflow-hidden',
                   {
                     'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
                       isOpened,

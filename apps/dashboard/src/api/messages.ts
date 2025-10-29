@@ -14,3 +14,10 @@ export const fetchMessages = async (
   });
   return axiosResponse.data;
 };
+
+export const getUnreadMessagesCount = async (): Promise<{
+  unreadCount: number;
+}> => {
+  const axiosResponse = await api.get(`/messages/unread/count`);
+  return axiosResponse.data;
+};

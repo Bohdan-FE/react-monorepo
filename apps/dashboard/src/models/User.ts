@@ -9,6 +9,7 @@ export interface User {
   lastSeen: string;
   relationshipStatus?: RelationshipStatus;
   lastMessage?: Message;
+  unreadCount: number;
 }
 
 export const RelationshipStatus = {

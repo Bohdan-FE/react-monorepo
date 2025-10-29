@@ -4,7 +4,15 @@ import { PaginatedMessagesResponse } from '../models/Message';
 import { fetchMessages } from '../api/messages';
 import { useMemo } from 'react';
 
-export const useMessagesPaginated = (userId: string, perPage = 20) => {
+export const useMessagesPaginated = ({
+  userId,
+  perPage = 20,
+  enabled,
+}: {
+  userId: string;
+  perPage?: number;
+  enabled?: boolean;
+}) => {
   const query = useInfiniteQuery<
     PaginatedMessagesResponse,
     AxiosError<{ message: string }>
@@ -19,7 +27,7 @@ export const useMessagesPaginated = (userId: string, perPage = 20) => {
         : undefined;
     },
     staleTime: 0,
-    enabled: !!userId,
+    enabled: !!userId && (enabled ?? true),
     refetchOnMount: 'always',
   });
 

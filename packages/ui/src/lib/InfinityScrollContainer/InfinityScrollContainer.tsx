@@ -5,11 +5,12 @@ interface InfinityScrollContainerProps {
   hasMore: boolean;
   children: React.ReactNode;
   threshold?: number; // px before reaching the end
+  reverse?: boolean;
 }
 
 export const InfinityScrollContainer: React.FC<
   InfinityScrollContainerProps
-> = ({ loadMore, hasMore, children, threshold = 200 }) => {
+> = ({ loadMore, hasMore, children, threshold = 200, reverse = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -53,9 +54,10 @@ export const InfinityScrollContainer: React.FC<
       className="infinite-scroll-container pr-4"
       style={{ overflowY: 'auto', height: '100%' }}
     >
+      {reverse && <div ref={sentinelRef} style={{ height: 0 }} />}
       {children}
       {/* Sentinel div at the end of the list */}
-      <div ref={sentinelRef} style={{ height: 1 }} />
+      {!reverse && <div ref={sentinelRef} style={{ height: 0 }} />}
     </div>
   );
 };

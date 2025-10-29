@@ -5,6 +5,9 @@ import { useStore } from '../../../store/store';
 import { useMessagesPaginated } from '../../../hooks/useMessagesPaginated';
 import clsx from 'clsx';
 import { throttle } from 'lodash';
+import { useQueryClient } from '@tanstack/react-query';
+import { InfinityScrollContainer } from '@acme/ui';
+import { IoCheckmarkDoneSharp, IoCheckmarkOutline } from 'react-icons/io5';
 
 function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const [message, setMessage] = useState('');
@@ -14,9 +17,18 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const emit = useStore((store) => store.emit);
   const off = useStore((store) => store.off);
   const isConnected = useStore((store) => store.isConnected);
-  const { data: chatHistory } = useMessagesPaginated(target?._id || '');
+  const {
+    data: chatHistory,
+    hasNext,
+    fetchNext,
+  } = useMessagesPaginated({
+    userId: target?._id || '',
+    enabled: !!target?._id,
+  });
   const chatEndRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const queryClient = useQueryClient();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView();
@@ -61,6 +73,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
           msg._id.startsWith('temporary-id-')
       );
 
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       if (tempIndex !== -1) {
         const updated = [...prevChat];
         updated[tempIndex] = data;
@@ -124,36 +137,35 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
   };
 
   return (
-    <div style={{ padding: 20 }} className="bg-white w-full">
+    <div
+      style={{ padding: 20 }}
+      className="bg-white/50 w-full flex flex-col h-full backdrop-blur-sm"
+    >
       <div className="flex justify-between">
         <h2>Private Chat 💬</h2>
         <p>{target?.name}</p>
       </div>
-
       <div
-        className="flex flex-col gap-2"
+        className="flex-1"
         style={{
           border: '1px solid #ccc',
-          height: 250,
           overflowY: 'auto',
           marginBottom: 10,
           padding: 10,
         }}
       >
-        {chat.map((c) => (
-          <div
-            key={c._id}
-            className={clsx('p-2 rounded-md bg-blue-100 max-w-2/3', {
-              'self-end bg-orange': c.from === me._id,
-            })}
-          >
-            <b>{c.from === me._id ? 'You' : target?.name}:</b> {c.message}{' '}
-            <small style={{ color: '#888' }}>
-              {new Date(c.createdAt || '').toLocaleTimeString()}
-            </small>
+        <InfinityScrollContainer
+          loadMore={fetchNext}
+          hasMore={!!hasNext}
+          reverse
+        >
+          <div className="flex flex-col gap-2 justify-end min-h-full">
+            {chat.map((c) => (
+              <MessageItem key={c._id} message={c} me={me} target={target!} />
+            ))}
+            <div ref={chatEndRef} />
           </div>
-        ))}
-        <div ref={chatEndRef} />
+        </InfinityScrollContainer>
       </div>
 
       {isTyping ? <p>{target?.name} is typing...</p> : <p></p>}
@@ -170,3 +182,96 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
 }
 
 export default ChatBox;
+
+const MessageItem = ({
+  message,
+  me,
+  target,
+}: {
+  message: Message;
+  me: User;
+  target: User;
+}) => {
+  const messageRef = useRef<HTMLDivElement>(null);
+  const emit = useStore((store) => store.emit);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (
+          entry.isIntersecting &&
+          (message.status === MessageStatus.DELIVERED ||
+            message.status === MessageStatus.SENT) &&
+          message.from === target._id
+        ) {
+          console.log('Message read:', message._id);
+          emit('messageRead', message._id);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (messageRef.current) {
+      observer.observe(messageRef.current);
+    }
+
+    return () => {
+      if (messageRef.current) {
+        observer.unobserve(messageRef.current);
+      }
+    };
+  }, [message.status, message.from, target._id, message._id, emit]);
+
+  return (
+    <div
+      ref={messageRef}
+      className={clsx('flex gap-1 items-end max-w-[65%] ', {
+        'self-end': message.from === me._id,
+        'flex-row-reverse self-start': message.from === target._id,
+      })}
+    >
+      <div
+        className={clsx('rounded-xl shadow-small p-3 px-6 space-y-2 mb-4', {
+          'bg-blue-light rounded-br-none': message.from === me._id,
+          'bg-yellow text-black rounded-bl-none': message.from === target._id,
+        })}
+      >
+        <p className="">{message.message}</p>
+        <div
+          className={clsx('flex items-end gap-2', {
+            'justify-start flex-row-reverse': message.from === me._id,
+            'justify-end ': message.from === target._id,
+          })}
+        >
+          <p className="italic text-black/50 text-xs">
+            {new Date(message.createdAt).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+            })}{' '}
+            {new Date(message.createdAt).toLocaleTimeString('en-GB', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </p>
+
+          {message.status === MessageStatus.SENT && (
+            <IoCheckmarkOutline className="text-black/50" />
+          )}
+          {message.status === MessageStatus.DELIVERED && (
+            <IoCheckmarkDoneSharp className="text-black/50 font-bold" />
+          )}
+          {message.status === MessageStatus.READ && (
+            <IoCheckmarkDoneSharp className="text-blue font-bold" />
+          )}
+        </div>
+      </div>
+      <div className="size-[3rem] shrink-0 rounded-full overflow-hidden">
+        <img
+          className="size-full object-center object-cover"
+          src="/jiraiya.png"
+        />
+      </div>
+    </div>
+  );
+};
