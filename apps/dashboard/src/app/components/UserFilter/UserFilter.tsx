@@ -74,7 +74,7 @@ function UserFilter() {
           onChange={(e) => setInput(e.target.value)}
         />
       </div>
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
         <UserList filter={filter} search={search} />
       </div>
     </div>

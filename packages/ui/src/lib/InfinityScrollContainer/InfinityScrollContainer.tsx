@@ -10,7 +10,7 @@ interface InfinityScrollContainerProps {
 
 export const InfinityScrollContainer: React.FC<
   InfinityScrollContainerProps
-> = ({ loadMore, hasMore, children, threshold = 200, reverse = false }) => {
+> = ({ loadMore, hasMore, children, threshold = 0, reverse = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +29,6 @@ export const InfinityScrollContainer: React.FC<
         }
       },
       {
-        root: container,
         rootMargin: `0px 0px ${threshold}px 0px`,
         threshold: 0,
       }
@@ -37,7 +36,6 @@ export const InfinityScrollContainer: React.FC<
 
     observer.observe(sentinel);
 
-    // ✅ Handle the case when the sentinel is visible immediately
     if (
       container.scrollHeight <= container.clientHeight ||
       sentinel.getBoundingClientRect().top <= container.clientHeight
@@ -49,12 +47,8 @@ export const InfinityScrollContainer: React.FC<
   }, [hasMore, loadMore, threshold]);
 
   return (
-    <div
-      ref={containerRef}
-      className="infinite-scroll-container pr-4"
-      style={{ overflowY: 'auto', height: '100%' }}
-    >
-      {reverse && <div ref={sentinelRef} style={{ height: 0 }} />}
+    <div ref={containerRef} className="infinite-scroll-container pr-4">
+      {reverse && <div ref={sentinelRef} style={{ height: 1 }} />}
       {children}
       {/* Sentinel div at the end of the list */}
       {!reverse && <div ref={sentinelRef} style={{ height: 0 }} />}

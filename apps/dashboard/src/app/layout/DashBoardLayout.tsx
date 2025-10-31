@@ -25,6 +25,10 @@ function DashBoardLayout() {
           });
         }
       );
+
+      on('privateMessage', () => {
+        queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
+      });
     }
 
     const handleBeforeUnload = () => {

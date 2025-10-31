@@ -37,6 +37,7 @@ export const useUsersPaginated = (
     fetchNext: query.fetchNextPage,
     hasNext: query.hasNextPage,
     error: query.error,
+    isFetchingNextPage: query.isFetchingNextPage,
   };
 };
 

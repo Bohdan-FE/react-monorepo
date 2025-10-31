@@ -13,7 +13,7 @@ function UserList({ filter, search }: UserListProps) {
     data: users,
     hasNext,
     fetchNext,
-    isFetching,
+    isFetchingNextPage,
   } = useUsersPaginated(filter || 'all', search || '');
 
   return (
@@ -25,7 +25,7 @@ function UserList({ filter, search }: UserListProps) {
           </li>
         ))}
       </ul>
-      {isFetching && <div className="loader mx-auto mt-4"></div>}
+      {isFetchingNextPage && <div className="loader mx-auto mt-4"></div>}
     </InfinityScrollContainer>
   );
 }

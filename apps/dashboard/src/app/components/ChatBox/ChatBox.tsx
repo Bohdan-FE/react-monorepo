@@ -21,6 +21,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
     data: chatHistory,
     hasNext,
     fetchNext,
+    isFetchingNextPage,
   } = useMessagesPaginated({
     userId: target?._id || '',
     enabled: !!target?._id,
@@ -29,21 +30,39 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const queryClient = useQueryClient();
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const previousScrollHeightRef = useRef<number>(0);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView();
+    if (!chat.length) return;
+    if (isInitialLoad) {
+      chatEndRef.current?.scrollIntoView();
+      setIsInitialLoad(false);
+    } else {
+      const container = containerRef.current;
+      if (container) {
+        const newScrollHeight = container.scrollHeight;
+        const scrollDifference =
+          newScrollHeight - previousScrollHeightRef.current;
+        container.scrollTop += scrollDifference;
+      }
+    }
   }, [chat]);
 
   useEffect(() => {
     if (chatHistory) {
-      // сортируем по createdAt, если нужно на клиенте
+      const container = containerRef.current;
+      if (container && !isInitialLoad) {
+        previousScrollHeightRef.current = container.scrollHeight;
+      }
+
       const sortedChat = [...chatHistory].sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
       setChat(sortedChat);
     }
-  }, [chatHistory]);
+  }, [chatHistory, isInitialLoad]);
 
   useEffect(() => {
     if (!isConnected) return;
@@ -52,14 +71,29 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
     on('error', handleError);
     on('errorMessage', handleErrorMessage);
     on('typing', handleTyping);
+    on('messageStatusUpdate', handleMessageStatusUpdate);
 
     return () => {
       off('privateMessage', handlePrivateMessage);
       off('error', handleError);
       off('errorMessage', handleErrorMessage);
       off('typing', handleTyping);
+      off('messageStatusUpdate', handleMessageStatusUpdate);
     };
   }, [isConnected]);
+
+  const handleMessageStatusUpdate = (data: {
+    messageId: string;
+    status: MessageStatus;
+  }) => {
+    setChat((prevChat) =>
+      prevChat.map((msg) =>
+        msg._id === data.messageId ? { ...msg, status: data.status } : msg
+      )
+    );
+    queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
+    queryClient.invalidateQueries({ queryKey: ['users'] });
+  };
 
   const handlePrivateMessage = (data: Message) => {
     setChat((prevChat) => {
@@ -72,6 +106,17 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
           msg.message === data.message &&
           msg._id.startsWith('temporary-id-')
       );
+
+      queryClient.setQueryData(['users'], (oldData: any) => {
+        if (!oldData) return [];
+        const updatedUsers = oldData.map((user: User) => {
+          if (user._id === data.from) {
+            return { ...user, lastMessage: data };
+          }
+          return user;
+        });
+        return updatedUsers;
+      });
 
       queryClient.invalidateQueries({ queryKey: ['users'] });
       if (tempIndex !== -1) {
@@ -146,13 +191,13 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
         <p>{target?.name}</p>
       </div>
       <div
-        className="flex-1"
+        className="flex-1 overflow-y-auto"
         style={{
           border: '1px solid #ccc',
-          overflowY: 'auto',
           marginBottom: 10,
           padding: 10,
         }}
+        ref={containerRef}
       >
         <InfinityScrollContainer
           loadMore={fetchNext}
@@ -160,8 +205,15 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
           reverse
         >
           <div className="flex flex-col gap-2 justify-end min-h-full">
+            {isFetchingNextPage && <div className="loader mx-auto my-4"></div>}
             {chat.map((c) => (
-              <MessageItem key={c._id} message={c} me={me} target={target!} />
+              <MessageItem
+                key={c._id}
+                message={c}
+                me={me}
+                target={target!}
+                setChat={setChat}
+              />
             ))}
             <div ref={chatEndRef} />
           </div>
@@ -187,13 +239,16 @@ const MessageItem = ({
   message,
   me,
   target,
+  setChat,
 }: {
   message: Message;
   me: User;
   target: User;
+  setChat: React.Dispatch<React.SetStateAction<Message[]>>;
 }) => {
   const messageRef = useRef<HTMLDivElement>(null);
   const emit = useStore((store) => store.emit);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -204,8 +259,32 @@ const MessageItem = ({
             message.status === MessageStatus.SENT) &&
           message.from === target._id
         ) {
-          console.log('Message read:', message._id);
           emit('messageRead', message._id);
+          setChat((prevChat) =>
+            prevChat.map((msg) =>
+              msg._id === message._id
+                ? { ...msg, status: MessageStatus.READ }
+                : msg
+            )
+          );
+          queryClient.setQueryData(['unreadMessagesCount'], (oldData: any) => {
+            if (!oldData) return 0;
+            return oldData - 1;
+          });
+          // queryClient.setQueryData(['users'], (oldData: any) => {
+          //   if (!oldData) return [];
+          //   const updatedUsers = oldData.map((user: User) => {
+          //     if (user._id === target._id) {
+          //       return {
+          //         ...user,
+          //         unreadCount:
+          //           user.unreadCount - 1 < 0 ? 0 : user.unreadCount - 1,
+          //       };
+          //     }
+          //     return user;
+          //   });
+          //   return updatedUsers;
+          // });
         }
       },
       { threshold: 0.5 }
@@ -220,14 +299,14 @@ const MessageItem = ({
         observer.unobserve(messageRef.current);
       }
     };
-  }, [message.status, message.from, target._id, message._id, emit]);
+  }, [message.status, message.from, target?._id, message?._id, emit]);
 
   return (
     <div
       ref={messageRef}
       className={clsx('flex gap-1 items-end max-w-[65%] ', {
         'self-end': message.from === me._id,
-        'flex-row-reverse self-start': message.from === target._id,
+        'flex-row-reverse self-start': message.from === target?._id,
       })}
     >
       <div
