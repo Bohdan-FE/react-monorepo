@@ -26,7 +26,7 @@ function DashBoardLayout() {
         }
       );
 
-      on('privateMessage', () => {
+      on('privateMessage', (data) => {
         queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
       });
     }

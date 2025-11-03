@@ -72,11 +72,11 @@ function Sidebar() {
                 {item.name === 'Chat' && unreadMessagesCount > 0 && (
                   <div
                     className={clsx(
-                      'absolute  bg-orange rounded-full flex items-center justify-center',
+                      'absolute  bg-orange rounded-full flex items-center justify-center shrink-0 aspect-square',
                       {
-                        'top-1 right-1 translate-y-[-50%] translate-x-[50%] p-1 text-[0.65rem]':
+                        'top-1 right-1 translate-y-[-50%] translate-x-[50%] px-1 text-[0.65rem]':
                           !isOpened,
-                        'top-1/2 translate-y-[-50%] right-3 p-2 text-xs':
+                        'top-1/2 translate-y-[-50%] right-3 px-2 text-xs':
                           isOpened,
                       }
                     )}

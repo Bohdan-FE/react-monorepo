@@ -1,57 +1,35 @@
-import React, { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-interface InfinityScrollContainerProps {
+interface InfiniteScrollProps {
   loadMore: () => void;
-  hasMore: boolean;
-  children: React.ReactNode;
-  threshold?: number; // px before reaching the end
-  reverse?: boolean;
+  hasNext: boolean;
 }
 
-export const InfinityScrollContainer: React.FC<
-  InfinityScrollContainerProps
-> = ({ loadMore, hasMore, children, threshold = 0, reverse = false }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+export function InfiniteScrollContainer({
+  loadMore,
+  hasNext,
+}: InfiniteScrollProps) {
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!hasMore) return;
-
-    const container = containerRef.current;
-    const sentinel = sentinelRef.current;
-    if (!container || !sentinel) return;
+    if (!hasNext) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
+        if (entries[0].isIntersecting) {
           loadMore();
         }
       },
-      {
-        rootMargin: `0px 0px ${threshold}px 0px`,
-        threshold: 0,
-      }
+      { rootMargin: '200px' } // triggers slightly before reaching bottom
     );
 
-    observer.observe(sentinel);
+    const el = observerRef.current;
+    if (el) observer.observe(el);
 
-    if (
-      container.scrollHeight <= container.clientHeight ||
-      sentinel.getBoundingClientRect().top <= container.clientHeight
-    ) {
-      loadMore();
-    }
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, [hasNext, loadMore]);
 
-    return () => observer.disconnect();
-  }, [hasMore, loadMore, threshold]);
-
-  return (
-    <div ref={containerRef} className="infinite-scroll-container pr-4">
-      {reverse && <div ref={sentinelRef} style={{ height: 1 }} />}
-      {children}
-      {/* Sentinel div at the end of the list */}
-      {!reverse && <div ref={sentinelRef} style={{ height: 0 }} />}
-    </div>
-  );
-};
+  return <div ref={observerRef} />;
+}

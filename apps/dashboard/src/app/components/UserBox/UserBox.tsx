@@ -19,7 +19,7 @@ function UserBox({ user }: { user: User }) {
   return (
     <div
       className={clsx(
-        'cursor-pointer p-2 rounded-2xl border-2 min-w-[16.875rem] group bg-white'
+        'cursor-pointer p-2 rounded-2xl border-2 min-w-[16.875rem] group bg-white shadow-small'
       )}
       onClick={() => selectUser(user)}
     >
@@ -65,14 +65,13 @@ function UserBox({ user }: { user: User }) {
         </div>
 
         {user.unreadCount > 0 && (
-          <div className="ml-auto rounded-full bg-pink text-white p-1 flex items-center justify-center self-stretch aspect-square h-full shrink-0">
-            {user.unreadCount}
+          <div className="ml-auto rounded-full bg-pink text-white text-sm px-2 aspect-square flex items-center justify-center self-start shrink-0">
+            <p>{user.unreadCount}</p>
           </div>
         )}
       </div>
       <div className="grid grid-rows-[minmax(0px,0fr)] group-hover:grid-rows-[minmax(0px,1fr)] overflow-hidden transition-all duration-200 ease-in-out">
         <div className="grid [direction:rtl] grid-cols-2 gap-2 mt-[0.25rem] transition-all duration-200 ease-in-out p-1">
-          {/* <button>Send Message</button> */}
           {user.relationshipStatus === 'none' && (
             <button
               className={styles.button + ' bg-pink text-white'}

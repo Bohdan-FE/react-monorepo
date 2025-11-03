@@ -6,8 +6,12 @@ import { useMessagesPaginated } from '../../../hooks/useMessagesPaginated';
 import clsx from 'clsx';
 import { throttle } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
-import { InfinityScrollContainer } from '@acme/ui';
-import { IoCheckmarkDoneSharp, IoCheckmarkOutline } from 'react-icons/io5';
+import { InfiniteScrollContainer } from '@acme/ui';
+import {
+  IoCheckmarkDoneSharp,
+  IoCheckmarkOutline,
+  IoSend,
+} from 'react-icons/io5';
 
 function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const [message, setMessage] = useState('');
@@ -22,6 +26,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
     hasNext,
     fetchNext,
     isFetchingNextPage,
+    isLoading,
   } = useMessagesPaginated({
     userId: target?._id || '',
     enabled: !!target?._id,
@@ -79,6 +84,8 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
       off('errorMessage', handleErrorMessage);
       off('typing', handleTyping);
       off('messageStatusUpdate', handleMessageStatusUpdate);
+
+      queryClient.resetQueries({ queryKey: ['messages', target?._id] });
     };
   }, [isConnected]);
 
@@ -91,8 +98,8 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
         msg._id === data.messageId ? { ...msg, status: data.status } : msg
       )
     );
-    queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
     queryClient.invalidateQueries({ queryKey: ['users'] });
+    queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
   };
 
   const handlePrivateMessage = (data: Message) => {
@@ -107,18 +114,6 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
           msg._id.startsWith('temporary-id-')
       );
 
-      queryClient.setQueryData(['users'], (oldData: any) => {
-        if (!oldData) return [];
-        const updatedUsers = oldData.map((user: User) => {
-          if (user._id === data.from) {
-            return { ...user, lastMessage: data };
-          }
-          return user;
-        });
-        return updatedUsers;
-      });
-
-      queryClient.invalidateQueries({ queryKey: ['users'] });
       if (tempIndex !== -1) {
         const updated = [...prevChat];
         updated[tempIndex] = data;
@@ -127,6 +122,18 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
 
       return [...prevChat, data];
     });
+    queryClient.setQueryData(['users'], (oldData: any) => {
+      if (!oldData) return [];
+      const updatedUsers = oldData.map((user: User) => {
+        if (user._id === data.from) {
+          return { ...user, lastMessage: data };
+        }
+        return user;
+      });
+      return updatedUsers;
+    });
+
+    setIsTyping(false);
   };
 
   const handleError = (error: any) => {
@@ -148,7 +155,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
     }
   };
 
-  const startTyping = throttle((e: React.ChangeEvent<HTMLInputElement>) => {
+  const startTyping = throttle((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
     if (target) {
       emit('typing', target._id);
@@ -171,6 +178,10 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
       setMessage('');
 
       emit('privateMessage', newMessage);
+
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -182,29 +193,52 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
   };
 
   return (
-    <div
-      style={{ padding: 20 }}
-      className="bg-white/50 w-full flex flex-col h-full backdrop-blur-sm"
-    >
-      <div className="flex justify-between">
-        <h2>Private Chat 💬</h2>
-        <p>{target?.name}</p>
+    <div className="bg-blue/70 w-full flex flex-col h-full backdrop-blur-sm rounded-2xl shadow-big overflow-hidden border-2">
+      <div className="flex justify-between p-2">
+        {target && (
+          <div className="flex items-center gap-2">
+            <div className="size-[3rem] shrink-0  relative">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                <img
+                  src={target.avatarUrl || '/jiraiya.png'}
+                  alt={target.name}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+
+              {target.isOnline && (
+                <div className="absolute bottom-[0.1rem] right-[0.1rem] size-3 rounded-full border-2 border-white bg-green-500"></div>
+              )}
+            </div>
+            <div>
+              <p className="font-semibold ">{target.name}</p>
+              {target.isOnline ? (
+                <span className="text-green-800">Online</span>
+              ) : (
+                <span className=" italic text-sm whitespace-nowrap">
+                  Last online:{' '}
+                  {new Date(target.lastSeen)
+                    .toLocaleString('en-US', {
+                      day: '2-digit',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                    })
+                    .replace(',', '')}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       <div
-        className="flex-1 overflow-y-auto"
-        style={{
-          border: '1px solid #ccc',
-          marginBottom: 10,
-          padding: 10,
-        }}
+        className="flex-1 overflow-y-auto rounded-xl border-2 p-2 mx-4 bg-white"
         ref={containerRef}
       >
-        <InfinityScrollContainer
-          loadMore={fetchNext}
-          hasMore={!!hasNext}
-          reverse
-        >
+        {!isLoading ? (
           <div className="flex flex-col gap-2 justify-end min-h-full">
+            <InfiniteScrollContainer loadMore={fetchNext} hasNext={!!hasNext} />
             {isFetchingNextPage && <div className="loader mx-auto my-4"></div>}
             {chat.map((c) => (
               <MessageItem
@@ -217,18 +251,33 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
             ))}
             <div ref={chatEndRef} />
           </div>
-        </InfinityScrollContainer>
+        ) : (
+          <p className="text-center">Loading...</p>
+        )}
       </div>
 
-      {isTyping ? <p>{target?.name} is typing...</p> : <p></p>}
+      <div className="p-4">
+        {isTyping ? <p>{target?.name} is typing...</p> : <p></p>}
 
-      <input
-        placeholder="Message..."
-        value={message}
-        onChange={startTyping}
-        onKeyDown={handleKeyPress}
-      />
-      <button onClick={sendMessage}>Send</button>
+        <div className="flex gap-4">
+          <textarea
+            id="chat-message-input"
+            name="chat-message-input"
+            className="bg-white p-2 rounded-xl w-full field-sizing-content max-h-[8rem] resize-none border-2 focus:outline-none"
+            placeholder="Message..."
+            value={message}
+            onChange={startTyping}
+            onKeyDown={handleKeyPress}
+            rows={1}
+          />
+          <button
+            className="px-4 rounded-md shadow-small flex items-center justify-center bg-pink active:shadow-none active:scale-95 transition-all"
+            onClick={sendMessage}
+          >
+            <IoSend />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -271,20 +320,6 @@ const MessageItem = ({
             if (!oldData) return 0;
             return oldData - 1;
           });
-          // queryClient.setQueryData(['users'], (oldData: any) => {
-          //   if (!oldData) return [];
-          //   const updatedUsers = oldData.map((user: User) => {
-          //     if (user._id === target._id) {
-          //       return {
-          //         ...user,
-          //         unreadCount:
-          //           user.unreadCount - 1 < 0 ? 0 : user.unreadCount - 1,
-          //       };
-          //     }
-          //     return user;
-          //   });
-          //   return updatedUsers;
-          // });
         }
       },
       { threshold: 0.5 }
@@ -311,15 +346,15 @@ const MessageItem = ({
     >
       <div
         className={clsx('rounded-xl shadow-small p-3 px-6 space-y-2 mb-4', {
-          'bg-blue-light rounded-br-none': message.from === me._id,
-          'bg-yellow text-black rounded-bl-none': message.from === target._id,
+          'bg-pink/50 rounded-br-none': message.from === me._id,
+          'bg-orange/50  rounded-bl-none': message.from === target?._id,
         })}
       >
-        <p className="">{message.message}</p>
+        <p className="whitespace-pre-wrap">{message.message}</p>
         <div
           className={clsx('flex items-end gap-2', {
             'justify-start flex-row-reverse': message.from === me._id,
-            'justify-end ': message.from === target._id,
+            'justify-end ': message.from === target?._id,
           })}
         >
           <p className="italic text-black/50 text-xs">

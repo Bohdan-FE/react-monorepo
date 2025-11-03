@@ -1,7 +1,9 @@
-import { InfinityScrollContainer } from '@acme/ui';
+import { InfiniteScrollContainer } from '@acme/ui';
 import useUsersPaginated from '../../hooks/useUsersPaginated';
 import { UserFilter } from '../../models/User';
 import UserBox from './UserBox/UserBox';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface UserListProps {
   filter?: UserFilter;
@@ -15,18 +17,26 @@ function UserList({ filter, search }: UserListProps) {
     fetchNext,
     isFetchingNextPage,
   } = useUsersPaginated(filter || 'all', search || '');
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    return () => {
+      queryClient.resetQueries({ queryKey: ['users', filter, search] });
+    };
+  }, []);
 
   return (
-    <InfinityScrollContainer loadMore={fetchNext} hasMore={hasNext}>
-      <ul className="space-y-2">
+    <>
+      <ul className="space-y-2 pr-4">
         {users.map((user) => (
           <li key={user._id}>
             <UserBox user={user} />
           </li>
         ))}
+        <InfiniteScrollContainer loadMore={fetchNext} hasNext={hasNext} />
       </ul>
       {isFetchingNextPage && <div className="loader mx-auto mt-4"></div>}
-    </InfinityScrollContainer>
+    </>
   );
 }
 

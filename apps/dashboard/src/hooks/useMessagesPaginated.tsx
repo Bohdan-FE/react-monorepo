@@ -26,9 +26,9 @@ export const useMessagesPaginated = ({
         ? lastPage.meta.page + 1
         : undefined;
     },
-    staleTime: 0,
+    staleTime: 1000 * 60 * 5,
     enabled: !!userId && (enabled ?? true),
-    refetchOnMount: 'always',
+    refetchOnMount: true,
   });
 
   const messages = useMemo(

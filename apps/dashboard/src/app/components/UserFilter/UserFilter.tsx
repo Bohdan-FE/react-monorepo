@@ -40,8 +40,8 @@ function UserFilter() {
   };
 
   return (
-    <div className="p-4 w-full max-w-[25.25rem] flex flex-col">
-      <div className="relative w-fit ml-auto min-w-[11.625rem] mb-3">
+    <div className="p-4 pr-0 w-full max-w-[25.25rem] flex flex-col bg-pink/70 rounded-2xl shadow-big border-2">
+      <div className="relative w-fit ml-auto min-w-[11.625rem] mb-3 pr-4">
         <div
           className="flex items-center justify-between gap-2  p-2 rounded-xl bg-blue-dark text-white  shadow-small  cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
@@ -65,9 +65,9 @@ function UserFilter() {
         )}
       </div>
 
-      <div className="pr-4 mb-2">
+      <div className="mb-2 pr-4">
         <input
-          className="px-2 py-2 rounded-xl border-2 outline-0 w-full"
+          className="px-2 py-2 rounded-xl border-2 outline-0 w-full bg-white"
           type="text"
           placeholder="Search users..."
           value={input}

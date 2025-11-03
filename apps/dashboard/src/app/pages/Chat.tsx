@@ -9,7 +9,7 @@ const Chat = () => {
   const target = useStore((store) => store.selectedUser);
 
   return (
-    <div className="flex justify-between h-full">
+    <div className="flex justify-between h-full p-4 gap-4">
       {me && <ChatBox me={me} target={target} />}
 
       <UserFilter />
