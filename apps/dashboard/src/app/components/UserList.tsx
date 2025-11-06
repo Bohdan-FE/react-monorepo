@@ -27,7 +27,7 @@ function UserList({ filter, search }: UserListProps) {
 
   return (
     <>
-      <ul className="space-y-2 pr-4">
+      <ul className="space-y-2 pr-4 py-4">
         {users.map((user) => (
           <li key={user._id}>
             <UserBox user={user} />

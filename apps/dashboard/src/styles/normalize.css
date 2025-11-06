@@ -165,6 +165,7 @@ textarea {
   font-size: 100%; /* 1 */
   line-height: 1.15; /* 1 */
   margin: 0; /* 2 */
+  background-color: transparent;
 }
 
 /**
@@ -348,4 +349,9 @@ template {
 
 [hidden] {
   display: none;
+}
+
+input:-webkit-autofill {
+  background-color: transparent !important;
+  transition: background-color 5000s ease-in-out 0s;
 }

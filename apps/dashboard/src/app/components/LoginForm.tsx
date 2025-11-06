@@ -22,19 +22,27 @@ function LoginForm() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <input
-          {...register('email', {
-            required: 'Email is required',
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: 'Please enter a valid email address',
-            },
-          })}
-          type="email"
-          placeholder="Enter your email"
-        />
+    <div className="flex flex-col gap-6">
+      <p className=" text-[2.5rem] font-DMSans font-bold">Accaunt Login</p>
+      <p className=" font-DMSans">Welcome back Shinobi!</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <div className=" flex flex-col gap-2">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Please enter a valid email address',
+              },
+            })}
+            type="email"
+            placeholder="Enter your email address"
+            className="p-3 border-2 border-white/30 rounded-sm !bg-black/30 focus:outline-none outline-none text-[1.25rem]"
+          />
+        </div>
+
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
         <input

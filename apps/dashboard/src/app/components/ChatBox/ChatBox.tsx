@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { User } from '../../../models/User';
 import { Message, MessageStatus } from '../../../models/Message';
 import { useStore } from '../../../store/store';
@@ -12,6 +12,7 @@ import {
   IoCheckmarkOutline,
   IoSend,
 } from 'react-icons/io5';
+import { MdOutlineDoubleArrow } from 'react-icons/md';
 
 function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const [message, setMessage] = useState('');
@@ -37,6 +38,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousScrollHeightRef = useRef<number>(0);
+  const [isAtBottom, setIsAtBottom] = useState(false);
 
   useEffect(() => {
     if (!chat.length) return;
@@ -88,6 +90,33 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
       queryClient.resetQueries({ queryKey: ['messages', target?._id] });
     };
   }, [isConnected]);
+
+  useEffect(() => {
+    const interceptor = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsAtBottom(true);
+          } else {
+            setIsAtBottom(false);
+          }
+        });
+      },
+      {
+        root: null, // viewport
+        rootMargin: '0px 0px 1000px 0px', // start observing 100px before the element is visible
+        threshold: 0,
+      }
+    );
+    if (chatEndRef.current) {
+      interceptor.observe(chatEndRef.current);
+    }
+    return () => {
+      if (chatEndRef.current) {
+        interceptor.unobserve(chatEndRef.current);
+      }
+    };
+  }, [chatEndRef]);
 
   const handleMessageStatusUpdate = (data: {
     messageId: string;
@@ -233,7 +262,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
         )}
       </div>
       <div
-        className="flex-1 overflow-y-auto rounded-xl border-2 p-2 mx-4 bg-white"
+        className=" flex-1 overflow-y-auto rounded-xl border-2 p-2 mx-4 bg-[url('/naruto-chat-bg.jpg')] bg-size-[20%_auto]"
         ref={containerRef}
       >
         {!isLoading ? (
@@ -256,7 +285,21 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
         )}
       </div>
 
-      <div className="p-4">
+      <div className="p-4 relative">
+        <button
+          className="bottom-[calc(100%+1rem)] left-1/2 translate-x-[-50%] bg-white border-2 shadow-small rounded-full p-2 z-2 absolute active:scale-95 active:shadow-none transition-all"
+          style={{
+            display: !isAtBottom ? 'block' : 'none',
+          }}
+          onClick={() => {
+            containerRef.current?.scrollTo({
+              top: containerRef.current.scrollHeight,
+              behavior: 'smooth',
+            });
+          }}
+        >
+          <MdOutlineDoubleArrow className="rotate-[90deg] text-2xl" />
+        </button>
         {isTyping ? <p>{target?.name} is typing...</p> : <p></p>}
 
         <div className="flex gap-4">
@@ -339,21 +382,26 @@ const MessageItem = ({
   return (
     <div
       ref={messageRef}
-      className={clsx('flex gap-1 items-end max-w-[65%] ', {
+      className={clsx('flex gap-1 items-end max-w-[65%]', {
         'self-end': message.from === me._id,
         'flex-row-reverse self-start': message.from === target?._id,
       })}
     >
       <div
-        className={clsx('rounded-xl shadow-small p-3 px-6 space-y-2 mb-4', {
-          'bg-pink/50 rounded-br-none': message.from === me._id,
-          'bg-orange/50  rounded-bl-none': message.from === target?._id,
-        })}
+        className={clsx(
+          'rounded-xl shadow-small p-3 px-6 space-y-2 mb-4 min-w-[10rem]',
+          {
+            'bg-green-300 backdrop-blur-[1rem] rounded-br-none':
+              message.from === me._id,
+            'bg-purple-300 backdrop-blur-[1rem] rounded-bl-none ':
+              message.from === target?._id,
+          }
+        )}
       >
         <p className="whitespace-pre-wrap">{message.message}</p>
         <div
           className={clsx('flex items-end gap-2', {
-            'justify-start flex-row-reverse': message.from === me._id,
+            'justify-end flex-row-reverse': message.from === me._id,
             'justify-end ': message.from === target?._id,
           })}
         >

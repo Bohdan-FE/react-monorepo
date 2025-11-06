@@ -19,11 +19,11 @@ function UserBox({ user }: { user: User }) {
   return (
     <div
       className={clsx(
-        'cursor-pointer p-2 rounded-2xl border-2 min-w-[16.875rem] group bg-white shadow-small'
+        'cursor-pointer p-2 rounded-2xl border-2 min-w-[16.875rem] group bg-white shadow-small flex items-center justify-between gap-4 relative'
       )}
       onClick={() => selectUser(user)}
     >
-      <div className="flex items-center">
+      <div className="flex items-center max-w-1/2">
         <div className="size-[3rem] shrink-0  relative">
           <div className="w-full h-full rounded-full overflow-hidden">
             <img
@@ -40,92 +40,69 @@ function UserBox({ user }: { user: User }) {
 
         <div className="flex flex-col ">
           <p className="font-semibold text-md">{user.name}</p>
-          {/* {user.isOnline ? (
-            <span className="text-green-500">Online</span>
-          ) : (
-            <span className="text-gray-500 italic text-sm whitespace-nowrap">
-              Last online:{' '}
-              {new Date(user.lastSeen)
-                .toLocaleString('en-US', {
-                  day: '2-digit',
-                  month: 'short',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false,
-                })
-                .replace(',', '')}
-            </span>
-          )} */}
-
           {user.lastMessage && (
             <p className="text-sm text-gray-600 line-clamp-2 max-w-[10rem] leading-none">
               {user.lastMessage.message}
             </p>
           )}
         </div>
-
-        {user.unreadCount > 0 && (
-          <div className="ml-auto rounded-full bg-pink text-white text-sm px-2 aspect-square flex items-center justify-center self-start shrink-0">
-            <p>{user.unreadCount}</p>
-          </div>
-        )}
       </div>
-      <div className="grid grid-rows-[minmax(0px,0fr)] group-hover:grid-rows-[minmax(0px,1fr)] overflow-hidden transition-all duration-200 ease-in-out">
-        <div className="grid [direction:rtl] grid-cols-2 gap-2 mt-[0.25rem] transition-all duration-200 ease-in-out p-1">
-          {user.relationshipStatus === 'none' && (
+
+      <div className="flex gap-2">
+        {user.relationshipStatus === 'none' && (
+          <button
+            className={styles.button + ' bg-pink text-white'}
+            onClick={() => sendFriendRequest(user._id)}
+          >
+            <IoPersonAdd className="shrink-0 text-base" />
+            <p className="truncate">Add friend</p>
+          </button>
+        )}
+        {user.relationshipStatus === 'request_sent' && (
+          <>
             <button
-              className={styles.button + ' bg-pink text-white'}
-              onClick={() => sendFriendRequest(user._id)}
+              className={styles.button + ' bg-orange text-white'}
+              onClick={() => rejectFriendRequest(user._id)}
+            >
+              <TbCancel className="shrink-0 text-base" />
+              <p className="truncate">Cancel Request</p>
+            </button>
+          </>
+        )}
+        {user.relationshipStatus === 'request_received' && (
+          <>
+            <button
+              className={styles.button + ' bg-orange text-white'}
+              onClick={() => acceptFriendRequest(user._id)}
             >
               <IoPersonAdd className="shrink-0 text-base" />
-              <p>Add to Friends</p>
+              <p className="truncate">Accept Request</p>
             </button>
-          )}
-          {user.relationshipStatus === 'friend' && (
             <button
               className={styles.button + ' bg-blue text-white'}
-              onClick={() => removeFriend(user._id)}
+              onClick={() => rejectFriendRequest(user._id)}
             >
-              <MdPersonAddDisabled className="shrink-0 text-base" />
-              <p>Remove Friend</p>
+              <TbCancel className="shrink-0 text-base" />
+              <p className="truncate">Reject Request</p>
             </button>
-          )}
-          {user.relationshipStatus === 'request_received' && (
-            <>
-              <button
-                className={styles.button + ' bg-orange'}
-                onClick={() => acceptFriendRequest(user._id)}
-              >
-                <IoPersonAdd className="shrink-0 text-base" />
-                <p>Accept Request</p>
-              </button>
-              <button
-                className={styles.button + ' bg-blue text-white'}
-                onClick={() => rejectFriendRequest(user._id)}
-              >
-                <MdPersonAddDisabled className="shrink-0" />
-                <p>Reject Request</p>
-              </button>
-            </>
-          )}
-          {user.relationshipStatus === 'request_sent' && (
-            <>
-              <button
-                className={styles.button + ' bg-orange text-white'}
-                onClick={() => rejectFriendRequest(user._id)}
-              >
-                <TbCancel className="shrink-0 text-base" />
-                <p>Cancel Request</p>
-              </button>
-              <div className="flex items-center ">
-                <p className="text-sm italic text-gray-500">
-                  Friends request sent
-                </p>
-              </div>
-            </>
-          )}
-        </div>
+          </>
+        )}
+        {user.relationshipStatus === 'friend' && (
+          <button
+            className={styles.button + ' bg-blue text-white'}
+            onClick={() => removeFriend(user._id)}
+          >
+            <MdPersonAddDisabled className="shrink-0 text-base" />
+            <p className="truncate">Remove Friend</p>
+          </button>
+        )}
       </div>
+
+      {user.unreadCount > 0 && (
+        <div className="ml-auto rounded-full bg-orange border-2 shadow-small text-sm px-2 aspect-square flex items-center justify-center self-start shrink-0 absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+          <p>{user.unreadCount}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -134,5 +111,5 @@ export default UserBox;
 
 const styles = {
   button:
-    'rounded-xl px-2 py-[0.25rem] shadow-small text-sm [direction:initial] font-light active:scale-95 justify-center active:shadow-none items-center flex gap-1',
+    'rounded-full h-8 px-2  shadow-small text-sm  font-light active:scale-95 justify-center active:shadow-none items-center grid grid-cols-[minmax(0px,auto)_minmax(0px,0fr)] hover:grid-cols-[minmax(0px,auto)_minmax(0px,1fr)] hover:gap-1 transition-all',
 };

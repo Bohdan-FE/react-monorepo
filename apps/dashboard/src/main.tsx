@@ -6,23 +6,34 @@ import App from './app/App';
 import Home from './app/pages/Home';
 import ChatPage from './app/pages/Chat';
 import Game from './app/pages/Game';
+import ProtectedRoute from './app/components/ProtectedRouter/ProtectedRouter';
+import Authenticate from './app/pages/Authenticate';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    Component: App,
+    element: <App />, // base layout
     children: [
       {
-        path: '/',
-        Component: Home,
+        path: '/authenticate',
+        element: <Authenticate />,
       },
       {
-        path: '/chat',
-        Component: ChatPage,
-      },
-      {
-        path: '/game',
-        Component: Game,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: 'chat',
+            element: <ChatPage />,
+          },
+          {
+            path: 'game',
+            element: <Game />,
+          },
+        ],
       },
     ],
   },

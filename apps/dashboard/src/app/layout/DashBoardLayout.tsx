@@ -1,9 +1,9 @@
-import { Outlet } from 'react-router';
 import Sidebar from '../components/Sidebar/Sidebar';
 import { useEffect } from 'react';
 import { useStore } from '../../store/store';
 import { useUser } from '../../hooks/useUser';
 import { useQueryClient } from '@tanstack/react-query';
+import { Outlet } from 'react-router';
 
 function DashBoardLayout() {
   const connect = useStore((store) => store.connect);
