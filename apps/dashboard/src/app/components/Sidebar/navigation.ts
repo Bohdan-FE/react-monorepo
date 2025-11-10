@@ -1,11 +1,12 @@
-import { SiHomeassistantcommunitystore } from 'react-icons/si';
 import { BsFillChatSquareTextFill } from 'react-icons/bs';
+import { BsFillGrid1X2Fill } from 'react-icons/bs';
+import { MdBubbleChart } from 'react-icons/md';
 
 export const NAVIGATION = [
   {
     name: 'Home',
     href: '/',
-    IconComponent: SiHomeassistantcommunitystore,
+    IconComponent: BsFillGrid1X2Fill,
   },
   {
     name: 'Chat',
@@ -15,6 +16,6 @@ export const NAVIGATION = [
   {
     name: 'Game',
     href: '/game',
-    IconComponent: BsFillChatSquareTextFill,
+    IconComponent: MdBubbleChart,
   },
 ];

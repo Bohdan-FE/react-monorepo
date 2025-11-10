@@ -1,89 +1,49 @@
 import { useForm } from 'react-hook-form';
-import { useRegister } from '../../hooks/useRegister';
-import Input from './ui/Input/Input';
-import { useLogin } from '../../hooks/useLogin';
+import Input from '../ui/Input/Input';
+import { useRegister } from '../../../hooks/useRegister';
+import { useLogin } from '../../../hooks/useLogin';
 
-type Inputs = {
-  email: string;
+interface Inputs {
   password: string;
-  name: string;
   'repeat-password': string;
-};
+}
 
-function RegisterForm({}: {}) {
+function CreatePassword({
+  credentials,
+}: {
+  credentials: { email: string; name: string };
+}) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
     watch,
+    formState: { errors, isValid },
   } = useForm<Inputs>({
     mode: 'onChange',
   });
   const {
     mutate: registerFn,
-    error: registerError,
+    error,
     isPending: isRegisterPending,
   } = useRegister();
-  const {
-    mutate: login,
-    error: loginError,
-    isPending: isLoginPending,
-  } = useLogin();
+  const { mutate: login, isPending: isLoginPending } = useLogin();
 
   const onSubmit = (data: Inputs) => {
-    registerFn(data, {
-      onSuccess: () => {
-        login({ email: data.email, password: data.password });
-      },
-    });
+    registerFn(
+      { password: data.password, ...credentials },
+      {
+        onSuccess: () => {
+          login({ email: credentials.email, password: data.password });
+        },
+      }
+    );
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <p className=" text-[2.5rem] font-DMSans font-bold">
-        Create your account
-      </p>
+      <p className=" text-[2.5rem] font-DMSans font-bold">Create password</p>
+
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className=" flex flex-col ">
-          <label htmlFor="name" className="mb-2">
-            Shinobi Name
-          </label>
-          <Input
-            id="name"
-            autoComplete="off"
-            {...register('name', {
-              required: 'Name is required',
-            })}
-            type="text"
-            placeholder="Enter your name"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm pl-2">{errors.name.message}</p>
-          )}
-        </div>
-
-        <div className=" flex flex-col ">
-          <label htmlFor="email" className="mb-2">
-            Shinobi ID (Email)
-          </label>
-          <Input
-            id="email"
-            autoComplete="off"
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Please enter a valid email address',
-              },
-            })}
-            type="email"
-            placeholder="Enter your email address"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm pl-2">{errors.email.message}</p>
-          )}
-        </div>
-
         <div className=" flex flex-col">
           <label htmlFor="password" className="mb-2">
             Secret Jutsu (Password)
@@ -134,12 +94,9 @@ function RegisterForm({}: {}) {
           )}
         </div>
 
-        {(registerError || loginError) && (
+        {error && (
           <div className="text-red-500 text-sm">
-            <p>
-              {registerError?.response?.data.message ||
-                loginError?.response?.data.message}
-            </p>
+            <p>{error.response?.data.message}</p>
           </div>
         )}
 
@@ -147,18 +104,16 @@ function RegisterForm({}: {}) {
           type="submit"
           disabled={!isValid || isRegisterPending || isLoginPending}
           className={`p-3 bg-orange text-white rounded-2xl border-2 border-black active:shadow-none transition-all shadow-small ${
-            !isValid || isRegisterPending || isLoginPending
-              ? 'opacity-50 cursor-not-allowed'
-              : ''
+            !isValid ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
           {isRegisterPending || isLoginPending
-            ? 'Loading...'
-            : 'Enter the Village'}
+            ? 'Creating Account...'
+            : 'Create Account'}
         </button>
       </form>
     </div>
   );
 }
 
-export default RegisterForm;
+export default CreatePassword;

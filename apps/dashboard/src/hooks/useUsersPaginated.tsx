@@ -3,6 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { PaginatedUsersResponse, UserFilter } from '../models/User';
 import { AxiosError } from 'axios';
 import { fetchUsers } from '../api/users';
+import { useMemo } from 'react';
 
 export const useUsersPaginated = (
   filter: UserFilter = 'all',
@@ -28,7 +29,10 @@ export const useUsersPaginated = (
   });
 
   // Flatten users from all loaded pages
-  const users = query.data?.pages.flatMap((page) => page.data) ?? [];
+  const users = useMemo(
+    () => query.data?.pages.flatMap((page) => page.data) ?? [],
+    [query.data]
+  );
 
   return {
     data: users,

@@ -71,6 +71,10 @@ class SocketService {
     this.socket?.on(event, callback);
   }
 
+  once<T = any>(event: SocketEvents | string, callback: (data: T) => void) {
+    this.socket?.once(event, callback);
+  }
+
   /**
    * Stop listening for specific event
    */

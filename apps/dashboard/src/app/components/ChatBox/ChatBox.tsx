@@ -103,9 +103,9 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
         });
       },
       {
-        root: null, // viewport
-        rootMargin: '0px 0px 1000px 0px', // start observing 100px before the element is visible
         threshold: 0,
+        rootMargin: '400px',
+        root: containerRef.current || undefined,
       }
     );
     if (chatEndRef.current) {
@@ -117,6 +117,11 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
       }
     };
   }, [chatEndRef]);
+
+  useEffect(() => {
+    setIsInitialLoad(true);
+    setChat([]);
+  }, [target?._id]);
 
   const handleMessageStatusUpdate = (data: {
     messageId: string;
@@ -262,27 +267,34 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
         )}
       </div>
       <div
-        className=" flex-1 overflow-y-auto rounded-xl border-2 p-2 mx-4 bg-[url('/naruto-chat-bg.jpg')] bg-size-[20%_auto]"
+        className=" flex-1 overflow-y-auto rounded-xl border-2 mx-4 bg-[url('/naruto-chat-bg.jpg')] bg-size-[20%_auto]"
         ref={containerRef}
       >
-        {!isLoading ? (
-          <div className="flex flex-col gap-2 justify-end min-h-full">
-            <InfiniteScrollContainer loadMore={fetchNext} hasNext={!!hasNext} />
-            {isFetchingNextPage && <div className="loader mx-auto my-4"></div>}
-            {chat.map((c) => (
-              <MessageItem
-                key={c._id}
-                message={c}
-                me={me}
-                target={target!}
-                setChat={setChat}
+        <div className="bg-white/30 p-2 min-h-full flex items-end ">
+          {!isLoading ? (
+            <div className="flex flex-col gap-2 justify-end min-h-full w-full">
+              <InfiniteScrollContainer
+                loadMore={fetchNext}
+                hasNext={!!hasNext}
               />
-            ))}
-            <div ref={chatEndRef} />
-          </div>
-        ) : (
-          <p className="text-center">Loading...</p>
-        )}
+              {isFetchingNextPage && (
+                <div className="loader mx-auto my-4"></div>
+              )}
+              {chat.map((c) => (
+                <MessageItem
+                  key={c._id}
+                  message={c}
+                  me={me}
+                  target={target!}
+                  setChat={setChat}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center">Loading...</p>
+          )}
+          <div className="" ref={chatEndRef} />
+        </div>
       </div>
 
       <div className="p-4 relative">
@@ -306,7 +318,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
           <textarea
             id="chat-message-input"
             name="chat-message-input"
-            className="bg-white p-2 rounded-xl w-full field-sizing-content max-h-[8rem] resize-none border-2 focus:outline-none"
+            className="!bg-white p-2 rounded-xl w-full field-sizing-content max-h-[8rem] resize-none border-2 focus:outline-none"
             placeholder="Message..."
             value={message}
             onChange={startTyping}
@@ -317,7 +329,7 @@ function ChatBox({ me, target }: { me: User; target?: User | null }) {
             className="px-4 rounded-md shadow-small flex items-center justify-center bg-pink active:shadow-none active:scale-95 transition-all"
             onClick={sendMessage}
           >
-            <IoSend />
+            <IoSend className="text-white" />
           </button>
         </div>
       </div>
@@ -379,6 +391,8 @@ const MessageItem = ({
     };
   }, [message.status, message.from, target?._id, message?._id, emit]);
 
+  if (!target._id) return null;
+
   return (
     <div
       ref={messageRef}
@@ -389,7 +403,7 @@ const MessageItem = ({
     >
       <div
         className={clsx(
-          'rounded-xl shadow-small p-3 px-6 space-y-2 mb-4 min-w-[10rem]',
+          'rounded-xl shadow-small p-3  space-y-2 mb-4 min-w-[10rem]',
           {
             'bg-green-300 backdrop-blur-[1rem] rounded-br-none':
               message.from === me._id,

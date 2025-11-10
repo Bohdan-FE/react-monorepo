@@ -11,6 +11,7 @@ export interface SocketStore {
   emit: (event: string, data?: any) => void;
   on: <T = any>(event: string, callback: (data: T) => void) => void;
   off: <T = any>(event: string, callback?: (data: T) => void) => void;
+  once: <T = any>(event: string, callback: (data: T) => void) => void;
 }
 
 export const createSocketSlice: StateCreator<SocketStore> = (set, get) => ({
@@ -49,5 +50,9 @@ export const createSocketSlice: StateCreator<SocketStore> = (set, get) => ({
 
   off: (event, callback) => {
     get().socket?.off(event, callback);
+  },
+
+  once: (event, callback) => {
+    get().socket?.once(event, callback);
   },
 });

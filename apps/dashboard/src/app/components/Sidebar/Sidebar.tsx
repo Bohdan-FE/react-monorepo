@@ -1,9 +1,8 @@
-import { Link, NavLink, useLocation } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import Profile from '../Profile';
 import { useStore } from '../../../store/store';
 import AuthModal from '../Modal/AuthModal';
 import { NAVIGATION } from './navigation';
-import { IoChevronBackCircleOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { FiLogIn } from 'react-icons/fi';
 import clsx from 'clsx';
@@ -29,19 +28,11 @@ function Sidebar() {
       )}
       animate={{
         width: isOpened ? 232 : 64,
-        // borderBottomRightRadius: isOpened ? '0rem' : '50%',
-        // borderTopRightRadius: isOpened ? '0rem' : '50%',
         transition: { duration: 0.2, ease: 'easeInOut' },
       }}
       onMouseEnter={() => setIsOpened(true)}
       onMouseLeave={() => setIsOpened(false)}
     >
-      <button
-        className="absolute top-2 right-2 z-20"
-        onClick={() => setIsOpened((prev) => !prev)}
-      >
-        <IoChevronBackCircleOutline className="w-5 h-5" />
-      </button>
       <Profile full={isOpened} />
       <nav className="z-10">
         <ul className="flex flex-col gap-3">

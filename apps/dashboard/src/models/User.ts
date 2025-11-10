@@ -42,4 +42,12 @@ export const UserFilter = {
   requestReceived: 'request_received',
 } as const;
 
+export interface GoogleLoginResponse {
+  token?: string;
+  _id?: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+}
+
 export type UserFilter = (typeof UserFilter)[keyof typeof UserFilter];

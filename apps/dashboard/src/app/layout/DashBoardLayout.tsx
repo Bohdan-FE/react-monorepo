@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { useStore } from '../../store/store';
 import { useUser } from '../../hooks/useUser';
 import { useQueryClient } from '@tanstack/react-query';
-import { Outlet } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
+import NotificationWidget from '../components/NotificationWidget/NotifivationWidget';
 
 function DashBoardLayout() {
   const connect = useStore((store) => store.connect);
@@ -11,23 +12,40 @@ function DashBoardLayout() {
   const { data: user } = useUser();
   const on = useStore((store) => store.on);
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const selectedUser = useStore((state) => state.selectedUser);
 
   useEffect(() => {
     if (user) {
       const token = localStorage.getItem('authToken');
       if (!token) return;
       connect('http://localhost:3000', token);
-      on(
-        'user_status_change',
-        ({ userId, isOnline }: { userId: string; isOnline: boolean }) => {
-          queryClient.invalidateQueries({
-            queryKey: ['users'],
-          });
-        }
-      );
+      on('user_status_change', () => {
+        queryClient.invalidateQueries({
+          queryKey: ['users'],
+        });
+      });
 
-      on('privateMessage', (data) => {
-        queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
+      on('privateMessage', () => {
+        if (location.pathname !== '/chat' && !selectedUser) {
+          queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
+        }
+      });
+
+      on('friendRequestAccepted', () => {
+        queryClient.invalidateQueries({ queryKey: ['users'] });
+      });
+
+      on('friendRequestRejected', () => {
+        queryClient.invalidateQueries({ queryKey: ['users'] });
+      });
+
+      on('friendRemoved', () => {
+        queryClient.invalidateQueries({ queryKey: ['users'] });
+      });
+
+      on('friendRequestReceived', () => {
+        queryClient.invalidateQueries({ queryKey: ['users'] });
       });
     }
 
@@ -49,6 +67,7 @@ function DashBoardLayout() {
       <main className="w-full border-black bg-[url('/naruto-bg.png')]  bg-center bg-no-repeat flex-1 pl-16">
         <Outlet />
       </main>
+      <NotificationWidget />
     </div>
   );
 }

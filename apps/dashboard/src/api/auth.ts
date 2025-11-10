@@ -1,3 +1,4 @@
+import { GoogleLoginResponse } from '../models/User';
 import api from './api';
 
 export interface LoginPayload {
@@ -27,6 +28,15 @@ export const register = async ({ name, email, password }: RegisterPayload) => {
   });
 
   return axiosResponse.data;
+};
+
+export const googleAuth = async (
+  access_token: string
+): Promise<GoogleLoginResponse> => {
+  const res = await api.post('/auth/google', {
+    access_token,
+  });
+  return res.data;
 };
 
 export const fetchUser = async () => {
