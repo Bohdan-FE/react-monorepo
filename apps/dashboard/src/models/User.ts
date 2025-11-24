@@ -4,7 +4,7 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  avatarUrl?: string;
+  avatarURL?: string;
   isOnline: boolean;
   lastSeen: string;
   relationshipStatus?: RelationshipStatus;

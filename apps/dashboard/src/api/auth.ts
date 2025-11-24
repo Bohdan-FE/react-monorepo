@@ -12,6 +12,12 @@ export interface RegisterPayload {
   password: string;
 }
 
+export interface UpdateUserPayload {
+  name?: string;
+  email?: string;
+  file?: File;
+}
+
 export const login = async ({ email, password }: LoginPayload) => {
   const axiosResponse = await api.post(`/auth/login`, {
     email,
@@ -46,5 +52,14 @@ export const fetchUser = async () => {
 
 export const logout = async () => {
   const axiosResponse = await api.post(`/auth/logout`);
+  return axiosResponse.data;
+};
+
+export const updateUser = async ({ name, email, file }: UpdateUserPayload) => {
+  const formData = new FormData();
+  if (name) formData.append('name', name);
+  if (email) formData.append('email', email);
+  if (file) formData.append('avatar', file);
+  const axiosResponse = await api.patch(`/auth/update`, formData);
   return axiosResponse.data;
 };

@@ -20,7 +20,7 @@ export function InfiniteScrollContainer({
           loadMore();
         }
       },
-      { rootMargin: '200px' } // triggers slightly before reaching bottom
+      { rootMargin: '20px' } // triggers slightly before reaching bottom
     );
 
     const el = observerRef.current;

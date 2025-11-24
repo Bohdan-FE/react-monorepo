@@ -12,6 +12,7 @@ export const useLogout = () => {
     onSuccess: () => {
       removeAuthDataFromLocalStorage();
       queryClient.setQueryData(['user'], null);
+      queryClient.clear();
     },
   });
 };

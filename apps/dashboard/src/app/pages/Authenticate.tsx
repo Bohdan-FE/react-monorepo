@@ -37,7 +37,7 @@ function Authenticate() {
   }, [user]);
 
   return (
-    <div className="h-screen grid grid-cols-2  relative gap-10 p-4  bg-yellow-light">
+    <div className="h-screen grid grid-cols-2  relative gap-10 p-4  bg-yellow-light overflow-hidden">
       <div className="h-full  relative flex flex-col justify-center overflow-hidden gap-8 p-6 rounded-2xl shadow-big border-2 bg-blue-dark text-white border-black">
         <div className="flex justify-between">
           <img
@@ -55,7 +55,7 @@ function Authenticate() {
         <p className="font-black text-[3.5rem] leading-none capitalize  mt-auto">
           Begin your shinobi journey.
         </p>
-        <p className=" max-w-md font-DMSans">
+        <p className="max-w-md font-DMSans">
           Welcome back. Log in to continue your mission and connect with fellow
           ninjas in the Hidden Leaf Village
         </p>

@@ -28,6 +28,7 @@ function DashBoardLayout() {
 
       on('privateMessage', () => {
         if (location.pathname !== '/chat' && !selectedUser) {
+          console.log('Private message received');
           queryClient.invalidateQueries({ queryKey: ['unreadMessagesCount'] });
         }
       });

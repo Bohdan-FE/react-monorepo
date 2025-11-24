@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import useUnreadMessagesCount from '../../../hooks/useUnreadMessagesCount';
 import useUsersPaginated from '../../../hooks/useUsersPaginated';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RxCross2 } from 'react-icons/rx';
 
 function NotificationWidget() {
@@ -19,8 +19,16 @@ function NotificationWidget() {
   const navigateToChat = () => {
     navigate('/chat?filter=all');
   };
+  useEffect(() => {
+    setIsOpen(true);
+  }, [users, unreadCount]);
 
-  if ((users.length === 0 && !unreadCount) || !isOpen) return null;
+  if (
+    (users.length === 0 && !unreadCount) ||
+    !isOpen ||
+    localStorage.getItem('showNotifications') === 'false'
+  )
+    return null;
 
   return (
     <motion.div

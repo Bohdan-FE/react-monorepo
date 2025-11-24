@@ -59,11 +59,11 @@ function UserBox({ user }: { user: User }) {
       )}
       onClick={() => selectUser(user)}
     >
-      <div className="flex items-center max-w-1/2">
+      <div className="flex items-center max-w-1/2 gap-1">
         <div className="size-[3rem] shrink-0  relative">
-          <div className="w-full h-full rounded-full overflow-hidden">
+          <div className="w-full h-full rounded-full overflow-hidden border-2">
             <img
-              src={user.avatarUrl || '/jiraiya.png'}
+              src={user.avatarURL || '/jiraiya.png'}
               alt={user.name}
               className="w-full h-full object-cover object-center"
             />

@@ -19,7 +19,7 @@ function App() {
         <GoogleOAuthProvider clientId="1065788413490-0sl0ualo6o7od2emndcriri4lbq1dcm5.apps.googleusercontent.com">
           <Outlet />
           <ModalProvider />
-          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+          <ReactQueryDevtools initialIsOpen={false} />
           <DragProvider />
         </GoogleOAuthProvider>
       </QueryClientProvider>

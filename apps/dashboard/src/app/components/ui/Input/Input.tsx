@@ -5,10 +5,10 @@ function Input({ type, ...props }: { type: string; [key: string]: any }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
-    <div className="border-2 rounded-xl bg-white flex items-center">
+    <div className="border-2 border-black rounded-xl bg-white flex items-center">
       <input
         {...props}
-        className="p-3 focus:outline-none outline-none text-[1.25rem] w-full h-full"
+        className="p-3 focus:outline-none outline-none text-[1.25rem] w-full h-full text-black"
         type={
           type === 'password' ? (isPasswordVisible ? 'text' : 'password') : type
         }

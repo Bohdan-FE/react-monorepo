@@ -11,7 +11,7 @@ import LineGraphContainer from '../components/LineGraphContainer/LineGraphContai
 
 function Home() {
   return (
-    <div className="flex h-full">
+    <div className="flex h-full w-full overflow-hidden">
       <div className="flex-1 w-full h-full flex flex-col gap-4 p-4">
         <div className="grid grid-rows-[1fr_minmax(0,1fr)] h-full gap-4 ">
           <div className="grid grid-cols-4 gap-4 h-full">

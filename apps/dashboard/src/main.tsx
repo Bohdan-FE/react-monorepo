@@ -8,6 +8,7 @@ import ChatPage from './app/pages/Chat';
 import Game from './app/pages/Game';
 import ProtectedRoute from './app/components/ProtectedRouter/ProtectedRouter';
 import Authenticate from './app/pages/Authenticate';
+import Settings from './app/pages/Settings';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
           {
             path: 'game',
             element: <Game />,
+          },
+          {
+            path: 'settings',
+            element: <Settings />,
           },
         ],
       },

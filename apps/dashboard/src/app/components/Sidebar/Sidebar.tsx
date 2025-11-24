@@ -34,25 +34,24 @@ function Sidebar() {
       onMouseLeave={() => setIsOpened(false)}
     >
       <Profile full={isOpened} />
-      <nav className="z-10">
-        <ul className="flex flex-col gap-3">
+      <nav className="z-10 flex-1 pb-10 px-[0.8rem]">
+        <ul className="flex flex-col gap-3 h-full">
           {NAVIGATION.map((item) => (
             <NavLink to={item.href} key={item.name}>
               <li
                 className={clsx(
-                  'px-4 py-4  hover:scale-105 grid transition-all mx-[0.6rem]  relative',
+                  'p-3 hover:scale-105 grid transition-all relative',
                   {
-                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
-                      isOpened,
-                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(auto,1fr)]': isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(0px,0fr)]': !isOpened,
                   },
                   location.pathname === item.href
                     ? 'bg-pink rounded-xl shadow-small scale-105  text-white'
                     : 'hover:pl-6'
                 )}
               >
-                <div>
-                  <item.IconComponent className="w-4 h-4 mx-auto" />
+                <div className="w-4 h-4">
+                  <item.IconComponent className="mx-auto" />
                 </div>
                 <div className={clsx('flex items-center px-4')}>
                   <p className="font-bold overflow-hidden whitespace-nowrap">
@@ -80,21 +79,20 @@ function Sidebar() {
           ))}
           {!user ? (
             <button
-              className="w-full mx-[0.6rem]"
+              className="w-full mt-auto"
               onClick={() => openModal(<AuthModal />)}
             >
               <li
                 className={clsx(
-                  'px-4 py-4  grid transition-all duration-300 overflow-hidden',
+                  'p-3 grid transition-all duration-300 overflow-hidden',
                   {
-                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
-                      isOpened,
-                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(auto,1fr)]': isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(0px,0fr)]': !isOpened,
                   }
                 )}
               >
-                <div>
-                  <FiLogIn className="w-4 h-4 mx-auto" />
+                <div className="w-4 h-4">
+                  <FiLogIn className=" mx-auto" />
                 </div>
                 <div className={clsx('flex items-center px-4')}>
                   <p className="font-bold overflow-hidden whitespace-nowrap">
@@ -104,14 +102,13 @@ function Sidebar() {
               </li>
             </button>
           ) : (
-            <button className="w-full px-[0.6rem]" onClick={() => logout()}>
+            <button className="w-full  mt-auto" onClick={() => logout()}>
               <li
                 className={clsx(
-                  'px-4 py-4  grid transition-all duration-300 overflow-hidden',
+                  'p-3  grid transition-all duration-300 overflow-hidden',
                   {
-                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
-                      isOpened,
-                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(auto,1fr)]': isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(0px,0fr)]': !isOpened,
                   }
                 )}
               >
@@ -128,10 +125,6 @@ function Sidebar() {
           )}
         </ul>
       </nav>
-      {/* <button onClick={() => openModal(<AuthModal />)}>Login/sign up</button>
-      <button onClick={() => openModal(<CreateTaskModal />)}>
-        Create task
-      </button> */}
     </motion.aside>
   );
 }

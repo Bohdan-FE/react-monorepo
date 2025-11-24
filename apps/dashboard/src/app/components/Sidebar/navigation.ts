@@ -1,5 +1,6 @@
 import { BsFillChatSquareTextFill } from 'react-icons/bs';
 import { BsFillGrid1X2Fill } from 'react-icons/bs';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { MdBubbleChart } from 'react-icons/md';
 
 export const NAVIGATION = [
@@ -17,5 +18,10 @@ export const NAVIGATION = [
     name: 'Game',
     href: '/game',
     IconComponent: MdBubbleChart,
+  },
+  {
+    name: 'Settings',
+    href: '/settings',
+    IconComponent: IoSettingsOutline,
   },
 ];

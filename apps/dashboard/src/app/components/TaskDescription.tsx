@@ -91,7 +91,7 @@ function TaskDescription() {
         <div className="mb-2 rounded-2xl grid grid-cols-2  relative border-2  p-2">
           <div
             className={clsx(
-              'absolute h-full w-1/2 bg-pink rounded-[0.8rem] transition-all shadow-small ',
+              'absolute h-full w-1/2 bg-pink rounded-[0.8rem] transition-all shadow-small translate-[-0.2rem]',
               {
                 'translate-x-full': selectedTab === 'Update',
               }
@@ -99,7 +99,7 @@ function TaskDescription() {
           ></div>
           <button
             className={clsx('relative z-10 transition-colors', {
-              'text-white': selectedTab === 'Create',
+              'text-white translate-[-0.2rem]': selectedTab === 'Create',
             })}
             onClick={() => selectTab('Create')}
           >
@@ -109,7 +109,7 @@ function TaskDescription() {
             className={clsx(
               'relative z-10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
               {
-                'text-white': selectedTab === 'Update',
+                'text-white translate-[-0.2rem]': selectedTab === 'Update',
               }
             )}
             onClick={() => selectTab('Update')}
@@ -122,7 +122,7 @@ function TaskDescription() {
           <div className="flex flex-col gap-2">
             <label htmlFor="title">Title</label>
             <input
-              className="bg-white border p-2 rounded-xl"
+              className="!bg-white border p-2 rounded-xl"
               type="text"
               id="title"
               value={title}
@@ -132,7 +132,7 @@ function TaskDescription() {
           <div className="flex flex-col gap-2 flex-1">
             <label htmlFor="description">Description</label>
             <textarea
-              className="bg-white border p-2 rounded-xl flex-1"
+              className="!bg-white border p-2 rounded-xl flex-1"
               name="description"
               id="description"
               value={description}

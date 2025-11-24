@@ -5,22 +5,22 @@ function Profile({ full }: { full: boolean }) {
   const { data: user } = useUser();
 
   if (!user) {
-    return;
+    return null;
   }
 
   return (
     <div
       className={clsx(
-        ' py-8 px-4 grid transition-all duration-300 z-10',
+        ' px-4 grid transition-all duration-300 z-10 h-34 items-center',
         full
           ? 'grid-cols-[minmax(3.5rem,3.5rem)minmax(auto,1fr)]'
-          : 'grid-cols-[minmax(2rem,1rem)minmax(0px,0fr)]'
+          : 'grid-cols-[minmax(2.2rem,2.2rem)minmax(0px,0fr)]'
       )}
     >
-      <div className="aspect-square rounded-full overflow-hidden shrink-0 shadow-small">
+      <div className="aspect-square rounded-full overflow-hidden shrink-0 shadow-small bg-white">
         <img
           className="h-full w-full object-cover object-center"
-          src="https://m.media-amazon.com/images/I/51d9TO-CgbL.jpg"
+          src={user.avatarURL || '/jiraiya.png'}
           loading="lazy"
           alt="avatar"
         />
