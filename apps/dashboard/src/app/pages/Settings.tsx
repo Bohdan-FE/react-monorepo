@@ -5,11 +5,14 @@ import { useUser } from '../../hooks/useUser';
 import useUpdateUser from '../../hooks/useUploadAvatar';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { FiMinus } from 'react-icons/fi';
+import { FaPlus } from 'react-icons/fa';
 
 type Inputs = {
-  email: string;
   name: string;
-  password: string;
+  'repeat-newPassword': string;
+  oldPassword: string;
+  newPassword: string;
 };
 
 function Settings() {
@@ -19,11 +22,12 @@ function Settings() {
     handleSubmit,
     formState: { errors, isValid, isDirty },
     reset,
+    watch,
+    resetField,
   } = useForm<Inputs>({
     mode: 'onChange',
     defaultValues: {
       name: user?.name || '',
-      email: user?.email || '',
     },
   });
   const [image, setImage] = useState<File | null>(null);
@@ -37,15 +41,22 @@ function Settings() {
   const [showNotifications, setShowNotifications] = useState(
     localStorage.getItem('showNotifications') === 'false' ? false : true
   );
+  const [changeIsOpen, setChangeIsOpen] = useState(false);
 
   const onSubmit = (data: Inputs) => {
     updateUser(
-      { ...data, file: image || undefined },
+      {
+        oldPassword: data.oldPassword,
+        newPassword: data.newPassword,
+        file: image || undefined,
+      },
       {
         onSuccess: (updatedUser) => {
           reset({
             name: updatedUser.name,
-            email: updatedUser.email,
+            oldPassword: '',
+            newPassword: '',
+            'repeat-newPassword': '',
           });
 
           setImage(null);
@@ -62,17 +73,42 @@ function Settings() {
     }
   }, [showNotifications]);
 
+  useEffect(() => {
+    if (!changeIsOpen) {
+      resetField('oldPassword');
+      resetField('newPassword');
+      resetField('repeat-newPassword');
+    }
+  }, [changeIsOpen]);
+
   return (
     <div className="p-4 h-full">
-      <div className=" bg-orange/80 grid grid-cols-2 gap-4 h-full rounded-2xl shadow-big overflow-hidden border-2 border-black backdrop-blur-md">
-        <div className=" w-full h-full flex flex-col justify-start p-8 gap-6">
-          <p className="text-center font-bold text-3xl uppercase">Profile</p>
-          <div></div>
-          <UploadAvatar image={image} setImage={setImage} />
+      <div className=" bg-orange/80 grid grid-cols-2 gap-4 h-full rounded-2xl shadow-big overflow-hidden border-2 border-black backdrop-blur-md overflow-y-auto">
+        <div className=" w-full h-full flex flex-col justify-start p-5 px-7 gap-6">
+          <div className="flex items-end justify-between">
+            <UploadAvatar image={image} setImage={setImage} />
+            <div
+              className="flex items-center gap-6 cursor-pointer select-none max-w-[18rem] justify-between mt-auto"
+              onClick={() => setShowNotifications((prev) => !prev)}
+            >
+              <p className="font-medium ">Show notifications</p>
+              <div
+                className={` w-12 h-5 rounded-full transition-all flex items-center border-black border-2 ${
+                  showNotifications ? 'bg-pink' : 'bg-pink/30 opacity-55'
+                }`}
+              >
+                <div
+                  className={`w-3 h-3 bg-white rounded-full shadow-md transform transition-all ${
+                    showNotifications ? 'translate-x-7' : 'translate-x-0'
+                  }`}
+                ></div>
+              </div>
+            </div>
+          </div>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-2"
           >
             <div className=" flex flex-col ">
               <label htmlFor="name" className="mb-2">
@@ -95,30 +131,106 @@ function Settings() {
               )}
             </div>
 
-            <div className=" flex flex-col ">
-              <label htmlFor="email" className="mb-2">
-                Change Email
-              </label>
-              <Input
-                id="email"
-                autoComplete="off"
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Please enter a valid email address',
-                  },
-                })}
-                type="email"
-                defaultValue={user?.email}
-                placeholder="Enter your email address"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm pl-2">
-                  {errors.email.message}
-                </p>
-              )}
+            <div className="flex items-center justify-between">
+              <p>Change Password</p>
+              <div
+                className="size-[2rem] rounded-md bg-pink border-2 border-black active:scale-95 active:shadow-none transition-all shadow-small flex items-center justify-center text-white cursor-pointer"
+                onClick={() => setChangeIsOpen((prev) => !prev)}
+              >
+                {changeIsOpen ? <FiMinus /> : <FaPlus />}
+              </div>
             </div>
+
+            {changeIsOpen && (
+              <div className="p-3 border-2 rounded-xl space-y-2">
+                <div className=" flex flex-col">
+                  <label htmlFor="oldPassword" className="mb-2">
+                    Old Password
+                  </label>
+                  <div>
+                    <Input
+                      {...register('oldPassword', {
+                        required: changeIsOpen ? 'Password is required' : false,
+                        minLength: changeIsOpen
+                          ? {
+                              value: 6,
+                              message:
+                                'Password must be at least 6 characters long',
+                            }
+                          : undefined,
+                      })}
+                      type="password"
+                      autoComplete="off"
+                      placeholder="Enter your old password"
+                    />
+                  </div>
+
+                  {errors.oldPassword && (
+                    <p className="text-red-500 text-sm pl-2">
+                      {errors.oldPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className=" flex flex-col">
+                  <label htmlFor="newPassword" className="mb-2">
+                    New Password
+                  </label>
+                  <div>
+                    <Input
+                      {...register('newPassword', {
+                        required: changeIsOpen ? 'Password is required' : false,
+                        minLength: changeIsOpen
+                          ? {
+                              value: 6,
+                              message:
+                                'Password must be at least 6 characters long',
+                            }
+                          : undefined,
+                      })}
+                      type="password"
+                      autoComplete="off"
+                      placeholder="Enter your new password"
+                    />
+                  </div>
+
+                  {errors.newPassword && (
+                    <p className="text-red-500 text-sm pl-2">
+                      {errors.newPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className=" flex flex-col">
+                  <label htmlFor="repeat-newPassword" className="mb-2">
+                    Repeat New Password
+                  </label>
+                  <div>
+                    <Input
+                      {...register('repeat-newPassword', {
+                        required: changeIsOpen
+                          ? 'Please repeat your password'
+                          : false,
+                        validate: changeIsOpen
+                          ? (value) =>
+                              value === watch('newPassword') ||
+                              'Passwords do not match'
+                          : undefined,
+                      })}
+                      type="password"
+                      autoComplete="off"
+                      placeholder="Repeat your password"
+                    />
+                  </div>
+
+                  {errors['repeat-newPassword'] && (
+                    <p className="text-red-500 text-sm pl-2">
+                      {errors['repeat-newPassword'].message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {isError && (
               <div className="text-red-800 text-sm">
@@ -129,33 +241,15 @@ function Settings() {
             <button
               type="submit"
               disabled={(!isDirty && !image) || !isValid || isPending}
-              className={`p-3 bg-blue w-1/2 ml-auto text-white rounded-2xl border-2 border-black active:shadow-none transition-all shadow-small ${
+              className={`p-2  bg-blue w-1/2 ml-auto mt-4 text-white rounded-2xl border-2 border-black active:shadow-none transition-all shadow-small ${
                 !isValid || isPending || (!isDirty && !image)
-                  ? 'opacity-50 cursor-not-allowed'
+                  ? 'opacity-50 pointer-events-none cursor-not-allowed'
                   : ''
               }`}
             >
               {isPending ? 'Loading...' : 'Update Profile'}
             </button>
           </form>
-          <div
-            className="flex items-center gap-3 cursor-pointer select-none max-w-[18rem] justify-between mt-auto"
-            onClick={() => setShowNotifications((prev) => !prev)}
-          >
-            <p className="font-medium text-xl">Show notifications</p>
-            <div
-              className={` w-12 h-6 rounded-full transition-all flex items-center border-black border-2
-      ${showNotifications ? 'bg-pink' : 'bg-pink/30 opacity-55'}
-    `}
-            >
-              <div
-                className={`
-        w-4 h-4 bg-white rounded-full shadow-md transform transition-all
-        ${showNotifications ? 'translate-x-6' : 'translate-x-0'}
-      `}
-              ></div>
-            </div>
-          </div>
         </div>
 
         <div className="bg-[url('/all-ninja.png')] bg-no-repeat bg-contain bg-right-bottom ">

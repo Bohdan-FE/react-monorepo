@@ -14,7 +14,8 @@ export interface RegisterPayload {
 
 export interface UpdateUserPayload {
   name?: string;
-  email?: string;
+  oldPassword?: string;
+  newPassword?: string;
   file?: File;
 }
 
@@ -55,10 +56,16 @@ export const logout = async () => {
   return axiosResponse.data;
 };
 
-export const updateUser = async ({ name, email, file }: UpdateUserPayload) => {
+export const updateUser = async ({
+  name,
+  oldPassword,
+  newPassword,
+  file,
+}: UpdateUserPayload) => {
   const formData = new FormData();
   if (name) formData.append('name', name);
-  if (email) formData.append('email', email);
+  if (oldPassword) formData.append('oldPassword', oldPassword);
+  if (newPassword) formData.append('newPassword', newPassword);
   if (file) formData.append('avatar', file);
   const axiosResponse = await api.patch(`/auth/update`, formData);
   return axiosResponse.data;

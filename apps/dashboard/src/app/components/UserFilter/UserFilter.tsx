@@ -4,6 +4,7 @@ import { UserFilter as UserFilterType } from '../../../models/User';
 import { IoIosArrowDown } from 'react-icons/io';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router';
+import useOutsideClick from '../../../../../../packages/ui/src/lib/OutsideClick/useOutsideClick';
 
 function UserFilter() {
   const [filter, setFilter] = useState<UserFilterType>('all');
@@ -11,6 +12,10 @@ function UserFilter() {
   const [search, setSearch] = useState('');
   const [input, setInput] = useState('');
   const [params] = useSearchParams();
+
+  const selectRef = useOutsideClick<HTMLDivElement>(() => {
+    setIsOpen(false);
+  });
 
   useEffect(() => {
     const filter = params.get('filter') as UserFilterType;
@@ -51,7 +56,10 @@ function UserFilter() {
 
   return (
     <div className="p-4 pr-0 w-full max-w-[25.25rem] flex flex-col bg-pink/70 rounded-2xl shadow-big border-2">
-      <div className="relative w-fit ml-auto min-w-[11.625rem] mb-3 pr-4 z-10">
+      <div
+        className="relative w-fit ml-auto min-w-[11.625rem] mb-3 pr-4 z-10"
+        ref={selectRef}
+      >
         <div
           className="flex items-center justify-between gap-2  p-2 rounded-xl bg-blue-dark text-white  shadow-small  cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}

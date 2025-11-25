@@ -3,6 +3,8 @@ import { TaskAmount, useTasksAmount } from '../../../hooks/useTaskAmount';
 import { useStore } from '../../../store/store';
 import DonutChart from '../DonatChart/DonatChart';
 import { IoIosArrowDown } from 'react-icons/io';
+import clsx from 'clsx';
+import useOutsideClick from '../../../../../../packages/ui/src/lib/OutsideClick/useOutsideClick';
 
 function DonutGraphContainer() {
   const firstDayOfMonth = useStore((state) => state.firstDayOfMonth);
@@ -22,6 +24,10 @@ function DonutGraphContainer() {
     const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday as start
     return new Date(now.setDate(diff));
   })();
+
+  const selectRef = useOutsideClick<HTMLDivElement>(() => {
+    setIsOpen(false);
+  });
 
   const endOfWeek = (() => {
     const start = new Date(startOfWeek);
@@ -79,7 +85,7 @@ function DonutGraphContainer() {
 
   return (
     <div className="shadow-big border-4 bg-white/50 backdrop-blur-md rounded-2xl flex flex-col gap-4 p-2 h-full">
-      <div className="relative z-10 w-1/2 self-end">
+      <div className="relative z-10 w-1/2 self-end" ref={selectRef}>
         <div
           className="flex items-center justify-between gap-2  p-2 rounded-xl bg-blue-dark text-white  shadow-small  cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
@@ -89,21 +95,39 @@ function DonutGraphContainer() {
         </div>
 
         {isOpen && (
-          <div className="absolute top-[calc(100%+0.2rem)] left-0 flex flex-col gap-2 w-full rounded-xl shadow-small bg-white overflow-hidden">
+          <div className="absolute top-[calc(100%+0.4rem)] left-0 flex flex-col  w-full rounded-xl shadow-small bg-white overflow-hidden">
             <button
-              className="p-2 text-start hover:bg-blue-light transition-colors"
+              className={clsx(
+                'p-2 text-start hover:bg-blue-light transition-colors',
+                {
+                  'bg-blue-dark text-white pointer-events-none':
+                    selectedTab === 'Today',
+                }
+              )}
               onClick={() => selectTab('Today')}
             >
               Today
             </button>
             <button
-              className=" p-2 text-start hover:bg-blue-light transition-colors"
+              className={clsx(
+                'p-2 text-start hover:bg-blue-light transition-colors',
+                {
+                  'bg-blue-dark text-white pointer-events-none':
+                    selectedTab === 'This week',
+                }
+              )}
               onClick={() => selectTab('This week')}
             >
               This week
             </button>
             <button
-              className=" p-2 text-start hover:bg-blue-light transition-colors "
+              className={clsx(
+                'p-2 text-start hover:bg-blue-light transition-colors',
+                {
+                  'bg-blue-dark text-white pointer-events-none':
+                    selectedTab === 'This month',
+                }
+              )}
               onClick={() => selectTab('This month')}
             >
               This month

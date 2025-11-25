@@ -56,7 +56,7 @@ function UploadAvatar({
         className={`
           rounded-full  text-center cursor-pointer relative
           transition-all
-          w-32 h-32
+         size-22
           bg-white
           border-2 shadow-small
             ${dragActive ? 'border-blue-500' : 'border-black'}
@@ -66,7 +66,7 @@ function UploadAvatar({
         <img
           src={preview || user?.avatarURL}
           alt="Avatar Preview"
-          className="size-full object-center object-cover mx-auto rounded-full object-cover shadow-md"
+          className="size-full object-center  mx-auto rounded-full object-cover shadow-md"
         />
 
         <div className="absolute inset-0 m-auto size-full flex items-center justify-center opacity-0 hover:opacity-100 bg-black/40 rounded-full text-white transition-opacity">
@@ -74,8 +74,8 @@ function UploadAvatar({
         </div>
       </div>
       <div>
-        <p className="mb-2 text-xl font-semibold">Update Avatar</p>
-        <p className=" italic">
+        <p className="mb-1 text-md font-semibold">Update Avatar</p>
+        <p className="italic text-sm">
           {' '}
           Drag & drop image <br /> or click to upload
         </p>

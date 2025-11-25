@@ -77,28 +77,26 @@ function Game() {
   };
 
   const gravityPhysic = () => {
-    const GRAVITY = 0.07; // pixels/frame²
-    const FRICTION = 0.98; // damping on velocity
+    const GRAVITY = 0.1;
+    const FRICTION = 0.99;
 
     const ctx = contextRef.current;
     if (!ctx) return;
     circlesRef.current.forEach((obj) => {
-      obj.vy += GRAVITY; // gravity accelerates downward
-      obj.vx *= FRICTION; // optional friction for horizontal
-      obj.vy *= FRICTION; // optional damping for vertical
+      obj.vy += GRAVITY;
+      obj.vx *= FRICTION;
+      obj.vy *= FRICTION;
 
       obj.circle.update({
         x: obj.circle.getX() + obj.vx,
         y: obj.circle.getY() + obj.vy,
       });
 
-      // floor collision
       if (obj.circle.getY() + obj.circle.getRadius() > ctx.canvas.height) {
         obj.circle.update({ y: ctx.canvas.height - obj.circle.getRadius() });
         obj.vy *= -0.7; // bounce effect
       }
 
-      // walls
       if (obj.circle.getX() - obj.circle.getRadius() < 0) {
         obj.circle.update({ x: obj.circle.getRadius() });
         obj.vx *= -0.7;
