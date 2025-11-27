@@ -46,6 +46,7 @@ function Settings() {
   const onSubmit = (data: Inputs) => {
     updateUser(
       {
+        name: data.name,
         oldPassword: data.oldPassword,
         newPassword: data.newPassword,
         file: image || undefined,
@@ -58,7 +59,7 @@ function Settings() {
             newPassword: '',
             'repeat-newPassword': '',
           });
-
+          setChangeIsOpen(false);
           setImage(null);
         },
       }

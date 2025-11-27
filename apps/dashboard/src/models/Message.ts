@@ -10,9 +10,10 @@ export interface Message {
   _id: string;
   from: string;
   to: string;
-  message: string;
+  message?: string;
   createdAt: string;
   status?: 'sent' | 'delivered' | 'read';
+  imageUrl?: string;
 }
 
 export interface PaginatedMessagesResponse {

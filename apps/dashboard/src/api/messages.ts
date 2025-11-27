@@ -21,3 +21,13 @@ export const getUnreadMessagesCount = async (): Promise<{
   const axiosResponse = await api.get(`/messages/unread/count`);
   return axiosResponse.data;
 };
+
+export const uploadImageMessage = async (
+  file: File
+): Promise<{ imageUrl: string }> => {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const axiosResponse = await api.post('/messages/image', formData);
+  return axiosResponse.data;
+};

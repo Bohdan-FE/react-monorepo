@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useStore } from '../../../../store/store';
 import { useQueryClient } from '@tanstack/react-query';
@@ -6,6 +6,8 @@ import { Message, MessageStatus } from '../../../../models/Message';
 import clsx from 'clsx';
 import { IoCheckmarkDoneSharp, IoCheckmarkOutline } from 'react-icons/io5';
 import { User } from '../../../../models/User';
+import ModalLayout from '../../../layout/ModalLayout';
+import { IoIosCloseCircle } from 'react-icons/io';
 
 interface MessageItemProps {
   message: Message;
@@ -20,6 +22,9 @@ const MessageItem = ({ message, me, target, setChat }: MessageItemProps) => {
   const queryClient = useQueryClient();
   const meId = me._id;
   const targetId = target._id;
+
+  const openModal = useStore((store) => store.openModal);
+  const closeModal = useStore((store) => store.closeModal);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -55,8 +60,28 @@ const MessageItem = ({ message, me, target, setChat }: MessageItemProps) => {
     };
   }, [message.status, message.from, targetId, message._id, emit]);
 
+  const openImage = () => {
+    openModal(
+      <ModalLayout>
+        <div className="h-[80vh] w-[80vw] overflow-auto bg-blue-dark rounded-3xl shadow-big p-4 relative">
+          <button
+            className="top-4 right-4 absolute text-white text-3xl"
+            onClick={() => closeModal()}
+          >
+            <IoIosCloseCircle />
+          </button>
+          <img
+            className="size-full object-contain object-center"
+            src={message.imageUrl}
+            alt="Enlarged view"
+          />
+        </div>
+      </ModalLayout>
+    );
+  };
+
   if (!targetId || !meId) return null;
-  console.log('Rendering MessageItem:', meId, message.from);
+
   return (
     <div
       ref={messageRef}
@@ -76,6 +101,22 @@ const MessageItem = ({ message, me, target, setChat }: MessageItemProps) => {
           }
         )}
       >
+        {message.imageUrl && (
+          <div
+            className=" overflow-hidden h-[225px] relative cursor-pointer bg-white rounded-md"
+            onClick={() => openImage()}
+          >
+            <img
+              src={message.imageUrl}
+              alt="Sent Image"
+              width={225}
+              height={225}
+              className={clsx(
+                'size-full  max-h-[225px] object-contain object-center rounded-md border-2 border-black'
+              )}
+            />
+          </div>
+        )}
         <p className="whitespace-pre-wrap">{message.message}</p>
         <div
           className={clsx('flex items-end gap-2', {

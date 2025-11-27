@@ -1,4 +1,4 @@
-import { use, useEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { MessageStatus } from '../../../models/Message';
 import { useStore } from '../../../store/store';
@@ -11,6 +11,9 @@ import { MdOutlineDoubleArrow } from 'react-icons/md';
 import { useChat } from '../../../hooks/useChat';
 import { useUser } from '../../../hooks/useUser';
 import ChatHistory from './components/ChatHistory';
+import SendFile from './components/SendFile';
+import useUploadImageMessage from '../../../hooks/useUploadMessageImage';
+import { LuTrash2 } from 'react-icons/lu';
 
 function ChatBox() {
   const [message, setMessage] = useState('');
@@ -23,8 +26,10 @@ function ChatBox() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const { chat, setChat, isTyping } = useChat(target?._id, me?._id);
+  const uploadImageMutation = useUploadImageMessage();
+  const [file, setFile] = useState<File | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const interceptor = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -68,26 +73,54 @@ function ChatBox() {
   };
 
   const sendMessage = () => {
-    if (message && target?._id) {
-      const tempId = 'temporary-id-' + Math.random().toString(36).substr(2, 9);
-      const newMessage = {
-        _id: tempId,
-        to: target._id,
-        from: me?._id || 'unknown',
-        message,
-        createdAt: new Date().toISOString(),
-        status: MessageStatus.SENT,
-      };
+    if (!target?._id || !me?._id) return;
 
-      setChat((prev) => [...prev, newMessage]);
-      setMessage('');
+    if (!message && !file) return;
 
-      emit('privateMessage', newMessage);
+    const tempId = 'temporary-id-' + Math.random().toString(36).substr(2, 9);
 
+    const tempMessage: any = {
+      _id: tempId,
+      to: target._id,
+      from: me._id,
+      createdAt: new Date().toISOString(),
+      status: MessageStatus.SENT,
+    };
+
+    if (message) tempMessage.message = message;
+
+    if (file) tempMessage.imageUrl = URL.createObjectURL(file);
+
+    setChat((prev) => [...prev, tempMessage]);
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+    setMessage('');
+    setFile(null);
+
+    if (!file) {
+      emit('privateMessage', tempMessage);
       queryClient.invalidateQueries({ queryKey: ['users'] });
-
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      return;
     }
+
+    uploadImageMutation.mutate(file, {
+      onSuccess: (data) => {
+        const finalMessage = {
+          ...tempMessage,
+          imageUrl: data.imageUrl,
+        };
+
+        emit('privateMessage', finalMessage);
+
+        setChat((prev) =>
+          prev.map((m) =>
+            m._id === tempId ? { ...m, imageUrl: data.imageUrl } : m
+          )
+        );
+
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      },
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -187,7 +220,20 @@ function ChatBox() {
         >
           <MdOutlineDoubleArrow className="rotate-[90deg] text-2xl" />
         </button>
+        {file && (
+          <div className="h-[3rem] mb-4 flex gap-4 items-center">
+            <img
+              src={URL.createObjectURL(file)}
+              alt="Selected file preview"
+              className="h-full object-contain rounded-md"
+            />
 
+            <LuTrash2
+              className="cursor-pointer"
+              onClick={() => setFile(null)}
+            />
+          </div>
+        )}
         <div className="flex gap-4">
           <textarea
             id="chat-message-input"
@@ -199,8 +245,9 @@ function ChatBox() {
             onKeyDown={handleKeyPress}
             rows={1}
           />
+          <SendFile setFile={setFile} />
           <button
-            className="px-4 rounded-md shadow-small flex items-center justify-center bg-pink active:shadow-none active:scale-95 transition-all"
+            className="px-3 rounded-md shadow-small flex items-center justify-center bg-pink active:shadow-none active:scale-95 transition-all"
             onClick={sendMessage}
           >
             <IoSend className="text-white" />
