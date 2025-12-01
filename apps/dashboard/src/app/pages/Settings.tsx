@@ -82,9 +82,17 @@ function Settings() {
     }
   }, [changeIsOpen]);
 
+  const nameValue = watch('name');
+  const isFormDirty =
+    nameValue !== user?.name ||
+    !!image ||
+    (changeIsOpen && !!watch('oldPassword')) ||
+    !!watch('newPassword') ||
+    !!watch('repeat-newPassword');
+
   return (
     <div className="p-4 h-full">
-      <div className=" bg-orange/80 grid grid-cols-2 gap-4 h-full rounded-2xl shadow-big overflow-hidden border-2 border-black backdrop-blur-md overflow-y-auto">
+      <div className=" bg-orange/60 grid grid-cols-2 gap-4 h-full rounded-2xl shadow-big overflow-hidden border-2 border-black backdrop-blur-md overflow-y-auto">
         <div className=" w-full h-full flex flex-col justify-start p-5 px-7 gap-6">
           <div className="flex items-end justify-between">
             <UploadAvatar image={image} setImage={setImage} />
@@ -238,12 +246,11 @@ function Settings() {
                 <p>{error?.response?.data.message}</p>
               </div>
             )}
-
             <button
               type="submit"
-              disabled={(!isDirty && !image) || !isValid || isPending}
-              className={`p-2  bg-blue w-1/2 ml-auto mt-4 text-white rounded-2xl border-2 border-black active:shadow-none transition-all shadow-small ${
-                !isValid || isPending || (!isDirty && !image)
+              disabled={!isFormDirty || !isValid || isPending}
+              className={`p-2 bg-blue w-1/2 ml-auto mt-4 text-white rounded-2xl border-2 border-black active:shadow-none transition-all shadow-small ${
+                !isFormDirty || !isValid || isPending
                   ? 'opacity-50 pointer-events-none cursor-not-allowed'
                   : ''
               }`}

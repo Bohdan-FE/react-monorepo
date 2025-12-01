@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { MessageStatus } from '../../../models/Message';
 import { useStore } from '../../../store/store';
@@ -24,12 +24,13 @@ function ChatBox() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
   const { chat, setChat, isTyping } = useChat(target?._id, me?._id);
   const uploadImageMutation = useUploadImageMessage();
   const [file, setFile] = useState<File | null>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    if (!chat) return;
     const interceptor = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -54,7 +55,7 @@ function ChatBox() {
         interceptor.unobserve(chatEndRef.current);
       }
     };
-  }, [chatEndRef]);
+  }, [chatEndRef, chat]);
 
   const throttledTyping = useMemo(
     () =>
@@ -220,6 +221,7 @@ function ChatBox() {
         >
           <MdOutlineDoubleArrow className="rotate-[90deg] text-2xl" />
         </button>
+
         {file && (
           <div className="h-[3rem] mb-4 flex gap-4 items-center">
             <img
