@@ -9,5 +9,6 @@ export const useUser = () => {
     queryFn: fetchUser,
     staleTime: 1000 * 60 * 5,
     enabled: !!localStorage.getItem('authToken'),
+    refetchOnMount: true,
   });
 };

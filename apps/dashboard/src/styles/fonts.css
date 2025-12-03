@@ -9,3 +9,27 @@
   src: url('/fonts/ComicRelief-Regular.ttf');
   font-weight: normal;
 }
+
+@font-face {
+  font-family: DMSans;
+  src: url('/fonts/DMSans/DMSans-Regular.ttf');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: DMSans;
+  src: url('/fonts/DMSans/DMSans-Medium.ttf');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: DMSans;
+  src: url('/fonts/DMSans/DMSans-Bold.ttf');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: DMSans;
+  src: url('/fonts/DMSans/DMSans-Light.ttf');
+  font-weight: 300;
+}

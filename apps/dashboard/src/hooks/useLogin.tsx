@@ -6,6 +6,7 @@ type AuthResponse = {
   token: string;
   email: string;
   name: string;
+  avatarUrl?: string;
 };
 
 const saveAuthDataToLocalStorage = (data: AuthResponse) => {
@@ -19,8 +20,8 @@ export const useLogin = () => {
     AxiosError<{ message: string }>,
     LoginPayload
   >({
-    mutationFn: payload => login(payload),
-    onSuccess: data => {
+    mutationFn: (payload) => login(payload),
+    onSuccess: (data) => {
       saveAuthDataToLocalStorage(data);
       queryClient.setQueryData(['user'], data);
     },
