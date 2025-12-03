@@ -1,7 +1,8 @@
-import { BsFillChatSquareTextFill } from 'react-icons/bs';
 import { BsFillGrid1X2Fill } from 'react-icons/bs';
-import { IoSettingsOutline } from 'react-icons/io5';
+
 import { MdBubbleChart } from 'react-icons/md';
+import { AiFillWechat } from 'react-icons/ai';
+import { IoMdSettings } from 'react-icons/io';
 
 export const NAVIGATION = [
   {
@@ -12,16 +13,16 @@ export const NAVIGATION = [
   {
     name: 'Chat',
     href: '/chat',
-    IconComponent: BsFillChatSquareTextFill,
+    IconComponent: AiFillWechat,
   },
   {
-    name: 'Game',
+    name: 'Bubbles',
     href: '/game',
     IconComponent: MdBubbleChart,
   },
   {
     name: 'Settings',
     href: '/settings',
-    IconComponent: IoSettingsOutline,
+    IconComponent: IoMdSettings,
   },
 ];
