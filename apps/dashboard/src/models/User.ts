@@ -1,11 +1,15 @@
+import { Message } from './Message';
+
 export interface User {
   _id: string;
   name: string;
   email: string;
-  avatarUrl?: string;
+  avatarURL?: string;
   isOnline: boolean;
   lastSeen: string;
   relationshipStatus?: RelationshipStatus;
+  lastMessage?: Message;
+  unreadCount: number;
 }
 
 export const RelationshipStatus = {
@@ -37,5 +41,13 @@ export const UserFilter = {
   requestSent: 'request_sent',
   requestReceived: 'request_received',
 } as const;
+
+export interface GoogleLoginResponse {
+  token?: string;
+  _id?: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+}
 
 export type UserFilter = (typeof UserFilter)[keyof typeof UserFilter];

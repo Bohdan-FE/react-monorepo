@@ -1,9 +1,8 @@
-import { Link, NavLink, useLocation } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import Profile from '../Profile';
 import { useStore } from '../../../store/store';
 import AuthModal from '../Modal/AuthModal';
 import { NAVIGATION } from './navigation';
-import { IoChevronBackCircleOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { FiLogIn } from 'react-icons/fi';
 import clsx from 'clsx';
@@ -11,6 +10,7 @@ import { useUser } from '../../../hooks/useUser';
 import { motion } from 'motion/react';
 import { useLogout } from '../../../hooks/useLogout';
 import { MdLogout } from 'react-icons/md';
+import useUnreadMessagesCount from '../../../hooks/useUnreadMessagesCount';
 
 function Sidebar() {
   const openModal = useStore((state) => state.openModal);
@@ -19,6 +19,8 @@ function Sidebar() {
   const { mutate: logout } = useLogout();
   const location = useLocation();
 
+  const { data: unreadMessagesCount } = useUnreadMessagesCount();
+
   return (
     <motion.aside
       className={clsx(
@@ -26,62 +28,71 @@ function Sidebar() {
       )}
       animate={{
         width: isOpened ? 232 : 64,
-        // borderBottomRightRadius: isOpened ? '0rem' : '50%',
-        // borderTopRightRadius: isOpened ? '0rem' : '50%',
         transition: { duration: 0.2, ease: 'easeInOut' },
       }}
       onMouseEnter={() => setIsOpened(true)}
       onMouseLeave={() => setIsOpened(false)}
     >
-      <button
-        className="absolute top-2 right-2 z-20"
-        onClick={() => setIsOpened((prev) => !prev)}
-      >
-        <IoChevronBackCircleOutline className="w-5 h-5" />
-      </button>
       <Profile full={isOpened} />
-      <nav className="z-10">
-        <ul>
+      <nav className="z-10 flex-1 pb-10 px-[0.8rem]">
+        <ul className="flex flex-col gap-3 h-full">
           {NAVIGATION.map((item) => (
             <NavLink to={item.href} key={item.name}>
               <li
                 className={clsx(
-                  'px-4 py-4  hover:scale-105 grid transition-all   overflow-hidden',
+                  'p-3 hover:scale-105 grid transition-all relative',
                   {
-                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
-                      isOpened,
-                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(auto,1fr)]': isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(0px,0fr)]': !isOpened,
                   },
                   location.pathname === item.href
-                    ? 'bg-pink rounded-xl shadow-small scale-105 mx-[0.6rem] text-white'
+                    ? 'bg-pink rounded-xl shadow-small scale-105  text-white'
                     : 'hover:pl-6'
                 )}
               >
-                <div>
-                  <item.IconComponent className="w-4 h-4 mx-auto" />
+                <div className="w-4 h-4">
+                  <item.IconComponent className="mx-auto" />
                 </div>
                 <div className={clsx('flex items-center px-4')}>
                   <p className="font-bold overflow-hidden whitespace-nowrap">
                     {item.name}
                   </p>
                 </div>
+
+                {item.name === 'Chat' && unreadMessagesCount > 0 && (
+                  <div
+                    className={clsx(
+                      'absolute  bg-orange rounded-full flex items-center justify-center shrink-0 aspect-square',
+                      {
+                        'top-1 right-1 translate-y-[-50%] translate-x-[50%] px-1 text-[0.65rem]':
+                          !isOpened,
+                        'top-1/2 translate-y-[-50%] right-3 px-2 text-xs':
+                          isOpened,
+                      }
+                    )}
+                  >
+                    <span className=" font-bold">{unreadMessagesCount}</span>
+                  </div>
+                )}
               </li>
             </NavLink>
           ))}
           {!user ? (
-            <button className="w-full" onClick={() => openModal(<AuthModal />)}>
+            <button
+              className="w-full mt-auto"
+              onClick={() => openModal(<AuthModal />)}
+            >
               <li
                 className={clsx(
-                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  'p-3 grid transition-all duration-300 overflow-hidden',
                   {
-                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
-                      isOpened,
-                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(auto,1fr)]': isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(0px,0fr)]': !isOpened,
                   }
                 )}
               >
-                <div>
-                  <FiLogIn className="w-4 h-4 mx-auto" />
+                <div className="w-4 h-4">
+                  <FiLogIn className=" mx-auto" />
                 </div>
                 <div className={clsx('flex items-center px-4')}>
                   <p className="font-bold overflow-hidden whitespace-nowrap">
@@ -91,14 +102,13 @@ function Sidebar() {
               </li>
             </button>
           ) : (
-            <button className="w-full" onClick={() => logout()}>
+            <button className="w-full  mt-auto" onClick={() => logout()}>
               <li
                 className={clsx(
-                  'px-4 py-4 hover:bg-orange/40 grid transition-all duration-300 overflow-hidden',
+                  'p-3  grid transition-all duration-300 overflow-hidden',
                   {
-                    'grid-cols-[minmax(auto,max-content)minmax(auto,1fr)]':
-                      isOpened,
-                    'grid-cols-[minmax(auto,auto)minmax(0px,0fr)]': !isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(auto,1fr)]': isOpened,
+                    'grid-cols-[minmax(auto,1rem)minmax(0px,0fr)]': !isOpened,
                   }
                 )}
               >
@@ -115,10 +125,6 @@ function Sidebar() {
           )}
         </ul>
       </nav>
-      {/* <button onClick={() => openModal(<AuthModal />)}>Login/sign up</button>
-      <button onClick={() => openModal(<CreateTaskModal />)}>
-        Create task
-      </button> */}
     </motion.aside>
   );
 }

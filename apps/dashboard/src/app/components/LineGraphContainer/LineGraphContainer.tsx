@@ -83,6 +83,10 @@ function LineGraphContainer() {
     return Math.max(...points.map((p) => p.y));
   }, [points]);
 
+  const isData = useMemo(() => {
+    return points.some((p) => p.y > 0);
+  }, [points]);
+
   return (
     <div className="col-span-2 rounded-2xl shadow-big border-4 bg-white relative p-6 pt-2 h-full flex flex-col z-[2]">
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/konoha-bg.jpg')] bg-center bg-cover opacity-30 rounded-2xl"></div>
@@ -113,8 +117,15 @@ function LineGraphContainer() {
           ))}
         </div>
 
-        {week && Array.isArray(taskAmount) && taskAmount.length > 0 && (
+        {week &&
+        isData &&
+        Array.isArray(taskAmount) &&
+        taskAmount.length > 0 ? (
           <Graph points={points} />
+        ) : (
+          <div className="h-full flex items-center justify-center text-md">
+            No tasks this week
+          </div>
         )}
       </div>
 

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import ModalLayout from '../../layout/ModalLayout';
 import LoginForm from '../LoginForm';
-import RegisterForm from '../RegisterForm';
 import { useUser } from '../../../hooks/useUser';
 
 function AuthModal() {
@@ -15,7 +14,7 @@ function AuthModal() {
   return (
     <ModalLayout>
       {activeModal}
-      <button>
+      {/* <button>
         <span onClick={() => setActiveModal(<LoginForm />)}>Login</span>
         <span
           onClick={() =>
@@ -24,7 +23,7 @@ function AuthModal() {
         >
           Register
         </span>
-      </button>
+      </button> */}
     </ModalLayout>
   );
 }

@@ -3,3 +3,4 @@ export * from './lib/hero';
 export * from './lib/canvas';
 export * from './lib/MouseFollowContainer/MouseFollowContainer';
 export * from './lib/InfinityScrollContainer/InfinityScrollContainer';
+export * from './lib/OutsideClick/useOutsideClick';

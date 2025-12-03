@@ -12,6 +12,8 @@
   --shadow-big: 0.4rem 0.4rem 0px 0px rgba(0, 0, 0, 0.75);
   --shadow-small: 0.2rem 0.2rem 0px 0px rgba(0, 0, 0, 0.75);
 
+  --font-DMSans: DMSans, sans-serif;
+
   --animate-dot-wave: dot-wave 0.9s ease infinite;
 
   --animate-flame-up: flame-up 2s line;
