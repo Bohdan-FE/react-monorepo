@@ -5,7 +5,6 @@ const Chat = () => {
   return (
     <div className="flex justify-between h-full p-4 gap-4">
       <ChatBox />
-
       <UserFilter />
     </div>
   );

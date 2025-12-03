@@ -103,9 +103,13 @@ export class CircleDrawer {
 
       const img = this.image;
       const circleSize = this.radius * 2;
-      const scale = Math.min(circleSize / img.width, circleSize / img.height);
+
+      // COVER вместо contain
+      const scale = Math.max(circleSize / img.width, circleSize / img.height);
+
       const drawWidth = img.width * scale;
       const drawHeight = img.height * scale;
+
       const dx = -drawWidth / 2;
       const dy = -drawHeight / 2;
 

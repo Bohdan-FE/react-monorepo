@@ -10,7 +10,7 @@ type Inputs = {
   'repeat-password': string;
 };
 
-function RegisterForm({}: {}) {
+function RegisterForm() {
   const {
     register,
     handleSubmit,

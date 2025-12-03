@@ -31,11 +31,6 @@ function Home() {
           </div>
         </div>
       </div>
-
-      {/* <div className="h-full flex flex-col shrink-0 ">
-        <Calendar />
-        <div className="bg-white h-full">{user && <TasksList status='' />}</div>
-      </div> */}
     </div>
   );
 }

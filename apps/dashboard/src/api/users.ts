@@ -5,7 +5,7 @@ export const fetchUsers = async (
   page: number,
   per_page: number,
   filter: UserFilter = 'all',
-  search: string = ''
+  search = ''
 ): Promise<PaginatedUsersResponse> => {
   const axiosResponse = await api.get(`/users`, {
     params: {

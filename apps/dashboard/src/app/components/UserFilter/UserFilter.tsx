@@ -4,7 +4,7 @@ import { UserFilter as UserFilterType } from '../../../models/User';
 import { IoIosArrowDown } from 'react-icons/io';
 import clsx from 'clsx';
 import { useSearchParams } from 'react-router';
-import useOutsideClick from '../../../../../../packages/ui/src/lib/OutsideClick/useOutsideClick';
+import { useOutsideClick } from '@acme/ui';
 
 function UserFilter() {
   const [filter, setFilter] = useState<UserFilterType>('all');

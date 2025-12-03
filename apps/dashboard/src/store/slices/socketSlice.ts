@@ -9,9 +9,9 @@ export interface SocketStore {
   connect: (url: string, token?: string) => void;
   disconnect: () => void;
   emit: (event: string, data?: any) => void;
-  on: <T = any>(event: string, callback: (data: T) => void) => void;
-  off: <T = any>(event: string, callback?: (data: T) => void) => void;
-  once: <T = any>(event: string, callback: (data: T) => void) => void;
+  on: <T>(event: string, callback: (data: T) => void) => void;
+  off: <T>(event: string, callback?: (data: T) => void) => void;
+  once: <T>(event: string, callback: (data: T) => void) => void;
 }
 
 export const createSocketSlice: StateCreator<SocketStore> = (set, get) => ({

@@ -4,7 +4,7 @@ import { useStore } from '../../../store/store';
 import DonutChart from '../DonatChart/DonatChart';
 import { IoIosArrowDown } from 'react-icons/io';
 import clsx from 'clsx';
-import useOutsideClick from '../../../../../../packages/ui/src/lib/OutsideClick/useOutsideClick';
+import { useOutsideClick } from '@acme/ui';
 
 function DonutGraphContainer() {
   const firstDayOfMonth = useStore((state) => state.firstDayOfMonth);

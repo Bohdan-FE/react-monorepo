@@ -1,11 +1,6 @@
-// hooks/ui/useScrollRestoration.ts
-'use client';
-
 import { useEffect } from 'react';
 
 import { usePathname, useRouter } from 'next/navigation';
-
-// hooks/ui/useScrollRestoration.ts
 
 export function useScrollRestoration() {
   const pathname = usePathname();
@@ -19,7 +14,7 @@ export function useScrollRestoration() {
     const saveScrollPos = (path: string) => {
       sessionStorage.setItem(
         `scroll-pos:${path}`,
-        JSON.stringify({ x: window.scrollX, y: window.scrollY }),
+        JSON.stringify({ x: window.scrollX, y: window.scrollY })
       );
     };
 

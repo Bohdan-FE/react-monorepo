@@ -5,6 +5,7 @@ interface CustomSliderProps {
   onChange: (value: number) => void;
   min?: number;
   max?: number;
+  step?: number; // <--- added
   className?: string;
 }
 
@@ -13,6 +14,7 @@ export default function CustomSlider({
   onChange,
   min = 0,
   max = 100,
+  step = 1, // <--- default step
   className = '',
 }: CustomSliderProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -28,7 +30,12 @@ export default function CustomSlider({
     x = Math.max(0, Math.min(x, rect.width));
 
     const newPercent = x / rect.width;
-    const newValue = Math.round(newPercent * (max - min) + min);
+    const rawValue = newPercent * (max - min) + min;
+
+    // apply step rounding
+    const steppedValue = Math.round(rawValue / step) * step;
+
+    const newValue = Math.min(max, Math.max(min, steppedValue));
 
     onChange(newValue);
   };
@@ -38,25 +45,27 @@ export default function CustomSlider({
     dragging && updateValue(e.touches[0].clientX);
 
   useEffect(() => {
+    const stop = () => setDragging(false);
+
     document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', () => setDragging(false));
+    document.addEventListener('mouseup', stop);
 
     document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', () => setDragging(false));
+    document.addEventListener('touchend', stop);
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', () => setDragging(false));
+      document.removeEventListener('mouseup', stop);
 
       document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', () => setDragging(false));
+      document.removeEventListener('touchend', stop);
     };
   }, [dragging]);
 
   return (
     <div
       ref={sliderRef}
-      className={`relative h-2 w-full bg-neutral-300 dark:bg-neutral-700 rounded-full cursor-pointer ${className}`}
+      className={`relative h-2 w-full bg-neutral-300 dark:bg-neutral-700 rounded-full cursor-pointer select-none ${className}`}
       onMouseDown={(e) => updateValue(e.clientX)}
       onTouchStart={(e) => updateValue(e.touches[0].clientX)}
     >
@@ -71,7 +80,7 @@ export default function CustomSlider({
         onMouseDown={() => setDragging(true)}
         onTouchStart={() => setDragging(true)}
         className="
-          absolute top-1/2 -translate-y-1/2 transform
+          absolute top-1/2 -translate-y-1/2 transform -translate-x-1/2
           w-5 h-5
           bg-white dark:bg-neutral-900
           border-4 border-blue-500

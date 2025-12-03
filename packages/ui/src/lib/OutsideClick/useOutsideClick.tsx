@@ -1,6 +1,6 @@
 import { useEffect, useRef, RefObject } from 'react';
 
-function useOutsideClick<T extends HTMLElement>(
+export function useOutsideClick<T extends HTMLElement>(
   callback: () => void
 ): RefObject<T> {
   const ref = useRef<T>(null!);
@@ -23,5 +23,3 @@ function useOutsideClick<T extends HTMLElement>(
 
   return ref;
 }
-
-export default useOutsideClick;

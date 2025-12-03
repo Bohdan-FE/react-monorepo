@@ -10,10 +10,12 @@ function TaskItem({ task, index }: { task: Task; index: number }) {
   const { selectTask, selectedTask } = useStore();
 
   const handleDeleteTask = (e: React.MouseEvent) => {
-    console.log('Deleting task:', task._id);
     e.stopPropagation();
     e.preventDefault();
     deleteTask(task._id);
+    if (selectedTask?._id === task._id) {
+      selectTask(null);
+    }
   };
 
   return (

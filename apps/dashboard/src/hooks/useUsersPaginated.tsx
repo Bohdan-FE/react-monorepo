@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 export const useUsersPaginated = (
   filter: UserFilter = 'all',
-  search: string = '',
+  search = '',
   perPage = 10
 ) => {
   const query = useInfiniteQuery<
