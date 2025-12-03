@@ -63,12 +63,24 @@ function DashBoardLayout() {
   }, [user]);
 
   return (
-    <div className=" h-screen flex shadow-lg bg-yellow-light border-4 ">
-      <Sidebar />
-      <main className="w-full border-black bg-[url('/naruto-bg.png')]  bg-center bg-no-repeat flex-1 pl-16 select-none">
-        <Outlet />
-      </main>
-      <NotificationWidget />
+    <div className="h-screen w-full">
+      {/* MOBILE WARNING */}
+      <div className="flex md:hidden items-center justify-center h-full bg-yellow-200 p-6 text-center">
+        <p className="text-xl font-bold text-red-600">
+          This app works only on desktop.
+          <br />
+          Mobile version coming soon ❤️
+        </p>
+      </div>
+
+      {/* DESKTOP LAYOUT */}
+      <div className="hidden md:flex h-full shadow-lg bg-yellow-light border-4">
+        <Sidebar />
+        <main className="w-full border-black bg-[url('/naruto-bg.png')] bg-center bg-no-repeat flex-1 pl-16 select-none">
+          <Outlet />
+        </main>
+        <NotificationWidget />
+      </div>
     </div>
   );
 }
