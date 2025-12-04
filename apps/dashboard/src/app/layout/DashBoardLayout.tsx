@@ -19,7 +19,7 @@ function DashBoardLayout() {
     if (user) {
       const token = localStorage.getItem('authToken');
       if (!token) return;
-      connect('http://localhost:3000', token);
+      connect('http://13.49.226.36:4252', token);
       on('user_status_change', () => {
         queryClient.invalidateQueries({
           queryKey: ['users'],
