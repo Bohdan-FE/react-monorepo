@@ -31,12 +31,12 @@ export class CircleDrawer {
   private gradientColorEnd?: string;
   private imageUrl?: string;
   private image?: HTMLImageElement;
-  public vx: number = 0;
-  public vy: number = 0;
+  public vx = 0;
+  public vy = 0;
   public mass: number;
-  public angle: number = 0;
-  public angularVelocity: number = 0;
-  public inertia: number = 0;
+  public angle = 0;
+  public angularVelocity = 0;
+  public inertia = 0;
 
   constructor(ctx: CanvasRenderingContext2D, options: CircleOptions) {
     this.ctx = ctx;
@@ -138,26 +138,26 @@ export class CircleDrawer {
     ctx.restore();
   }
 
-  set X(x: number) {
-    this.x = x;
-  }
-  set Y(y: number) {
-    this.y = y;
-  }
   get X() {
     return this.x;
+  }
+  set X(x: number) {
+    this.x = x;
   }
   get Y() {
     return this.y;
   }
+  set Y(y: number) {
+    this.y = y;
+  }
   get VX() {
     return this.vx;
   }
-  get VY() {
-    return this.vy;
-  }
   set VX(vx: number) {
     this.vx = vx;
+  }
+  get VY() {
+    return this.vy;
   }
   set VY(vy: number) {
     this.vy = vy;
