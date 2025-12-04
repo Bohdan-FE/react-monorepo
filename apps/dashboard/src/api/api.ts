@@ -1,10 +1,13 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://13.49.226.36:4252';
-//  'https://express-h9wn.onrender.com';
+export const API_BASE_URL = 'https://stenohaline-cuc-unimposing.ngrok-free.dev';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
 });
 
 api.interceptors.request.use(

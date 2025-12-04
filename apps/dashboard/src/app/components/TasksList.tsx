@@ -24,7 +24,8 @@ function TasksList({ status }: { status: TaskStatus }) {
 
   useEffect(() => {
     setSortedTasks((prev) => {
-      const tasks = data?.filter((t) => t.status === status);
+      if (!data) return prev;
+      const tasks = data.filter((t) => t.status === status);
       if (tasks) {
         const sorted = [...tasks].sort((a, b) => a.index - b.index);
         return sorted;

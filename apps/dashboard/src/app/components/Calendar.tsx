@@ -43,7 +43,8 @@ export default function Calendar() {
       days.push(null);
     }
     for (let i = 1; i <= daysInMonth; i++) {
-      const tasksAmountForDay = tasksAmount?.find(
+      if (tasksAmount === undefined) break;
+      const tasksAmountForDay = tasksAmount.find(
         (d) =>
           new Date(d.date).toISOString() ===
           new Date(year, month, i).toISOString()

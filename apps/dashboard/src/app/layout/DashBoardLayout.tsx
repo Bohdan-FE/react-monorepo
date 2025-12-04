@@ -19,7 +19,7 @@ function DashBoardLayout() {
     if (user) {
       const token = localStorage.getItem('authToken');
       if (!token) return;
-      connect('http://13.49.226.36:4252', token);
+      connect('https://stenohaline-cuc-unimposing.ngrok-free.dev', token);
       on('user_status_change', () => {
         queryClient.invalidateQueries({
           queryKey: ['users'],
