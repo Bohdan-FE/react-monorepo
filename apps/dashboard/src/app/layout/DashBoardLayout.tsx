@@ -19,7 +19,10 @@ function DashBoardLayout() {
     if (user) {
       const token = localStorage.getItem('authToken');
       if (!token) return;
-      connect('https://stenohaline-cuc-unimposing.ngrok-free.dev', token);
+      connect(
+        'https://specialty-formal-bizarre-delight.trycloudflare.com',
+        token
+      );
       on('user_status_change', () => {
         queryClient.invalidateQueries({
           queryKey: ['users'],

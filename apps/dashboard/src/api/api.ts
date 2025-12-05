@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'https://stenohaline-cuc-unimposing.ngrok-free.dev';
+export const API_BASE_URL =
+  'https://specialty-formal-bizarre-delight.trycloudflare.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
