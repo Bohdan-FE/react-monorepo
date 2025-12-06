@@ -64,7 +64,7 @@ function UploadAvatar({
         onClick={() => document.getElementById('avatarInput')?.click()}
       >
         <img
-          src={preview || user?.avatarURL}
+          src={preview || user?.avatarURL || '/jiraiya.png'}
           alt="Avatar Preview"
           className="size-full object-center  mx-auto rounded-full object-cover shadow-md"
         />
