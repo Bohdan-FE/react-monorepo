@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'https://api.apidashboard.online';
+export const API_BASE_URL = 'http://localhost:4252';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': 'true',
   },
   withCredentials: true,
@@ -20,6 +19,20 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/authenticate';
+      }
+    }
     return Promise.reject(error);
   }
 );

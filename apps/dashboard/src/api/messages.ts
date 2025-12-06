@@ -27,7 +27,6 @@ export const uploadImageMessage = async (
 ): Promise<{ imageUrl: string }> => {
   const formData = new FormData();
   formData.append('image', file);
-
   const axiosResponse = await api.post('/messages/image', formData);
   return axiosResponse.data;
 };
