@@ -24,6 +24,7 @@ export const login = async ({ email, password }: LoginPayload) => {
     email,
     password,
   });
+  localStorage.setItem('userData', JSON.stringify(axiosResponse.data));
   return axiosResponse.data;
 };
 
@@ -48,11 +49,14 @@ export const googleAuth = async (
 
 export const fetchUser = async () => {
   const axiosResponse = await api.get(`/auth/current`);
+  localStorage.setItem('userData', JSON.stringify(axiosResponse.data));
   return axiosResponse.data;
 };
 
 export const logout = async () => {
   const axiosResponse = await api.post(`/auth/logout`);
+  localStorage.removeItem('userData');
+  localStorage.removeItem('authToken');
   return axiosResponse.data;
 };
 
