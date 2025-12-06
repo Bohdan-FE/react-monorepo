@@ -5,6 +5,7 @@ import { useUser } from '../../hooks/useUser';
 import { useQueryClient } from '@tanstack/react-query';
 import { Outlet, useLocation } from 'react-router';
 import NotificationWidget from '../components/NotificationWidget/NotifivationWidget';
+import { API_BASE_URL } from '../../api/api';
 
 function DashBoardLayout() {
   const connect = useStore((store) => store.connect);
@@ -19,10 +20,7 @@ function DashBoardLayout() {
     if (user) {
       const token = localStorage.getItem('authToken');
       if (!token) return;
-      connect(
-        'https://specialty-formal-bizarre-delight.trycloudflare.com',
-        token
-      );
+      connect(API_BASE_URL, token);
       on('user_status_change', () => {
         queryClient.invalidateQueries({
           queryKey: ['users'],

@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL =
-  'https://specialty-formal-bizarre-delight.trycloudflare.com';
+export const API_BASE_URL = 'https://api.apidashboard.online';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
