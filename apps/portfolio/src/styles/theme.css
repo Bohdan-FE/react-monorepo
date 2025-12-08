@@ -1,0 +1,40 @@
+@theme {
+  --color-blue-light: #5365ed;
+  --color-purple: #a057c7;
+  --color-purple-dark: #47204f;
+  --shadow-big: 0.4rem 0.4rem 0px 0px rgba(0, 0, 0, 0.75);
+  --shadow-small: 0.2rem 0.2rem 0px 0px rgba(0, 0, 0, 0.75);
+
+  --inset-shadow-white: 0 1px 40px 0 rgba(114, 130, 208, 0.2) inset;
+
+  --font-GreatVibes: GreatVibes;
+
+  --gradient-main: linear-gradient(
+    124deg,
+    rgba(134, 42, 155, 1) 0%,
+    rgba(102, 87, 199, 1) 50%,
+    rgba(237, 170, 83, 1) 100%
+  );
+
+  --animate-spin-slow: spin 10s linear infinite;
+
+  --animate-blink: blink 1s infinite;
+
+  --animate-up-down: up-down 3s ease-in-out infinite;
+
+  @keyframes up-down {
+    0%,
+    100% {
+      transform: translateY(10px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+}

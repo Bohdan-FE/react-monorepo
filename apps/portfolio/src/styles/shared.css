@@ -1,0 +1,160 @@
+.gradient-main {
+  background-image: linear-gradient(
+    124deg,
+    #47204f 0%,
+    #a057c7 50%,
+    #5365ed 100%
+  );
+}
+.header-bg {
+  background-image: linear-gradient(
+    124deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: translateX(-100%);
+  animation: moveRight 5s linear infinite;
+}
+
+@keyframes moveRight {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(150%);
+  }
+}
+
+.conical-bg {
+  background: conic-gradient(
+    #47204f,
+    rgba(160, 87, 199, 1),
+    rgba(83, 101, 237, 1),
+    #47204f
+  );
+}
+
+@layer base {
+  @property --gradient-color-1 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgba(114, 130, 208, 1);
+  }
+  @property --gradient-color-2 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgba(212, 111, 215, 1);
+  }
+  @property --gradient-color-3 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgba(198, 195, 212, 1);
+  }
+}
+
+.animated_gradient {
+  background: linear-gradient(
+    145deg,
+    var(--gradient-color-1) 0%,
+    var(--gradient-color-2) 50%,
+    var(--gradient-color-3) 100%
+  );
+  animation: changeGradientColors 4s linear infinite;
+}
+
+@keyframes changeGradientColors {
+  0% {
+    --gradient-color-1: rgba(71, 32, 79, 1);
+    --gradient-color-2: rgba(160, 87, 199, 1);
+    --gradient-color-3: rgba(83, 101, 237, 1);
+  }
+  33% {
+    --gradient-color-1: rgba(83, 101, 237, 1);
+    --gradient-color-2: rgba(71, 32, 79, 1);
+    --gradient-color-3: rgba(160, 87, 199, 1);
+  }
+  66% {
+    --gradient-color-1: rgba(160, 87, 199, 1);
+    --gradient-color-2: rgba(83, 101, 237, 1);
+    --gradient-color-3: rgba(71, 32, 79, 1);
+  }
+  100% {
+    --gradient-color-1: rgba(71, 32, 79, 1);
+    --gradient-color-2: rgba(160, 87, 199, 1);
+    --gradient-color-3: rgba(83, 101, 237, 1);
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(
+    145deg,
+    var(--gradient-color-1) 0%,
+    var(--gradient-color-2) 50%,
+    var(--gradient-color-3) 100%
+  );
+  animation: changeGradientColors 4s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.button {
+  @apply h-10 flex items-center px-8 rounded-4xl cursor-pointer transition-all duration-300 ease-in-out text-white
+    font-bold;
+
+  background: linear-gradient(
+    145deg,
+    var(--gradient-color-1) 0%,
+    var(--gradient-color-2) 50%,
+    var(--gradient-color-3) 100%
+  );
+  animation: changeGradientColors 4s linear infinite;
+
+  &:hover {
+    box-shadow: 0 0 20px 5px rgba(160, 87, 199, 0.6);
+  }
+}
+
+.button.outlined {
+  background: transparent;
+  border: 2px solid white;
+
+  &:hover {
+    box-shadow: 0 0 20px 0 rgba(255, 255, 255, 0.6);
+  }
+}
+
+.animated-border {
+  border-radius: 45% 55% 51% 49% / 66% 30% 70% 34%;
+
+  /* Более плавная анимация с ease-in-out */
+  animation: bubbleRadius 8s ease-in-out infinite;
+}
+
+@keyframes bubbleRadius {
+  0%,
+  100% {
+    border-radius: 45% 55% 51% 49% / 66% 30% 70% 34%;
+  }
+
+  25% {
+    border-radius: 27% 73% 28% 72% / 42% 56% 44% 58%;
+  }
+
+  50% {
+    border-radius: 39% 61% 69% 31% / 42% 49% 51% 58%;
+  }
+
+  75% {
+    border-radius: 60% 40% 30% 70% / 69% 41% 59% 31%;
+  }
+}
+
+.icon-shadow {
+  filter: drop-shadow(0 0px 8px rgba(160, 87, 199, 0.8))
+    drop-shadow(0 0px 6px rgba(160, 87, 199, 0.4))
+    drop-shadow(0 0px 4px rgba(160, 87, 199, 0.2))
+    drop-shadow(0 0px 2px rgba(160, 87, 199, 0.1));
+}

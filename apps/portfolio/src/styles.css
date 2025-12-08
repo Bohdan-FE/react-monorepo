@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+@import './styles/fonts.css';
+@import './styles/theme.css';
+@import './styles/shared.css';
+
+html {
+  font-family: Rubik, sans-serif;
+  color: white;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+body {
+  background-color: black;
+}
