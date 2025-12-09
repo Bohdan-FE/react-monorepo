@@ -1,17 +1,15 @@
-import { useRef } from 'react';
+import { SectionTitle } from './SectionTitle';
 import TechnologyCard from './TechnologyCard';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 export default function BackendSkillsPage() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   return (
     <div className="max-w-6xl mx-auto px-4 text-white/90">
       <div className=" w-fit overflow-hidden mx-auto">
         <motion.h2
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
+          initial={{ y: 60 }}
           transition={{ delay: 0.2, duration: 0.4 }}
+          animate={{ y: 0 }}
           className="text-6xl font-bold  text-center gradient-text leading-none "
         >
           Backend Development{' '}
@@ -19,7 +17,7 @@ export default function BackendSkillsPage() {
       </div>
       <div className="mb-12 w-fit overflow-hidden mx-auto">
         <motion.h2
-          initial={{ y: 100 }}
+          initial={{ y: 60 }}
           animate={{ y: 0 }}
           transition={{ delay: 0.4, duration: 0.4 }}
           className="text-6xl font-bold  text-center gradient-text leading-none"
@@ -27,9 +25,14 @@ export default function BackendSkillsPage() {
           Skills & Architecture
         </motion.h2>
       </div>
-      
 
-      <p className="text-blue-dark leading-relaxed mb-16 text-center max-w-2xl mx-auto">
+      <motion.p
+        className="text-blue-dark leading-relaxed mb-16 text-center max-w-2xl mx-auto"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+      >
         I build secure, scalable, and high-performance backend systems using
         modern
         <span className="font-semibold">
@@ -38,13 +41,11 @@ export default function BackendSkillsPage() {
         </span>
         . My work focuses on robust server architecture, efficient API design,
         and reliable communication between backend and client layers.
-      </p>
+      </motion.p>
 
       {/* Node.js / Express */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          Node.js & API Frameworks
-        </h3>
+        <SectionTitle>Node.js & API Frameworks</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -75,9 +76,7 @@ export default function BackendSkillsPage() {
 
       {/* API Development */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          API Development & Architecture
-        </h3>
+        <SectionTitle>API Development & Architecture</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -120,9 +119,7 @@ export default function BackendSkillsPage() {
 
       {/* Real-time */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          Real-Time Communication
-        </h3>
+        <SectionTitle>Real-Time Communication</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -141,9 +138,7 @@ export default function BackendSkillsPage() {
 
       {/* Databases */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          Databases & Data Layer
-        </h3>
+        <SectionTitle>Databases & Data Layer</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -186,9 +181,7 @@ export default function BackendSkillsPage() {
 
       {/* Deployment */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          Deployment & Infrastructure
-        </h3>
+        <SectionTitle>Deployment & Infrastructure</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -226,7 +219,16 @@ export default function BackendSkillsPage() {
       </section>
 
       {/* Approach */}
-      <section className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]">
+      <motion.section
+        className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]"
+        initial={{
+          opacity: 0,
+          y: 50,
+        }}
+        transition={{ duration: 0.5 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ margin: '0px 0px -200px 0px' }}
+      >
         <h3 className="text-4xl text-center font-semibold mb-4">My Approach</h3>
         <ul className="space-y-2 flex flex-col items-center text-base">
           <li>Predictable, scalable backend architectures</li>
@@ -235,7 +237,7 @@ export default function BackendSkillsPage() {
           <li>Secure and well-documented APIs</li>
           <li>Backend layers built for smooth frontend integration</li>
         </ul>
-      </section>
+      </motion.section>
     </div>
   );
 }

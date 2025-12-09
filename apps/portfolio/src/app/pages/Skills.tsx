@@ -24,9 +24,9 @@ function Skills() {
 
   return (
     <motion.div
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      exit={{ translateZ: openedCard ? 0 : 100, opacity: 0 }}
+      initial={{ translateZ: -100, opacity: 0 }}
+      animate={{ translateZ: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
       className="max-w-7xl mx-auto"
     >
@@ -43,9 +43,9 @@ function Skills() {
             <h2 className="text-5xl font-bold mb-6 text-white">Skills</h2>
             <div className="max-w-7xl mx-auto grid grid-cols-3 gap-6 w-full perspective-midrange">
               <motion.div
-                initial={{ opacity: 0, x: 50 }}
+                initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
+                exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.4 }}
               >
                 <SkillCard type="Visual" setOpenCard={setOpenedCard} />
@@ -59,9 +59,9 @@ function Skills() {
                 <SkillCard type="Interactivity" setOpenCard={setOpenedCard} />
               </motion.div>
               <motion.div
-                initial={{ opacity: 0, x: -50 }}
+                initial={{ opacity: 0, x: -100 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
+                exit={{ opacity: 0, x: 100 }}
                 transition={{ duration: 0.4 }}
               >
                 <SkillCard type="Backend" setOpenCard={setOpenedCard} />

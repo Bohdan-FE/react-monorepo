@@ -1,13 +1,40 @@
+import { SectionTitle } from './SectionTitle';
 import TechnologyCard from './TechnologyCard';
+import { motion } from 'motion/react';
 
 export default function LogicSkillsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 text-white/90">
-      <h2 className="text-6xl font-bold mb-12 text-center gradient-text">
-        Interactivity & <br /> State Management Skills
-      </h2>
+      <div className="overflow-hidden">
+        <motion.h2
+          initial={{ y: 60 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          animate={{ y: 0 }}
+          className="text-6xl font-bold  text-center gradient-text leading-none "
+        >
+          {' '}
+          Interactivity &
+        </motion.h2>
+      </div>
+      <div className="overflow-hidden mb-12">
+        <motion.h2
+          initial={{ y: 60 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+          animate={{ y: 0 }}
+          className="text-6xl font-bold  text-center gradient-text leading-none "
+        >
+          {' '}
+          State Management Skills
+        </motion.h2>
+      </div>
 
-      <p className="text-blue-dark leading-relaxed mb-16 text-center max-w-2xl mx-auto">
+      <motion.p
+        className="text-blue-dark leading-relaxed mb-16 text-center max-w-2xl mx-auto"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+      >
         I build dynamic, responsive, and data-driven applications using a
         <span className="font-semibold">
           {' '}
@@ -15,13 +42,11 @@ export default function LogicSkillsPage() {
         </span>
         . My focus is on scalable logic, predictable state management, and
         reliable communication between client and backend layers.
-      </p>
+      </motion.p>
 
       {/* Frameworks Section */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          Frameworks & Architecture
-        </h3>
+        <SectionTitle>Frameworks & Architecture</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -72,9 +97,7 @@ export default function LogicSkillsPage() {
 
       {/* State Management */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          State Management
-        </h3>
+        <SectionTitle>State Management</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard title="Redux" imageSrc="/redux.png" animation="left">
@@ -108,7 +131,7 @@ export default function LogicSkillsPage() {
           <TechnologyCard
             title="TanStack Query"
             imageSrc="/tanstack.png"
-            animation="down"
+            animation="right"
           >
             <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
               <li>Advanced server-state management</li>
@@ -122,9 +145,7 @@ export default function LogicSkillsPage() {
 
       {/* APIs */}
       <section className="mb-24">
-        <h2 className="text-4xl text-center font-semibold mb-12">
-          Data Layer & APIs
-        </h2>
+        <SectionTitle>Data Layer & APIs</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard title="Axios" imageSrc="/axios.png" animation="left">
@@ -163,9 +184,7 @@ export default function LogicSkillsPage() {
 
       {/* Web3 */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12">
-          Web3 & Blockchain Interaction
-        </h3>
+        <SectionTitle>Web3 & Blockchain Interaction</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -184,7 +203,16 @@ export default function LogicSkillsPage() {
       </section>
 
       {/* Approach */}
-      <section className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]">
+      <motion.section
+        className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]"
+        initial={{
+          opacity: 0,
+          y: 50,
+        }}
+        transition={{ duration: 0.5 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ margin: '0px 0px -200px 0px' }}
+      >
         <h3 className="text-4xl text-center font-semibold mb-4">My Approach</h3>
         <ul className="space-y-2 flex flex-col items-center text-base">
           <li>Clear separation of UI, state, and data layers</li>
@@ -193,7 +221,8 @@ export default function LogicSkillsPage() {
           <li>Predictable and testable logic flows</li>
           <li>Real-time features with stable fallbacks</li>
         </ul>
-      </section>
+      </motion.section>
     </div>
   );
 }
+``;

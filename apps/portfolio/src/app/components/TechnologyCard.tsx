@@ -22,7 +22,7 @@ function TechnologyCard({
       }}
       transition={{ duration: 0.5 }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ margin: '0px 0px -200px 0px' }}
+      viewport={{ margin: '0px 0px -200px 0px', once: true }}
       whileHover={{
         scale: 1.02,
         boxShadow: '0 0 15px 5px rgba(128,0,128,0.5)',
@@ -34,7 +34,7 @@ function TechnologyCard({
       }}
       className=" items-center border-3  rounded-3xl border-purple/30  bg-black/10 backdrop-blur-md w-[calc(50%-3rem)]  "
     >
-      <div className="gap-6 p-8 py-12 flex flex-col items-center  rounded-3xl size-full inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]">
+      <div className="gap-6 p-8 py-12 flex flex-col items-center  rounded-3xl size-full inset-shadow-[0_0_45px_rgba(128,0,128,0.5)]">
         <div className="h-20">
           <img
             className="h-full "

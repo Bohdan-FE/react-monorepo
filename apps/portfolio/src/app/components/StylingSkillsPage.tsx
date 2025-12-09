@@ -1,13 +1,40 @@
+import { SectionTitle } from './SectionTitle';
 import TechnologyCard from './TechnologyCard';
+import { motion } from 'motion/react';
 
 export default function StylingSkillsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 text-white/90">
-      <h2 className="text-6xl font-bold mb-12 text-center gradient-text">
-        Frontend Visual & <br /> Styling Skills
-      </h2>
+      <div className="overflow-hidden">
+        <motion.h2
+          initial={{ y: 60 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          animate={{ y: 0 }}
+          className="text-6xl font-bold  text-center gradient-text leading-none "
+        >
+          {' '}
+          Frontend Visual &
+        </motion.h2>
+      </div>
+      <div className="overflow-hidden mb-12">
+        <motion.h2
+          initial={{ y: 60 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+          animate={{ y: 0 }}
+          className="text-6xl font-bold  text-center gradient-text leading-none "
+        >
+          {' '}
+          Styling Skills
+        </motion.h2>
+      </div>
 
-      <p className="text-blue-dark  leading-relaxed mb-16 text-center max-w-2xl mx-auto">
+      <motion.p
+        className="text-blue-dark leading-relaxed mb-16 text-center max-w-2xl mx-auto"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+      >
         I focus on creating clean, precise, and visually consistent user
         interfaces using a{' '}
         <span className="font-semibold">pixel-perfect approach</span>. While I
@@ -15,13 +42,11 @@ export default function StylingSkillsPage() {
         <span className="font-semibold">Figma</span>
         as a technical tool to translate layouts into accurate, production-ready
         frontend implementations.
-      </p>
+      </motion.p>
 
-      {/* Styling Tools Section */}
+      {/* Technologies & Styling Tools */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12 ">
-          Technologies & Styling Tools
-        </h3>
+        <SectionTitle>Technologies & Styling Tools</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -47,6 +72,7 @@ export default function StylingSkillsPage() {
               <li>Clean, maintainable UI development workflow</li>
             </ul>
           </TechnologyCard>
+
           <TechnologyCard
             title="Styled-Components"
             imageSrc="/styled-component.png"
@@ -58,6 +84,7 @@ export default function StylingSkillsPage() {
               <li>Scoped, maintainable styling architecture</li>
             </ul>
           </TechnologyCard>
+
           <TechnologyCard
             title="UI Libraries"
             imageSrc="/materialUI.png"
@@ -74,9 +101,7 @@ export default function StylingSkillsPage() {
 
       {/* Animations Section */}
       <section className="mb-24">
-        <h3 className="text-4xl text-center font-semibold mb-12 ">
-          Technologies & Styling Tools
-        </h3>
+        <SectionTitle>Animations & Motion Tools</SectionTitle>
 
         <div className="flex flex-wrap gap-12 justify-center">
           <TechnologyCard
@@ -113,7 +138,16 @@ export default function StylingSkillsPage() {
       </section>
 
       {/* Approach Section */}
-      <section className="flex flex-col items-center border-3 gap-6 p-8 py-12 rounded-3xl border-purple/30  bg-black/10 backdrop-blur-md  inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]">
+      <motion.section
+        className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]"
+        initial={{
+          opacity: 0,
+          y: 50,
+        }}
+        transition={{ duration: 0.5 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ margin: '0px 0px -200px 0px' }}
+      >
         <h2 className="text-4xl text-center font-semibold mb-4">My Approach</h2>
         <ul className="space-y-2 flex flex-col items-center text-base">
           <li>Pixel-perfect implementation based on Figma</li>
@@ -122,7 +156,7 @@ export default function StylingSkillsPage() {
           <li>Performance-first UI implementation</li>
           <li>Smooth and meaningful animations</li>
         </ul>
-      </section>
+      </motion.section>
     </div>
   );
 }
