@@ -17,7 +17,7 @@ function Home() {
       initial={{ translateZ: -100, opacity: 0 }}
       animate={{ translateZ: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className=" h-screen gap-8 min-h-186 pt-8 overflow-hidden transform-3d"
+      className="h-screen gap-8 min-h-186 pt-8 overflow-hidden transform-3d"
     >
       <div className="grid grid-cols-2 h-full  max-w-7xl mx-auto">
         <motion.div

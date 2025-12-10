@@ -15,9 +15,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         ></video>
       </div>
 
-      <main className="min-h-screen  mx-auto relative z-3 perspective-midrange">
-        {children}
-      </main>
+      <main className="min-h-screen  mx-auto relative z-3 ">{children}</main>
       {/* <footer className="h-[5rem]"></footer> */}
     </>
   );

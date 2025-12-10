@@ -55,7 +55,7 @@ function Header() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="#projects" className="hover:underline">
+              <NavLink to="/projects" className="hover:underline">
                 Projects
               </NavLink>
             </li>

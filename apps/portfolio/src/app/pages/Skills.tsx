@@ -40,7 +40,7 @@ function Skills() {
             animate={{ translateZ: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-5xl font-bold mb-6 text-white">Skills</h2>
+            <h2 className="text-6xl font-bold mb-6 text-white">Skills</h2>
             <div className="max-w-7xl mx-auto grid grid-cols-3 gap-6 w-full perspective-midrange">
               <motion.div
                 initial={{ opacity: 0, x: 100 }}

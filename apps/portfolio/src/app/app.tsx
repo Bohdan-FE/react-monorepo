@@ -12,7 +12,7 @@ export function App() {
     <Layout>
       <AnimatePresence mode="wait">
         {outlet && (
-          <div className=" perspective-midrange" key={location.pathname}>
+          <div className=" " key={location.pathname}>
             {outlet}
           </div>
         )}
