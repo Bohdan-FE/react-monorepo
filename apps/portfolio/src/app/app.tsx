@@ -4,20 +4,48 @@
 import { useLocation, useOutlet } from 'react-router';
 import Layout from './layout/Layout';
 import { AnimatePresence } from 'motion/react';
+import { ModalProvider } from './context/modal-context';
+import { Toaster } from 'react-hot-toast';
 
 export function App() {
   const location = useLocation();
   const outlet = useOutlet();
   return (
-    <Layout>
-      <AnimatePresence mode="wait">
-        {outlet && (
-          <div className=" " key={location.pathname}>
-            {outlet}
-          </div>
-        )}
-      </AnimatePresence>
-    </Layout>
+    <ModalProvider>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: '#000',
+            color: '#fff',
+            border: '2px solid #4b0082',
+            padding: '12px 16px',
+            fontWeight: 500,
+          },
+          success: {
+            iconTheme: {
+              primary: '#4b0082',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+      <Layout>
+        <AnimatePresence mode="wait">
+          {outlet && (
+            <div className=" perspective-distant" key={location.pathname}>
+              {outlet}
+            </div>
+          )}
+        </AnimatePresence>
+      </Layout>
+    </ModalProvider>
   );
 }
 

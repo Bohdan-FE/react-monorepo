@@ -13,6 +13,7 @@ export interface Project {
   description: string;
   images: string[];
   technologies: technologies[];
+  href: string;
 }
 
 export const PROJECTS_DATA: Project[] = [
@@ -29,6 +30,7 @@ export const PROJECTS_DATA: Project[] = [
       '/naruto/1765048587057.jpeg',
     ],
     technologies: ['react', 'tailwind', 'tanstack', 'zustand', 'nodejs'],
+    href: 'https://react-monorepo-eta.vercel.app',
   },
   {
     title: 'Citizen Conflict',
@@ -43,6 +45,7 @@ export const PROJECTS_DATA: Project[] = [
       '/cc/Screenshot-2025-12-08-at-23.19.09.png',
     ],
     technologies: ['angular', 'tailwind', 'scss'],
+    href: 'https://citizenconflict.com',
   },
   {
     title: 'Aneemate',
@@ -59,6 +62,7 @@ export const PROJECTS_DATA: Project[] = [
       '/anmt/Screenshot-2025-12-08-at-23.16.29.png',
     ],
     technologies: ['angular', 'react', 'tailwind', 'tanstack'],
+    href: 'https://aneemate.com',
   },
 
   {
@@ -74,6 +78,7 @@ export const PROJECTS_DATA: Project[] = [
       '/toy/Screenshot-2025-12-08-at-23.26.27.png',
     ],
     technologies: ['angular', 'tailwind', 'scss'],
+    href: 'https://playontoy.com',
   },
 
   {
@@ -90,6 +95,7 @@ export const PROJECTS_DATA: Project[] = [
       '/market/Screenshot-2025-12-08-at-23.39.35.png',
     ],
     technologies: ['nextjs', 'tailwind', 'tanstack'],
+    href: 'https://playontoy.com/market',
   },
 
   {
@@ -108,6 +114,7 @@ export const PROJECTS_DATA: Project[] = [
       '/qw/Screenshot-2025-12-08-at-23.23.20.png',
     ],
     technologies: ['angular', 'tailwind', 'scss'],
+    href: 'https://qorpo.world',
   },
 
   {
@@ -125,6 +132,7 @@ export const PROJECTS_DATA: Project[] = [
       '/taix/Screenshot-2025-12-08-at-23.30.29.png',
     ],
     technologies: ['angular', 'tailwind', 'scss'],
+    href: 'https://taix.ai',
   },
 
   {
@@ -141,6 +149,7 @@ export const PROJECTS_DATA: Project[] = [
       '/dao/Screenshot-2025-12-08-at-23.35.06.png',
     ],
     technologies: ['angular', 'tailwind', 'scss'],
+    href: 'https://daoblackswan.com/',
   },
 
   {
@@ -155,5 +164,6 @@ export const PROJECTS_DATA: Project[] = [
       '/flixHub/1718466675284.jpeg',
     ],
     technologies: ['nextjs', 'tailwind'],
+    href: 'https://next-project-eight-khaki.vercel.app',
   },
 ];

@@ -16,7 +16,6 @@ function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       <main className="min-h-screen  mx-auto relative z-3 ">{children}</main>
-      {/* <footer className="h-[5rem]"></footer> */}
     </>
   );
 }

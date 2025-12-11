@@ -1,13 +1,32 @@
 import { Project } from '../data/projects';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useState } from 'react';
+import { motion } from 'motion/react';
 import 'swiper/css';
+import { IoEarthOutline } from 'react-icons/io5';
 
 function ProjectCard({ project }: { project: Project }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <div className="rounded-2xl bg-black/40 backdrop-blur-2xl border-3 border-purple-dark select-none shadow-[0_4px_10px_rgba(128,90,213,0.5)] hover:shadow-[0_6px_30px_rgba(128,90,213,0.7)] transition-shadow duration-300 p-2 flex flex-col">
+    <motion.div
+      layout
+      layoutId={project.title}
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: 1,
+
+        transition: {
+          duration: 0.5,
+        },
+      }}
+      exit={{
+        opacity: 0,
+
+        transition: { duration: 0.5 },
+      }}
+      className="rounded-2xl bg-black/40  backdrop-blur-2xl border-3 border-purple-dark select-none shadow-[0_4px_10px_rgba(128,90,213,0.5)] hover:shadow-[0_6px_30px_rgba(128,90,213,0.7)] transition-shadow duration-300 p-2 flex flex-col"
+    >
       <div className="w-full aspect-video rounded-xl overflow-hidden border border-white shrink-0 cursor-grab relative">
         <Swiper
           spaceBetween={10}
@@ -43,19 +62,35 @@ function ProjectCard({ project }: { project: Project }) {
         <p className="text-sm mb-5 line-clamp-4 text-white/80">
           {project.description}
         </p>
-        <div className="flex items-center justify-end gap-2 mt-auto">
-          {project.technologies.map((tech, index) => (
-            <img
-              key={index}
-              className="w-[2rem]"
-              src={tech === 'zustand' ? `/${tech}.svg` : `/${tech}.png`}
-              alt={tech}
-              style={{ filter: tech === 'nextjs' ? 'invert(1)' : 'none' }}
-            />
-          ))}
+
+        <div className="mt-auto flex items-center justify-between">
+          <a
+            className="items-center grid grid-cols-[minmax(0,auto)minmax(0,0fr)] rounded-3xl border border-white/40 h-7 hover:grid-cols-[minmax(0,auto)minmax(0,1fr)] transition-all duration-300 cursor-pointer opacity-50 hover:opacity-100"
+            href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="size-6.5 flex items-center justify-center">
+              <IoEarthOutline />
+            </div>
+            <div className="overflow-hidden h-full flex items-center">
+              <p className="px-2 pr-4 font-thin italic">Visit</p>
+            </div>
+          </a>
+          <div className="flex items-center justify-end gap-2 ">
+            {project.technologies.map((tech, index) => (
+              <img
+                key={index}
+                className="w-[2rem]"
+                src={tech === 'zustand' ? `/${tech}.svg` : `/${tech}.png`}
+                alt={tech}
+                style={{ filter: tech === 'nextjs' ? 'invert(1)' : 'none' }}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

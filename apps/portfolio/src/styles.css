@@ -14,3 +14,28 @@ html {
 body {
   background-color: black;
 }
+
+input,
+textarea {
+  font-family: inherit;
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  &:autofill {
+    box-shadow: 0 0 0px 1000px black inset;
+    -webkit-text-fill-color: white;
+  }
+}
+
+input {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+}
+
+textarea {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+}
