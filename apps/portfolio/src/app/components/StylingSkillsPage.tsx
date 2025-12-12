@@ -53,7 +53,7 @@ export default function StylingSkillsPage() {
           <div className="flex flex-wrap gap-12 justify-center">
             <TechnologyCard
               title="CSS & SCSS"
-              imageSrc="/css+scss.png"
+              imageSrc="/css_scss.png"
               animation="left"
             >
               <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
