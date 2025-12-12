@@ -32,10 +32,10 @@ function TechnologyCard({
           transform: { duration: 0.5 },
         },
       }}
-      className=" items-center border-3  rounded-3xl border-purple/30  bg-black/40 backdrop-blur-md w-[calc(50%-3rem)]  "
+      className=" items-center border-3  rounded-3xl border-purple/30  bg-black/40 backdrop-blur-md w-full md:w-[calc(50%-3rem)] "
     >
-      <div className="gap-6 p-8 py-6 flex flex-col items-center  rounded-3xl size-full inset-shadow-[0_0_55px_rgba(128,0,128,0.5)]">
-        <div className="h-20">
+      <div className="gap-6 p-4 md:p-8 py-6 flex flex-col items-center  rounded-3xl size-full inset-shadow-[0_0_55px_rgba(128,0,128,0.5)]">
+        <div className="h-16 md:h-20">
           <img
             className="h-full "
             style={{

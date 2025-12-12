@@ -1,228 +1,247 @@
+import { FaArrowLeft } from 'react-icons/fa6';
 import { SectionTitle } from './SectionTitle';
 import TechnologyCard from './TechnologyCard';
 import { motion } from 'motion/react';
 
 export default function LogicSkillsPage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 text-white/90">
-      <div className="overflow-hidden">
-        <motion.h2
-          initial={{ y: 60 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-          animate={{ y: 0 }}
-          className="text-6xl font-bold  text-center gradient-text leading-none "
+    <>
+      <div className="max-w-6xl mx-auto px-4 text-white/90 py-29 overflow-hidden w-full h-fit relative">
+        <div className="w-fit overflow-hidden mx-auto">
+          <motion.h2
+            initial={{ y: 60 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+            animate={{ y: 0 }}
+            className="text-3xl md:text-6xl font-bold text-center gradient-text leading-none whitespace-nowrap"
+          >
+            Interactivity &
+          </motion.h2>
+        </div>
+
+        <div className="mb-6 md:mb-12 w-fit overflow-hidden mx-auto">
+          <motion.h2
+            initial={{ y: 60 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+            animate={{ y: 0 }}
+            className="text-3xl md:text-6xl font-bold text-center gradient-text leading-none whitespace-nowrap"
+          >
+            State Management Skills
+          </motion.h2>
+        </div>
+
+        <motion.p
+          className="text-blue-dark leading-relaxed mb-8 md:mb-16 text-center max-w-2xl mx-auto"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.4 }}
         >
-          {' '}
-          Interactivity &
-        </motion.h2>
-      </div>
-      <div className="overflow-hidden mb-12">
-        <motion.h2
-          initial={{ y: 60 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-          animate={{ y: 0 }}
-          className="text-6xl font-bold  text-center gradient-text leading-none "
+          I build dynamic, responsive, and data-driven applications using a
+          <span className="font-semibold">
+            {' '}
+            performance-oriented architecture
+          </span>
+          . My focus is on scalable logic, predictable state management, and
+          reliable communication between client and backend layers.
+        </motion.p>
+
+        {/* Frameworks Section */}
+        <section className="mb-10 md:mb-24">
+          <SectionTitle>Frameworks & Architecture</SectionTitle>
+
+          <div className="flex flex-wrap gap-8 md:gap-12 justify-center">
+            <TechnologyCard
+              title="Monorepo with Nx"
+              imageSrc="/nx.png"
+              animation="left"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Modular and scalable architecture</li>
+                <li>Shared libraries & reusable utilities</li>
+                <li>Optimized builds and caching</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="React"
+              imageSrc="/react.png"
+              animation="right"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Component-driven UI development</li>
+                <li>Custom hooks & optimized rendering</li>
+                <li>Client-side routing & API integration</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="Angular"
+              imageSrc="/angular.png"
+              animation="left"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Scalable module-based structure</li>
+                <li>RxJS reactive data flows</li>
+                <li>Powerful DI and service architecture</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="Next.js"
+              imageSrc="/nextjs.png"
+              animation="right"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Server-side and client-side rendering</li>
+                <li>App Router & layouts structure</li>
+                <li>API routes and backend integration</li>
+              </ul>
+            </TechnologyCard>
+          </div>
+        </section>
+
+        {/* State Management */}
+        <section className="mb-10 md:mb-24">
+          <SectionTitle>State Management</SectionTitle>
+
+          <div className="flex flex-wrap gap-8 md:gap-12 justify-center">
+            <TechnologyCard
+              title="Redux"
+              imageSrc="/redux.png"
+              animation="left"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Predictable global state container</li>
+                <li>Toolkit, Thunks, selectors</li>
+                <li>Horizontal scaling for large apps</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="Zustand"
+              imageSrc="/zustand.svg"
+              animation="right"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Lightweight & flexible stores</li>
+                <li>Extremely fast selector-based updates</li>
+                <li>Great for complex UI logic</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard title="RxJS" imageSrc="/rxjs.png" animation="left">
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Reactive streams & async flows</li>
+                <li>Observers, subjects & operators</li>
+                <li>Core part of Angular ecosystem</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="TanStack Query"
+              imageSrc="/tanstack.png"
+              animation="right"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Advanced server-state management</li>
+                <li>Smart caching & automatic refetching</li>
+                <li>Optimistic UI updates & request dedupe</li>
+                <li>Infinite queries & pagination</li>
+              </ul>
+            </TechnologyCard>
+          </div>
+        </section>
+
+        {/* APIs */}
+        <section className="mb-10 md:mb-24">
+          <SectionTitle>Data Layer & APIs</SectionTitle>
+
+          <div className="flex flex-wrap gap-8 md:gap-12 justify-center">
+            <TechnologyCard
+              title="Axios"
+              imageSrc="/axios.png"
+              animation="left"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Interceptors & error handling</li>
+                <li>Typed reusable client modules</li>
+                <li>Retry & cancellation logic</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="REST API"
+              imageSrc="/rest.svg"
+              animation="right"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>CRUD operations & pagination</li>
+                <li>Backend integration and auth</li>
+                <li>Request optimization & caching</li>
+              </ul>
+            </TechnologyCard>
+
+            <TechnologyCard
+              title="WebSockets"
+              imageSrc="/ws.png"
+              animation="down"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Real-time data channels</li>
+                <li>Subscriptions & event handling</li>
+                <li>Reconnect and fallback logic</li>
+              </ul>
+            </TechnologyCard>
+          </div>
+        </section>
+
+        {/* Web3 */}
+        <section className="mb-10 md:mb-24">
+          <SectionTitle>Web3 & Blockchain Interaction</SectionTitle>
+
+          <div className="flex flex-wrap gap-8 md:gap-12 justify-center">
+            <TechnologyCard
+              title="Web3 & Ethers.js"
+              imageSrc="/web3.png"
+              animation="down"
+            >
+              <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
+                <li>Reading & writing contract data</li>
+                <li>Wallet connection & chain handling</li>
+                <li>Event subscriptions & listeners</li>
+                <li>Building secure dApp UIs</li>
+              </ul>
+            </TechnologyCard>
+          </div>
+        </section>
+
+        {/* Approach */}
+        <motion.section
+          className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]"
+          initial={{ opacity: 0, y: 50 }}
+          transition={{ duration: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ margin: '0px 0px -200px 0px' }}
         >
-          {' '}
-          State Management Skills
-        </motion.h2>
+          <h3 className="text-4xl text-center font-semibold mb-4">
+            My Approach
+          </h3>
+          <ul className="space-y-2 flex flex-col items-center text-base text-center">
+            <li>Clear separation of UI, state, and data layers</li>
+            <li>Scalable and maintainable architecture</li>
+            <li>Performant async data pipelines</li>
+            <li>Predictable and testable logic flows</li>
+            <li>Real-time features with stable fallbacks</li>
+          </ul>
+        </motion.section>
       </div>
 
-      <motion.p
-        className="text-blue-dark leading-relaxed mb-16 text-center max-w-2xl mx-auto"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.6, duration: 0.4 }}
+      <button
+        className="md:sticky fixed bottom-6 left-4 size-10 rounded-full border opacity-70 flex items-center justify-center cursor-pointer hover:opacity-100 transition-opacity"
+        onClick={() => window.history.back()}
       >
-        I build dynamic, responsive, and data-driven applications using a
-        <span className="font-semibold">
-          {' '}
-          performance‑oriented architecture
-        </span>
-        . My focus is on scalable logic, predictable state management, and
-        reliable communication between client and backend layers.
-      </motion.p>
-
-      {/* Frameworks Section */}
-      <section className="mb-24">
-        <SectionTitle>Frameworks & Architecture</SectionTitle>
-
-        <div className="flex flex-wrap gap-12 justify-center">
-          <TechnologyCard
-            title="Monorepo with Nx"
-            imageSrc="/nx.png"
-            animation="left"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Modular and scalable architecture</li>
-              <li>Shared libraries & reusable utilities</li>
-              <li>Optimized builds and caching</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard title="React" imageSrc="/react.png" animation="right">
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Component-driven UI development</li>
-              <li>Custom hooks & optimized rendering</li>
-              <li>Client-side routing & API integration</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard
-            title="Angular"
-            imageSrc="/angular.png"
-            animation="left"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Scalable module-based structure</li>
-              <li>RxJS reactive data flows</li>
-              <li>Powerful DI and service architecture</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard
-            title="Next.js"
-            imageSrc="/nextjs.png"
-            animation="right"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Server-side and client-side rendering</li>
-              <li>App Router & layouts structure</li>
-              <li>API routes and backend integration</li>
-            </ul>
-          </TechnologyCard>
-        </div>
-      </section>
-
-      {/* State Management */}
-      <section className="mb-24">
-        <SectionTitle>State Management</SectionTitle>
-
-        <div className="flex flex-wrap gap-12 justify-center">
-          <TechnologyCard title="Redux" imageSrc="/redux.png" animation="left">
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Predictable global state container</li>
-              <li>Toolkit, Thunks, selectors</li>
-              <li>Horizontal scaling for large apps</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard
-            title="Zustand"
-            imageSrc="/zustand.svg"
-            animation="right"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Lightweight & flexible stores</li>
-              <li>Extremely fast selector-based updates</li>
-              <li>Great for complex UI logic</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard title="RxJS" imageSrc="/rxjs.png" animation="left">
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Reactive streams & async flows</li>
-              <li>Observers, subjects & operators</li>
-              <li>Core part of Angular ecosystem</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard
-            title="TanStack Query"
-            imageSrc="/tanstack.png"
-            animation="right"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Advanced server-state management</li>
-              <li>Smart caching & automatic refetching</li>
-              <li>Optimistic UI updates & request dedupe</li>
-              <li>Infinite queries & pagination</li>
-            </ul>
-          </TechnologyCard>
-        </div>
-      </section>
-
-      {/* APIs */}
-      <section className="mb-24">
-        <SectionTitle>Data Layer & APIs</SectionTitle>
-
-        <div className="flex flex-wrap gap-12 justify-center">
-          <TechnologyCard title="Axios" imageSrc="/axios.png" animation="left">
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Interceptors & error handling</li>
-              <li>Typed reusable client modules</li>
-              <li>Retry & cancellation logic</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard
-            title="REST API"
-            imageSrc="/rest.svg"
-            animation="right"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>CRUD operations & pagination</li>
-              <li>Backend integration and auth</li>
-              <li>Request optimization & caching</li>
-            </ul>
-          </TechnologyCard>
-
-          <TechnologyCard
-            title="WebSockets"
-            imageSrc="/ws.png"
-            animation="down"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Real-time data channels</li>
-              <li>Subscriptions & event handling</li>
-              <li>Reconnect and fallback logic</li>
-            </ul>
-          </TechnologyCard>
-        </div>
-      </section>
-
-      {/* Web3 */}
-      <section className="mb-24">
-        <SectionTitle>Web3 & Blockchain Interaction</SectionTitle>
-
-        <div className="flex flex-wrap gap-12 justify-center">
-          <TechnologyCard
-            title="Web3 & Ethers.js"
-            imageSrc="/web3.png"
-            animation="down"
-          >
-            <ul className="space-y-4 flex flex-col items-center text-base text-center leading-none">
-              <li>Reading & writing contract data</li>
-              <li>Wallet connection & chain handling</li>
-              <li>Event subscriptions & listeners</li>
-              <li>Building secure dApp UIs</li>
-            </ul>
-          </TechnologyCard>
-        </div>
-      </section>
-
-      {/* Approach */}
-      <motion.section
-        className="flex flex-col items-center gap-6 p-8 py-12 rounded-3xl border border-purple/30 bg-black/10 backdrop-blur-md inset-shadow-[0_4px_30px_rgba(128,0,128,0.5)]"
-        initial={{
-          opacity: 0,
-          y: 50,
-        }}
-        transition={{ duration: 0.5 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ margin: '0px 0px -200px 0px' }}
-      >
-        <h3 className="text-4xl text-center font-semibold mb-4">My Approach</h3>
-        <ul className="space-y-2 flex flex-col items-center text-base">
-          <li>Clear separation of UI, state, and data layers</li>
-          <li>Scalable and maintainable architecture</li>
-          <li>Performant async data pipelines</li>
-          <li>Predictable and testable logic flows</li>
-          <li>Real-time features with stable fallbacks</li>
-        </ul>
-      </motion.section>
-    </div>
+        <FaArrowLeft className="text-white" />
+      </button>
+    </>
   );
 }
-``;

@@ -5,6 +5,9 @@ import Home from './app/pages/Home';
 import Skills from './app/pages/Skills';
 import Projects from './app/pages/Projects';
 import Contacts from './app/pages/Contacts';
+import StylingSkillsPage from './app/components/StylingSkillsPage';
+import LogicSkillsPage from './app/components/LogicSkillsPage';
+import BackendSkillsPage from './app/components/BackendSkillsPage';
 
 const router = createBrowserRouter([
   {
@@ -17,7 +20,24 @@ const router = createBrowserRouter([
       },
       {
         path: 'skills',
-        element: <Skills />,
+        children: [
+          {
+            index: true,
+            element: <Skills />,
+          },
+          {
+            path: 'styling',
+            element: <StylingSkillsPage />,
+          },
+          {
+            path: 'frontend',
+            element: <LogicSkillsPage />,
+          },
+          {
+            path: 'backend',
+            element: <BackendSkillsPage />,
+          },
+        ],
       },
       {
         path: 'projects',

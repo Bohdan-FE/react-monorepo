@@ -2,6 +2,8 @@ import SocialsList from '../components/SocialsList';
 import { useTypeLoop } from '../hooks/useTypeSwitch';
 import { FiDownload } from 'react-icons/fi';
 import { motion } from 'motion/react';
+import { useModal } from '../context/modal-context';
+import ContactModal from '../components/ContactModal';
 
 function Home() {
   const text = useTypeLoop(
@@ -10,6 +12,7 @@ function Home() {
     60,
     3000
   );
+  const { openModal } = useModal();
 
   return (
     <motion.div
@@ -48,17 +51,14 @@ function Home() {
           </div>
 
           <div className="flex  gap-2">
-            <a
-              href="#projects"
+            <button
+              onClick={() => openModal(<ContactModal />)}
               className="button w-fit  whitespace-nowrap flex-1 md:flex-0 justify-center"
             >
               Contact Me
-            </a>
+            </button>
 
-            <a
-              href=""
-              className="button outlined w-fit flex items-center gap-2 whitespace-nowrap flex-1 md:flex-0 justify-center"
-            >
+            <a className="button outlined w-fit flex items-center gap-2 whitespace-nowrap flex-1 md:flex-0 justify-center">
               Download CV <FiDownload className="hidden md:block" />
             </a>
           </div>
@@ -70,7 +70,12 @@ function Home() {
           exit={{ opacity: 0, x: 50 }}
           transition={{ duration: 0.4 }}
         >
-          <div className="rounded-full size-[60vw] mx-auto  md:size-124 relative group  animate-up-down">
+          <div className="rounded-full size-[60vw] mx-auto  md:size-112 relative group  animate-up-down md:mt-42">
+            <img
+              className="w-full object-cover object-center absolute top-0 left-1/2 translate-x-[-50%] -translate-y-15 md:-translate-y-40 z-20 selection-none pointer-events-none "
+              src="/me2.png"
+              alt=""
+            />
             <div
               className="size-[115%] absolute top-1/2 left-1/2 translate-[-50%] border blur-[2px] rounded-[12rem] animate-spin-slow border-purple "
               style={{
@@ -93,16 +98,18 @@ function Home() {
             <div className="conical-bg size-[102%] blur-xl rounded-full absolute top-1/2 left-1/2 translate-[-50%]   group-hover:scale-105 transition-all duration-500 ease-in-out animated-border"></div>
             <div className="conical-bg size-[calc(100%+10px)] rounded-full absolute top-1/2 left-1/2 translate-[-50%]  transition-all duration-500 ease-in-out animated-border"></div>
             <div
-              className="size-full rounded-full relative z-1 overflow-hidden animated-border"
+              className="size-full rounded-full relative z-1 overflow-hidden animated-border "
               style={{
                 animationDelay: '0.1s',
               }}
             >
-              <img
-                className="size-full object-cover object-center"
-                src="https://thumbs.dreamstime.com/b/fashion-man-face-c…del-closeup-portrait-young-guy-41172946.jpg?w=992"
-                alt=""
-              />
+              <div className="size-full bg-size-[100%_auto] bg-position-[center_-3.75rem]  md:bg-position-[center_-10rem] bg-no-repeat">
+                <img
+                  className="w-full object-[center_-3.75rem] md:object-[100%_-10rem]  opacity-100 pointer-events-none select-none"
+                  src="/me.png"
+                  alt="me"
+                />
+              </div>
             </div>
           </div>
         </motion.div>

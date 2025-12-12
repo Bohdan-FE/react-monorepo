@@ -30,9 +30,9 @@ function Projects() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="py-29 max-w-7xl mx-auto"
+      className="py-29 max-w-7xl mx-auto overflow-hidden md:px-0 px-4"
     >
-      <div className="overflow-hidden  mb-6">
+      <div className="overflow-hidden mb-6">
         <h2 className="text-6xl font-bold mb-6 text-white text-center">
           Projects
         </h2>
@@ -67,7 +67,7 @@ function Projects() {
         </ul>
       </div>
 
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-3 gap-8">
         <AnimatePresence>
           {filteredData.map((project) => (
             <ProjectCard key={project.title} project={project} />

@@ -166,4 +166,20 @@ export const PROJECTS_DATA: Project[] = [
     technologies: ['nextjs', 'tailwind'],
     href: 'https://next-project-eight-khaki.vercel.app',
   },
+
+  {
+    title: 'Tamitos',
+    description:
+      'A playful educational project that helps neurodivergent kids feel understood and seen.',
+    images: [
+      '/tamitos/Screenshot6.png',
+      '/tamitos/Screenshot2.png',
+      '/tamitos/Screenshot3.png',
+      '/tamitos/Screenshot4.png',
+      '/tamitos/Screenshot5.png',
+      '/tamitos/Screenshot1.png',
+    ],
+    technologies: ['angular', 'scss', 'tailwind'],
+    href: 'https://your-tamitos-link.com',
+  },
 ];

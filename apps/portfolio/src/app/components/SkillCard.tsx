@@ -4,10 +4,9 @@ import { PiBracketsCurlyBold } from 'react-icons/pi';
 
 interface SkillCardProps {
   type: 'Visual' | 'Interactivity' | 'Backend';
-  setOpenCard: (card: string) => void;
 }
 
-function SkillCard({ type, setOpenCard }: SkillCardProps) {
+function SkillCard({ type }: SkillCardProps) {
   let title: string;
   switch (type) {
     case 'Visual':
@@ -55,10 +54,7 @@ function SkillCard({ type, setOpenCard }: SkillCardProps) {
   }
 
   return (
-    <div
-      className="w-86 h-112  mx-auto rounded-2xl bg-black/20 group  backdrop-blur-md relative hover:shadow-[0_0_25px_10px_rgba(255,255,255,0.2)] shadow-[0_0_15px_5px_rgba(255,255,255,0.1)]  flex items-center justify-center gap-4 flex-col p-6 hover:scale-105 transition-all duration-300 cursor-pointer"
-      onClick={() => setOpenCard(type)}
-    >
+    <div className="w-86 h-112  mx-auto rounded-2xl bg-black/20 group  backdrop-blur-md relative hover:shadow-[0_0_25px_10px_rgba(255,255,255,0.2)] shadow-[0_0_15px_5px_rgba(255,255,255,0.1)]  flex items-center justify-center gap-4 flex-col p-6 hover:scale-105 transition-all duration-300 cursor-pointer">
       <div className="inset-0 absolute size-full border-3 border-purple rounded-2xl blur-[3px] group-hover:blur-[1px] transition "></div>
       <div className=" flex flex-col h-full ">
         <div className="flex flex-col items-center justify-center gap-2 flex-1">

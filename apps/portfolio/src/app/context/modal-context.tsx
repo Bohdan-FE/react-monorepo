@@ -47,7 +47,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="p-6 rounded-2xl border-3 border-purple-dark min-w-[300px] relative backdrop-blur-3xl bg-black/90 shadow-purple"
+              className="md:p-6 rounded-2xl border-3 border-purple-dark md:min-w-[300px] md:w-fit w-[95%] relative backdrop-blur-3xl bg-black shadow-purple shadow-[0_0px_10px_rgba(128,90,213,0.7)]"
             >
               {content}
 
