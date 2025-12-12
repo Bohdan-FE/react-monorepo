@@ -71,11 +71,10 @@ function Home() {
           transition={{ duration: 0.4 }}
         >
           <div className="rounded-full size-[60vw] mx-auto  md:size-112 relative group  animate-up-down md:mt-42">
-            <img
-              className="w-full object-cover object-center absolute top-0 left-1/2 translate-x-[-50%] -translate-y-15 md:-translate-y-40 z-20 selection-none pointer-events-none "
-              src="/me2.png"
-              alt=""
-            />
+            <div className="w-full object-cover object-center absolute top-0 left-1/2 translate-x-[-50%] -translate-y-15 md:-translate-y-40 z-20 selection-none pointer-events-none overflow-hidden h-65">
+              <img className="w-full " src="/me.png" alt="" />
+            </div>
+
             <div
               className="size-[115%] absolute top-1/2 left-1/2 translate-[-50%] border blur-[2px] rounded-[12rem] animate-spin-slow border-purple "
               style={{
@@ -105,7 +104,7 @@ function Home() {
             >
               <div className="size-full bg-size-[100%_auto] bg-position-[center_-3.75rem]  md:bg-position-[center_-10rem] bg-no-repeat">
                 <img
-                  className="w-full object-[center_-3.75rem] md:object-[100%_-10rem]  opacity-100 pointer-events-none select-none"
+                  className="w-full object-[center_-3.75rem] md:object-[100%_-10rem] pointer-events-none select-none  "
                   src="/me.png"
                   alt="me"
                 />
