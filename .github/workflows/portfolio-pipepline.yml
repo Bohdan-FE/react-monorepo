@@ -21,17 +21,17 @@ jobs:
         run: npm install
 
       - name: Build Nx React App
-        run: npx nx build my-react-app --configuration=production
+        run: npx nx build portfolio --configuration=production
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: eu-north-1
 
       - name: Upload build to S3
-        run: aws s3 sync dist/apps/my-react-app s3://mycompany-react-prod --delete
+        run: aws s3 sync apps/portfolio/dist s3://my-portfolio-monorepo-react --delete
 
       - name: Invalidate CloudFront Cache
-        run: aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_ID --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id EOZ7D867YB3LL --paths "/*"
