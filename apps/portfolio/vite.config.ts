@@ -1,13 +1,8 @@
-/// <reference types="vitest" />
+/// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-
-// Для ESM-модулей Tailwind
-// Используем require + .default
-// Это работает с TypeScript и Nx
-const tailwindcss = require('@tailwindcss/vite').default;
-
-export default defineConfig({
+import tailwindcss from '@tailwindcss/vite';
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/portfolio',
   server: {
@@ -19,6 +14,10 @@ export default defineConfig({
     host: 'localhost',
   },
   plugins: [react(), tailwindcss()],
+  // Uncomment this if you are using workers.
+  // worker: {
+  //  plugins: [ nxViteTsPaths() ],
+  // },
   build: {
     outDir: './dist',
     emptyOutDir: true,
@@ -27,4 +26,4 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
-});
+}));
