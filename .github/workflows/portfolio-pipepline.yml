@@ -1,17 +1,37 @@
-{
-  'Version': '2012-10-17',
-  'Statement':
-    [
-      {
-        'Effect': 'Allow',
-        'Action': ['s3:PutObject', 's3:DeleteObject', 's3:ListBucket'],
-        'Resource': '*',
-      },
-      {
-        'Effect': 'Allow',
-        'Action':
-          ['cloudfront:CreateInvalidation', 'cloudfront:GetDistribution'],
-        'Resource': '*',
-      },
-    ],
-}
+name: Deploy NX React App to S3 + CloudFront
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Nx React App
+        run: npx nx build my-react-app --configuration=production
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload build to S3
+        run: aws s3 sync dist/apps/my-react-app s3://mycompany-react-prod --delete
+
+      - name: Invalidate CloudFront Cache
+        run: aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_ID --paths "/*"
