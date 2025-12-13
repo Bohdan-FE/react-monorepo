@@ -71,7 +71,7 @@ function Home() {
           transition={{ duration: 0.4 }}
         >
           <div className="rounded-full size-[60vw] mx-auto  md:size-112 relative group  animate-up-down md:mt-42">
-            <div className="w-full object-cover object-center absolute top-0 left-1/2 translate-x-[-50%] -translate-y-15 md:-translate-y-40 z-20 selection-none pointer-events-none overflow-hidden h-58">
+            <div className="w-full object-cover object-center absolute top-0 left-1/2 translate-x-[-50%] -translate-y-15 md:-translate-y-40 z-20 selection-none pointer-events-none overflow-hidden h-50">
               <img className="w-full " src="/me.png" alt="" />
             </div>
 
