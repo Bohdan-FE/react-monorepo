@@ -17,13 +17,16 @@ export default function ContactForm() {
 
   const onSubmit = async (data: ContactFormInputs) => {
     try {
-      const res = await fetch('http://localhost:4252/mail/send-message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        'https://api.apidashboard.online/mail/send-message',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       const result = await res.json();
 
