@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useMemo } from 'react';
 
 interface TechnologyCardProps {
   title: string;
@@ -13,6 +14,11 @@ function TechnologyCard({
   imageSrc,
   animation,
 }: TechnologyCardProps) {
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768;
+  }, []);
+
   return (
     <motion.div
       initial={{
@@ -22,7 +28,10 @@ function TechnologyCard({
       }}
       transition={{ duration: 0.5 }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ margin: '0px 0px -200px 0px', once: true }}
+      viewport={{
+        margin: isMobile ? '0px 0px -50px 0px' : '0px 0px -200px 0px',
+        once: true,
+      }}
       whileHover={{
         scale: 1.02,
         boxShadow: '0 0 15px 5px rgba(128,0,128,0.5)',
@@ -35,7 +44,7 @@ function TechnologyCard({
       className=" items-center border-3  rounded-3xl border-purple/30  bg-black/40 backdrop-blur-md w-full md:w-[calc(50%-3rem)] "
     >
       <div className="gap-6 p-4 md:p-8 py-6 flex flex-col items-center  rounded-3xl size-full inset-shadow-[0_0_55px_rgba(128,0,128,0.5)]">
-        <div className="h-16 md:h-20">
+        <div className="h-[50px] md:h-20">
           <img
             className="h-full "
             style={{

@@ -153,7 +153,7 @@ export default function StylingSkillsPage() {
           <h2 className="text-4xl text-center font-semibold mb-4">
             My Approach
           </h2>
-          <ul className="space-y-2 flex flex-col items-center text-base">
+          <ul className="space-y-2 flex flex-col items-center text-base text-center">
             <li>Pixel-perfect implementation based on Figma</li>
             <li>Clean and semantic code architecture</li>
             <li>Consistent visual logic across entire projects</li>
