@@ -98,17 +98,23 @@ function ImageWithLoading({ src, alt }: { src: string; alt: string }) {
   const [loading, setLoading] = useState(true);
 
   return (
-    <div className="w-full h-full relative">
+    <div className="relative w-full h-full overflow-hidden rounded-lg">
+      {/* Skeleton */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-800/20 animate-pulse">
-          <div className="w-full h-full bg-black/80 rounded-lg"></div>
+        <div className="absolute inset-0">
+          <div className="w-full h-full bg-black/50 animate-pulse" />
+
+          <div className="absolute inset-0 w-full h-full overflow-hidden rounded-4xl">
+            <div className="absolute inset-0 w-full h-full skeleton-bg translate-x-[-50%]"></div>
+          </div>
         </div>
       )}
+
       <img
         src={src}
         alt={alt}
         onLoad={() => setLoading(false)}
-        className={`w-full h-full object-cover object-center transition-opacity duration-500 ${
+        className={`w-full h-full object-cover transition-opacity duration-500 ${
           loading ? 'opacity-0' : 'opacity-100'
         }`}
       />
