@@ -25,7 +25,10 @@ function ProjectCard({ project }: { project: Project }) {
 
         transition: { duration: 0.5 },
       }}
-      className="rounded-2xl bg-black/40  backdrop-blur-2xl border-3 border-purple-dark select-none shadow-[0_4px_10px_rgba(128,90,213,0.5)] hover:shadow-[0_6px_30px_rgba(128,90,213,0.7)] transition-shadow duration-300 p-2 flex flex-col w-full overflow-hidden"
+      className="rounded-2xl bg-black/40  backdrop-blur-2xl border-3
+       border-purple-dark select-none shadow-[0_4px_10px_rgba(128,90,213,0.5)]
+        hover:shadow-[0_6px_30px_rgba(128,90,213,0.7)]
+        transition-shadow duration-300 p-2 flex flex-col w-full overflow-hidden"
     >
       <div className="w-full aspect-video  rounded-xl overflow-hidden border border-white shrink-0 cursor-grab relative">
         <Swiper

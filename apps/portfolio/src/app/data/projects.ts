@@ -24,7 +24,6 @@ export const PROJECTS_DATA: Project[] = [
     images: [
       '/naruto/1765048144454.jpeg',
       '/naruto/1765048222155.jpeg',
-      '/naruto/1765048144454.jpeg',
       '/naruto/1765048191836.jpeg',
       '/naruto/1765048263683.jpeg',
       '/naruto/1765048587057.jpeg',

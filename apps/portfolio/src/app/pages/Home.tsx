@@ -58,7 +58,12 @@ function Home() {
               Contact Me
             </button>
 
-            <a className="button outlined w-fit flex items-center gap-2 whitespace-nowrap flex-1 md:flex-0 justify-center">
+            <a
+              href="/Bohdan_Vivchar_CV.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="button outlined w-fit flex items-center gap-2 whitespace-nowrap flex-1 md:flex-0 justify-center"
+            >
               Download CV <FiDownload className="hidden md:block" />
             </a>
           </div>
