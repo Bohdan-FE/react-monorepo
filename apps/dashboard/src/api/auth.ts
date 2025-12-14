@@ -35,6 +35,8 @@ export const register = async ({ name, email, password }: RegisterPayload) => {
     password,
   });
 
+  localStorage.setItem('userData', JSON.stringify(axiosResponse.data));
+
   return axiosResponse.data;
 };
 
@@ -44,6 +46,7 @@ export const googleAuth = async (
   const res = await api.post('/auth/google', {
     access_token,
   });
+  localStorage.setItem('userData', JSON.stringify(res.data));
   return res.data;
 };
 
