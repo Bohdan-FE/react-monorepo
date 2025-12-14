@@ -179,6 +179,6 @@ export const PROJECTS_DATA: Project[] = [
       '/tamitos/Screenshot1.png',
     ],
     technologies: ['angular', 'scss', 'tailwind'],
-    href: 'https://your-tamitos-link.com',
+    href: 'https://tamitos.com',
   },
 ];
