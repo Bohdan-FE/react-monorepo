@@ -59,9 +59,14 @@ function ProjectCard({ project }: { project: Project }) {
         ))}
       </div>
       <div className="p-2 flex-1 flex flex-col">
-        <h3 className="text-2xl font-semibold mb-3 gradient-text">
+        <a
+          href={project.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-2xl font-semibold mb-3 gradient-text"
+        >
           {project.title}
-        </h3>
+        </a>
         <p className="text-sm mb-5 line-clamp-4 text-white/80">
           {project.description}
         </p>
