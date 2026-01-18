@@ -1,5 +1,5 @@
 import { FaLinkedinIn } from 'react-icons/fa6';
-import { GrInstagram } from 'react-icons/gr';
+
 import { FaGithub } from 'react-icons/fa';
 import { RiTelegram2Fill } from 'react-icons/ri';
 import { BsWhatsapp } from 'react-icons/bs';
@@ -13,11 +13,11 @@ function SocialsList() {
       icon: <FaLinkedinIn />,
     },
 
-    {
-      name: 'Instagram',
-      url: 'https://www.instagram.com/v.i.b.o',
-      icon: <GrInstagram />,
-    },
+    // {
+    //   name: 'Instagram',
+    //   url: 'https://www.instagram.com/v.i.b.o',
+    //   icon: <GrInstagram />,
+    // },
     {
       name: 'telegram',
       url: 'https://t.me/react321',
