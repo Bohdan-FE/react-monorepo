@@ -1,10 +1,10 @@
-import { PaginatedFriendsResponse, User } from '../models/User';
+import { PaginatedUsersResponse, User } from '../models/User';
 import api from './api';
 
 export const fetchFriends = async (
   page: number,
   per_page: number
-): Promise<PaginatedFriendsResponse> => {
+): Promise<PaginatedUsersResponse> => {
   const axiosResponse = await api.get(`/friends`, {
     params: {
       page,

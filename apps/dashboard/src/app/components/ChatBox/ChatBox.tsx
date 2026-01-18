@@ -92,7 +92,6 @@ function ChatBox() {
 
     if (file) tempMessage.imageUrl = URL.createObjectURL(file);
 
-    console.log('tempMessage', file);
 
     setChat((prev) => [...prev, tempMessage]);
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
